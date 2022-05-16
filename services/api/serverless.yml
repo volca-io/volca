@@ -1,0 +1,28 @@
+service: saas-boilerplate-api
+frameworkVersion: '3'
+useDotenv: true
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: '20201221'
+  stage: ${opt:stage, 'staging'}
+  environment:
+    ENVIRONMENT: ${self:provider.stage}
+
+custom:
+  serverless-offline:
+    httpPort: 4000
+    noPrependStageInUrl: true
+
+functions:
+  api:
+    handler: src/lambda-handlers/api.handler
+    events:
+      - http:
+          path: '{any+}'
+          method: any

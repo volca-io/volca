@@ -1,0 +1,9 @@
+extends:
+  - '../../eslintrc.yml'
+  - plugin:mocha/recommended
+
+env:
+  browser: false
+  es2021: true
+plugins:
+  - mocha
