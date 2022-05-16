@@ -1,20 +1,24 @@
 import chai from 'chai';
 import request from 'supertest';
-import Koa from 'koa';
+import { Server } from 'http';
 
 import { createServer } from '../server';
 
 const expect = chai.expect;
 
 describe('Hello world', function () {
-  let server: Koa;
+  let server: Server;
 
-  before(function () {
-    server = createServer();
+  beforeAll(function () {
+    server = createServer().listen();
+  });
+
+  afterAll(function () {
+    server.close();
   });
 
   it('get /hello-world returns message', async function () {
-    const res = await request(server.listen()).get('/hello-world');
+    const res = await request(server).get('/hello-world');
     expect(res.statusCode).to.eql(200);
     expect(res.body).to.eql({ message: 'Hello world!' });
   });
