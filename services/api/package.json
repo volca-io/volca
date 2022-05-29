@@ -13,26 +13,39 @@
     "@types/node": "^17.0.23",
     "@types/supertest": "^2.0.12",
     "chai": "^4.3.6",
+    "compd": "^4.1.1",
     "eslint-plugin-jest": "^26.2.2",
+    "inversify": "^6.0.1",
     "jest": "^28.1.0",
+    "nodemon": "^2.0.16",
+    "reflect-metadata": "^0.1.13",
     "serverless": "^3.11.0",
+    "serverless-jetpack": "^0.11.1",
     "serverless-offline": "^8.5.0",
+    "serverless-plugin-monorepo": "^0.11.0",
     "serverless-plugin-typescript": "^2.1.2",
     "supertest": "^6.2.2",
     "ts-jest": "^28.0.2",
     "typescript": "^4.6.3"
   },
   "scripts": {
-    "start:dev": "serverless offline",
+    "build": "rm -rf dist && tsc",
+    "start:dev": "compd --file docker-compose.yml serverless offline",
     "test": "jest ./src/**/*.spec.ts",
     "test:ci": "jest ./src/**/*.spec.ts",
-    "check:lint": "eslint '**/*.{ts,tsx}'"
+    "check:lint": "eslint '**/*.{ts,tsx}'",
+    "package": "serverless package",
+    "migrate:up": "compd --file docker-compose.yml serverless invoke local -f migrate-up",
+    "migrate:latest": "compd --file docker-compose.yml serverless invoke local -f migrate-latest"
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
     "aws-lambda": "^1.0.7",
+    "knex": "^2.1.0",
     "koa": "^2.13.4",
     "koa-mount": "^4.0.0",
+    "objection": "^3.0.1",
+    "pg": "^8.7.3",
     "serverless-http": "^3.0.1"
   }
 }

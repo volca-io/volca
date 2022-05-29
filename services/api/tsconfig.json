@@ -1,14 +1,23 @@
 {
   "compilerOptions": {
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "inlineSources": true,
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": "./",
     "preserveConstEnums": true,
     "strictNullChecks": true,
     "sourceMap": true,
     "allowJs": true,
-    "target": "es5",
-    "outDir": ".build",
+    "outDir": "dist",
     "moduleResolution": "node",
-    "lib": ["es2015"],
-    "rootDir": "./",
-    "esModuleInterop": true
+    "lib": ["es6"],
+    "target": "es6",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   }
 }

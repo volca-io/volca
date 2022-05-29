@@ -97,3 +97,6 @@ sketch
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,serverless,react,yarn
+
+# Build artifacts
+.webpack

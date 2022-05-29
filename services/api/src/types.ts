@@ -1,8 +1,8 @@
 import { RouterContext } from '@koa/router';
-import { HelloWorldService } from './services';
+import { AuthenticationService } from './services';
 
 export interface CustomContext extends RouterContext {
   services: {
-    helloWorldService: HelloWorldService;
+    authenticationService: AuthenticationService;
   };
 }

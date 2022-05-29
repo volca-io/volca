@@ -1,10 +1,10 @@
 import { Next } from 'koa';
-import { HelloWorldService } from '../services';
+import { AuthenticationService } from '../services';
 import { CustomContext } from '../types';
 
 export const createContext = (ctx: CustomContext, next: Next) => {
   const services = {
-    helloWorldService: new HelloWorldService(),
+    authenticationService: new AuthenticationService(),
   };
 
   ctx.services = services;

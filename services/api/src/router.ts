@@ -4,7 +4,7 @@ import { helloWorldAction } from './actions';
 import { createContext } from './middlewares/create-context';
 import { CustomContext } from './types';
 
-export const createRouter = (): Router => {
+export const createRouter = (): Router<Application.DefaultState, CustomContext> => {
   const router = new Router<Application.DefaultState, CustomContext>();
 
   // Pre action middlewares
