@@ -1,5 +1,5 @@
 extends:
-  - '../../eslintrc.yml'
+  - '../../.eslintrc.yml'
 
 env:
   browser: false
@@ -7,3 +7,6 @@ env:
   jest: true
 plugins:
   - jest
+rules:
+  no-useless-constructor: off
+  '@typescript-eslint/no-useless-constructor': ['error']
