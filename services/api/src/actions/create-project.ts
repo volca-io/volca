@@ -1,13 +1,18 @@
 import { CustomContext, DI_TYPES } from '../types';
 import { container } from '../inversify.config';
 import { ProjectService } from '../interfaces';
+import { useApiAction } from './utils/api-action';
 
-export const createProject = async (ctx: CustomContext) => {
+export const createProject = useApiAction(async (ctx: CustomContext) => {
   const projectService = container.get<ProjectService>(DI_TYPES.ProjectService);
 
   const { name } = ctx.request.body;
 
-  ctx.body = {
-    project: await projectService.create({ adminId: ctx.user.id, name }),
+  const project = await projectService.create({ adminId: ctx.user.id, name });
+
+  return {
+    body: {
+      project
+    },
   };
-};
+});

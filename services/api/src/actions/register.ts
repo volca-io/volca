@@ -1,8 +1,9 @@
 import { CustomContext, DI_TYPES } from '../types';
 import { container } from '../inversify.config';
 import { UserService } from '../interfaces';
+import { useApiAction } from './utils/api-action';
 
-export const register = async (ctx: CustomContext) => {
+export const register = useApiAction(async (ctx: CustomContext) => {
   const {
     request: {
       body: { firstName, lastName, email, password },
@@ -18,6 +19,7 @@ export const register = async (ctx: CustomContext) => {
     password,
   });
 
-  ctx.set('Content-Type', 'application/json');
-  ctx.body = JSON.stringify(user.toDTO());
-};
+  return {
+    body: user.toDTO(),
+  };
+});
