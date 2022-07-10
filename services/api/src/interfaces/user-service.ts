@@ -10,5 +10,5 @@ interface RegisterUserProperties {
 export interface UserService {
   findById(id: string): Promise<User | undefined>;
   findByEmail(email: string): Promise<User | undefined>;
-  register(input: RegisterUserProperties): Promise<boolean>;
+  register(input: RegisterUserProperties): Promise<User>;
 }

@@ -5,6 +5,7 @@ const DI_TYPES = {
   ProjectService: Symbol.for('ProjectService'),
   User: Symbol.for('User'),
   Project: Symbol.for('Project'),
+  Security: Symbol.for('Security'),
 };
 
 export { DI_TYPES };

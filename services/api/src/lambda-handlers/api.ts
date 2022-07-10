@@ -1,8 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import serverless from 'serverless-http';
-import { initialize } from 'src/lib/db/knex';
 
 import { createServer } from '../server';
+import { initialize } from '../lib/db/knex';
+
+// @ts-ignore
+const knex = initialize({
+  client: 'postgres',
+  port: 5432,
+  user: 'postgres',
+  password: 'postgres',
+  database: 'postgres',
+});
 
 initialize({
   client: 'postgres',

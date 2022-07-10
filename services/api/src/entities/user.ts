@@ -1,14 +1,22 @@
 import { Model } from 'objection';
 
 export class User extends Model {
-  id: string;
-
-  constructor() {
-    super();
-    this.id = '2c68a088-578e-4263-8639-31083f184085'; // placeholder
-  }
+  id!: string;
+  firstName!: string;
+  lastName!: string;
+  email!: string;
+  password?: string;
 
   static get tableName() {
     return 'users';
+  }
+
+  toDTO() {
+    return {
+      id: this.id,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+    };
   }
 }

@@ -6,7 +6,7 @@ package:
   individually: true
 
 plugins:
-  - serverless-bundle
+  - serverless-webpack
   - serverless-offline
 
 provider:
@@ -21,16 +21,10 @@ custom:
   serverless-offline:
     httpPort: 4000
     noPrependStageInUrl: true
-  bundle:
-    linting: false
-    tsConfig: 'tsconfig.json'
-    excludeFiles: '**/*/*.spec.ts'
-    packager: yarn
-    ignorePackages:
-      - pg-native
-    copyFiles:
-      - from: 'migrations/*'
-        to: './'
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    packager: 'yarn'
+    excludeFiles: src/**/*.spec.ts
 
 functions:
   api:
