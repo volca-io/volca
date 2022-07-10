@@ -8,6 +8,6 @@ export const createProject = async (ctx: CustomContext) => {
   const { name } = ctx.request.body;
 
   ctx.body = {
-    projects: await projectService.create({ adminId: ctx.user.id, name }),
+    project: await projectService.create({ adminId: ctx.user.id, name }),
   };
 };

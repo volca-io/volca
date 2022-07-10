@@ -45,7 +45,8 @@
     "package": "serverless package",
     "migrate:up": "compd --file docker-compose.yml serverless invoke local -f migrate-up",
     "migrate:down": "compd --file docker-compose.yml serverless invoke local -f migrate-down",
-    "migrate:latest": "compd --file docker-compose.yml serverless invoke local -f migrate-latest"
+    "migrate:latest": "compd --file docker-compose.yml serverless invoke local -f migrate-latest",
+    "seed": "compd --file docker-compose.yml serverless invoke local -f seeder-up"
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
