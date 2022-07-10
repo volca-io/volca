@@ -1,5 +1,4 @@
 import { injectable, inject } from 'inversify';
-import { Model } from 'objection';
 import { DI_TYPES } from '../types';
 import { UserService as UserServiceInterface } from '../interfaces';
 import { User } from '../entities';
@@ -13,7 +12,7 @@ interface RegisterUserProperties {
 
 @injectable()
 export class UserService implements UserServiceInterface {
-  public constructor(@inject(DI_TYPES.User) private user: Model) {}
+  public constructor(@inject(DI_TYPES.User) private user: User) {}
 
   public async findById(id: string): Promise<User | undefined> {
     return this.user.$query().findById(id);
