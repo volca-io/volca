@@ -5,7 +5,7 @@ import { Logger } from '../interfaces';
 export const helloWorldAction = (ctx: CustomContext) => {
   ctx.set('Content-Type', 'application/json');
   ctx.body = JSON.stringify({
-    message: 'Hello world!!',
+    message: 'Hello world!',
   });
 
   const logger = container.get<Logger>(DI_TYPES.Logger);

@@ -2,7 +2,7 @@ import Router from '@koa/router';
 import Application from 'koa';
 import body from 'koa-bodyparser';
 
-import { helloWorldAction, signIn } from './actions';
+import { helloWorldAction, signIn, listProjects } from './actions';
 import { CustomContext } from './types';
 
 export const createRouter = (): Router<Application.DefaultState, CustomContext> => {
@@ -12,6 +12,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.use(body());
 
   // Actions
+  router.get('/projects', listProjects);
   router.get('/hello-world', helloWorldAction);
   router.get('/authn/sign-in', signIn);
 
