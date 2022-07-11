@@ -12,7 +12,7 @@ export const createProject = useApiAction(async (ctx: CustomContext) => {
 
   return {
     body: {
-      project
+      project,
     },
   };
 });

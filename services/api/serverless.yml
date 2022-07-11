@@ -17,6 +17,7 @@ provider:
   environment:
     ENVIRONMENT: ${self:provider.stage}
     LOG_LEVEL: debug
+    DOMAIN: localhost:4000
 
 custom:
   serverless-offline:

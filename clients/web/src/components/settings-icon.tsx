@@ -7,6 +7,7 @@ export const SettingsIcon: React.FC = () => {
       <MenuButton as={Avatar} size="sm" />
       <MenuList>
         <MenuItem>Settings</MenuItem>
+        <MenuItem onClick={() => {}}>Sign out</MenuItem>
       </MenuList>
     </Menu>
   );

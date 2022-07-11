@@ -25,11 +25,11 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   // Actions
 
   // Projects
-  router.get('/projects/:id', getProject);
-  router.delete('/projects/:id', deleteProject);
-  router.get('/projects', listProjects);
-  router.post('/projects', createProject);
-  router.put('/projects/:id', updateProject);
+  router.get('/projects/:id', authenticationMiddleware, getProject);
+  router.delete('/projects/:id', authenticationMiddleware, deleteProject);
+  router.get('/projects', authenticationMiddleware, listProjects);
+  router.post('/projects', authenticationMiddleware, createProject);
+  router.put('/projects/:id', authenticationMiddleware, updateProject);
 
   // Hello world
   router.get('/hello-world', helloWorldAction);

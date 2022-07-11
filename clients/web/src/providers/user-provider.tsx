@@ -1,13 +1,11 @@
 import { createContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ApiClient } from '../lib/clients/api-client';
-import { Project } from '../types';
+import { User } from '../types';
 
 export type UserContextProps = {
-  firstName?: string | null;
-  lastName?: string | null;
-  selectedProject?: Project | null;
-  setSelectedProject: (project: Project) => void;
+  user?: User | null;
+  loadUser: () => void;
+  clearUser: () => void;
 };
 
 interface UserProviderProps {
@@ -15,43 +13,48 @@ interface UserProviderProps {
 }
 
 export const UserContext = createContext({
-  firstName: null,
-  lastName: null,
-  selectedProject: null,
-  setSelectedProject: () => {},
+  user: null,
+  loadUser: () => {},
 } as UserContextProps);
 
 export const UserConsumer = UserContext.Consumer;
 
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const navigate = useNavigate();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [selectedProject, setSelectedProject] = useState(null as Project | null);
+  const [initialized, setInitialized] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  const loadUser = async () => {
+    try {
+      const user = await ApiClient.getMe();
+      setUser(user);
+    } catch (err: unknown) {
+      console.error(err);
+    }
+  };
+
+  const clearUser = async () => {
+    setUser(null);
+  };
+
   useEffect(() => {
-    const getProjects = async () => {
-      const selectedProjectId = localStorage.getItem('selectedProjectId');
-      const projects = await ApiClient.getProjects();
-      const { first_name, last_name } = await ApiClient.getMe();
-      setFirstName(first_name);
-      setLastName(last_name);
-      setSelectedProject(
-        selectedProjectId ? projects.find((project) => project.id === selectedProjectId) || projects[0] : projects[0]
-      );
-      if (projects.length === 0) {
-        navigate('/projects');
-      }
+    const getMe = async () => {
+      await loadUser();
+      setInitialized(true);
     };
-    getProjects();
-  }, [navigate]);
+
+    getMe();
+  }, []);
+
+  if (!initialized) {
+    return null;
+  }
 
   return (
     <UserContext.Provider
       value={{
-        firstName,
-        lastName,
-        selectedProject,
-        setSelectedProject,
+        user,
+        loadUser,
+        clearUser,
       }}
     >
       {children}

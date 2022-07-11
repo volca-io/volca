@@ -1,23 +1,20 @@
 import React from 'react';
 import { VStack } from '@chakra-ui/react';
-import { Footer, Header, Sidebar } from '../components';
+import {} from '../components';
 import { MainPanel } from '../components/layout/main-panel';
 import { MainContent } from '../components/layout/main-content';
 
-interface AuthenticatedLayoutProps {
+interface DefaultLayoutProps {
   children: React.ReactNode;
 }
 
-export const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
+export const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
   return (
     <>
-      <Sidebar />
       <MainPanel>
-        <Header />
         <MainContent>
           <VStack align="flex-start">{children}</VStack>
         </MainContent>
-        <Footer />
       </MainPanel>
     </>
   );

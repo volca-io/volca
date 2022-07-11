@@ -12,9 +12,11 @@ export const useApiAction = (action: (ctx: CustomContext) => Promise<ApiResult |
     const response = await action(ctx);
 
     if (response) {
-      ctx.set('Content-Type', 'application/json');
       ctx.status = response.status || StatusCodes.OK;
+      ctx.set('Content-Type', 'application/json');
       ctx.body = snakecase(response.body, { deep: true });
+    } else {
+      ctx.status = StatusCodes.OK;
     }
   };
 };

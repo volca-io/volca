@@ -12,9 +12,10 @@ export const authnPassword = useApiAction(async (ctx: CustomContext) => {
 
   const token = authnService.generateAccessToken({ sub: user.id });
 
-  return {
-    body: {
-      accessToken: token,
-    },
-  };
+  ctx.cookies.set('x-access-token', token, {
+    secure: process.env.ENVIRONMENT !== 'local',
+    httpOnly: true,
+    sameSite: 'lax',
+    domain: process.env.ENVIRONMENT === 'local' ? undefined : process.env.DOMAIN,
+  });
 });
