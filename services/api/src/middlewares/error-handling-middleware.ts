@@ -3,7 +3,7 @@ import { container } from '../inversify.config';
 import { ServiceError } from '../errors/service-error';
 import { DI_TYPES } from '../types';
 import { Logger } from '../interfaces';
-import { ErrorNames } from 'src/constants';
+import { ErrorNames } from '../constants';
 
 export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
   const logger = container.get<Logger>(DI_TYPES.Logger);
