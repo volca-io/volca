@@ -3,6 +3,7 @@ version: '3.4'
 services:
   database:
     container_name: postgres-database
+    command: postgres -c 'max_connections=300'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

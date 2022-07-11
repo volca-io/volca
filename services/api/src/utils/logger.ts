@@ -8,6 +8,13 @@ export enum LoggingFormat {
   SIMPLE = 'simple',
 }
 
+enum LogLevel {
+  info = 'info',
+  error = 'error',
+  debug = 'debug',
+  warn = 'warn',
+}
+
 interface LoggingConfig {
   level: 'info' | 'error' | 'debug' | 'warn';
   format: LoggingFormat;
@@ -48,8 +55,12 @@ const createLogger = ({ level, format, defaultMeta = {}, silent = false }: Loggi
 @injectable()
 export class Logger implements LoggerInterface {
   private logger;
+
   public constructor() {
-    this.logger = createLogger({ level: 'info', format: LoggingFormat.SIMPLE });
+    const definedLevel = process.env.LOG_LEVEL || 'info';
+    const level = LogLevel[definedLevel as keyof typeof LogLevel];
+
+    this.logger = createLogger({ level, format: LoggingFormat.SIMPLE });
   }
 
   private buildMetadata(meta?: Record<string, unknown>): Record<string, unknown> {

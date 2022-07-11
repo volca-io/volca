@@ -16,6 +16,7 @@ provider:
   stage: ${opt:stage, 'local'}
   environment:
     ENVIRONMENT: ${self:provider.stage}
+    LOG_LEVEL: debug
 
 custom:
   serverless-offline:

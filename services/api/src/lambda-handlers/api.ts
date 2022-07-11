@@ -15,14 +15,6 @@ const knex = initialize({
   database: 'postgres',
 });
 
-initialize({
-  client: 'postgres',
-  port: 5432,
-  user: 'postgres',
-  password: 'postgres',
-  database: 'postgres',
-});
-
 const server = createServer();
 const serverlessHandler = serverless(server);
 
