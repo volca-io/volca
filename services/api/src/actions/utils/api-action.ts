@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { CustomContext } from 'src/types';
+import snakecase from 'snakecase-keys';
 
 interface ApiResult {
   status?: StatusCodes;
@@ -13,7 +14,7 @@ export const useApiAction = (action: (ctx: CustomContext) => Promise<ApiResult |
     if (response) {
       ctx.set('Content-Type', 'application/json');
       ctx.status = response.status || StatusCodes.OK;
-      ctx.body = response.body;
+      ctx.body = snakecase(response.body, { deep: true });
     }
   };
 };

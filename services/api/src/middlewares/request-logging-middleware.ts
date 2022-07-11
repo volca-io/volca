@@ -13,6 +13,7 @@ export const requestLoggingMiddleware = async (ctx: Koa.Context, next: Koa.Next)
 
   logger.info('Completed handling request', {
     path: ctx.path,
+    body: ctx.body,
     status: ctx.status,
   });
 };

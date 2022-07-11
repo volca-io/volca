@@ -32,7 +32,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     const getProjects = async () => {
       const selectedProjectId = localStorage.getItem('selectedProjectId');
       const projects = await ApiClient.getProjects();
-      const { firstName, lastName } = await ApiClient.getMe();
+      const { first_name, last_name } = await ApiClient.getMe();
       setFirstName(firstName);
       setLastName(lastName);
       setSelectedProject(
