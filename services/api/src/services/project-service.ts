@@ -20,4 +20,8 @@ export class ProjectService implements ProjectServiceInterface {
     await Project.query().where({ id }).update({ admin_id: adminId, name });
     return Project.query().findById(id);
   }
+
+  public async delete(id: string): Promise<void> {
+    await Project.query().deleteById(id);
+  }
 }

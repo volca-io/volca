@@ -1,4 +1,7 @@
 export * from './hello-world';
+export * from './get-me';
+export * from './get-project';
+export * from './delete-project';
 export * from './authn/password';
 export * from './list-projects';
 export * from './create-project';

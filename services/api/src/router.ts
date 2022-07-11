@@ -6,8 +6,10 @@ import {
   helloWorldAction,
   authnPassword,
   listProjects,
+  getProject,
   createProject,
   updateProject,
+  deleteProject,
   register,
   getMe,
 } from './actions';
@@ -23,9 +25,11 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   // Actions
 
   // Projects
-  router.get('/projects', authenticationMiddleware, listProjects);
-  router.post('/projects', authenticationMiddleware, createProject);
-  router.put('/projects/:id', authenticationMiddleware, updateProject);
+  router.get('/projects/:id', getProject);
+  router.delete('/projects/:id', deleteProject);
+  router.get('/projects', listProjects);
+  router.post('/projects', createProject);
+  router.put('/projects/:id', updateProject);
 
   // Hello world
   router.get('/hello-world', helloWorldAction);

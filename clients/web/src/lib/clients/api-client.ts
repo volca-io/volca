@@ -10,6 +10,19 @@ const postOptions = {
   },
 };
 
+const putOptions = {
+  method: 'PUT',
+  mode: 'cors' as RequestMode,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
+const deleteOptions = {
+  method: 'DELETE',
+  mode: 'cors' as RequestMode,
+};
+
 export class ApiClient {
   static async getMe(): Promise<User> {
     return fetch(`${baseUrl}/me`)
@@ -28,5 +41,28 @@ export class ApiClient {
       ...postOptions,
       body: JSON.stringify({ name }),
     }).then((response) => response.json());
+  }
+
+  static async getProject(id: string): Promise<Project> {
+    return fetch(`${baseUrl}/projects/${id}`)
+      .then((response) => response.json())
+      .then((response) => response.project);
+  }
+
+  static async updateProject({ id, name }: { id: string; name: string }): Promise<Project> {
+    return fetch(`${baseUrl}/projects/${id}`, {
+      ...putOptions,
+      body: JSON.stringify({ name }),
+    })
+      .then((response) => response.json())
+      .then((response) => response.project);
+  }
+
+  static async deleteProject(id: string): Promise<Project> {
+    return fetch(`${baseUrl}/projects/${id}`, {
+      ...deleteOptions,
+    })
+      .then((response) => response.json())
+      .then((response) => response);
   }
 }

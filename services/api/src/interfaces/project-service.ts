@@ -16,4 +16,5 @@ export interface ProjectService {
   list(adminId: string): Promise<Project[]>;
   create(input: CreateProjectInput): Promise<Project>;
   update(input: UpdateProjectInput): Promise<Project | undefined>;
+  delete(id: string): Promise<void>;
 }

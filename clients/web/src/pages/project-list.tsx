@@ -40,10 +40,11 @@ export const ProjectList: React.FC = () => {
                       const onSelectProject = () => {
                         localStorage.setItem('selectedProjectId', project.id);
                         setSelectedProject(project);
-                        navigate('/');
+                        navigate(`/projects/${project.id}`);
                       };
+                      const onClickSelectedProject = () => navigate(`/projects/${project.id}`);
                       return selectedProject && selectedProject.id === project.id ? (
-                        <Button minWidth={'160px'} rightIcon={<CheckIcon />}>
+                        <Button minWidth={'160px'} rightIcon={<CheckIcon />} onClick={onClickSelectedProject}>
                           Selected
                         </Button>
                       ) : (
