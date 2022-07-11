@@ -33,8 +33,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       const selectedProjectId = localStorage.getItem('selectedProjectId');
       const projects = await ApiClient.getProjects();
       const { first_name, last_name } = await ApiClient.getMe();
-      setFirstName(firstName);
-      setLastName(lastName);
+      setFirstName(first_name);
+      setLastName(last_name);
       setSelectedProject(
         selectedProjectId ? projects.find((project) => project.id === selectedProjectId) || projects[0] : projects[0]
       );
