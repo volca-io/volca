@@ -2,8 +2,16 @@ import Router from '@koa/router';
 import Application from 'koa';
 import body from 'koa-bodyparser';
 
-import { helloWorldAction, signIn, listProjects, createProject, updateProject, register } from './actions';
-import { getMe } from './actions/get-me';
+import {
+  helloWorldAction,
+  authnPassword,
+  listProjects,
+  createProject,
+  updateProject,
+  register,
+  getMe,
+} from './actions';
+import { authenticationMiddleware } from './middlewares';
 import { CustomContext } from './types';
 
 export const createRouter = (): Router<Application.DefaultState, CustomContext> => {
@@ -13,13 +21,21 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.use(body());
 
   // Actions
-  router.get('/projects', listProjects);
-  router.post('/projects', createProject);
-  router.put('/projects/:id', updateProject);
+
+  // Projects
+  router.get('/projects', authenticationMiddleware, listProjects);
+  router.post('/projects', authenticationMiddleware, createProject);
+  router.put('/projects/:id', authenticationMiddleware, updateProject);
+
+  // Hello world
   router.get('/hello-world', helloWorldAction);
-  router.get('/authn/sign-in', signIn);
-  router.post('/users', register);
-  router.get('/me', getMe);
+
+  // Users
+  router.post('/users', authenticationMiddleware, register);
+  router.get('/me', authenticationMiddleware, getMe);
+
+  // Authentication
+  router.post('/authn/password', authnPassword);
 
   // Post action middlewares
 

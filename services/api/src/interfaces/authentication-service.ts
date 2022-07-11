@@ -1,3 +1,5 @@
+import { User } from '../entities';
+
 export interface AuthenticationService {
-  authenticatePassword(username: string, password: string): Promise<boolean>;
+  verifyPassword(username: string, password: string): Promise<User>;
 }

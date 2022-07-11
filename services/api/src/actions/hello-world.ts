@@ -1,13 +1,10 @@
-import { container } from '../inversify.config';
-import { CustomContext, DI_TYPES } from '../types';
-import { Logger } from '../interfaces';
+import { CustomContext } from '../types';
 import { useApiAction } from './utils/api-action';
 
 export const helloWorldAction = useApiAction(async (ctx: CustomContext) => {
-  ctx.body = {
-    message: 'Hello world!',
+  return {
+    body: {
+      message: `Hello, ${ctx.user.firstName}!`,
+    },
   };
-
-  const logger = container.get<Logger>(DI_TYPES.Logger);
-  logger.info('Successfully got hello world', { data: 'Hello world' });
 });

@@ -4,8 +4,8 @@ import { ErrorNames } from '../constants';
 interface ErrorProperties {
   name: ErrorNames;
   message: string;
-  statusCode: StatusCodes;
   debug?: string;
+  statusCode: StatusCodes;
 }
 
 export class ServiceError extends Error {

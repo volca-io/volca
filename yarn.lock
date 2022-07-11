@@ -4426,9 +4426,11 @@ __metadata:
     "@types/expect": ^24.3.0
     "@types/http-status-codes": ^1.2.0
     "@types/jest": ^27.5.1
+    "@types/jsonwebtoken": ^8.5.8
     "@types/koa": ^2.13.4
     "@types/koa-bodyparser": ^4.3.7
     "@types/koa-mount": ^4.0.1
+    "@types/koa__cors": ^3.3.0
     "@types/koa__router": ^8.0.11
     "@types/node": ^17.0.23
     "@types/supertest": ^2.0.12
@@ -4443,6 +4445,7 @@ __metadata:
     http-status-codes: ^2.2.0
     inversify: ^6.0.1
     jest: ^28.1.0
+    jsonwebtoken: ^8.5.1
     knex: ^2.1.0
     koa: ^2.13.4
     koa-bodyparser: ^4.3.0
@@ -5295,6 +5298,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jsonwebtoken@npm:^8.5.8":
+  version: 8.5.8
+  resolution: "@types/jsonwebtoken@npm:8.5.8"
+  dependencies:
+    "@types/node": "*"
+  checksum: 56738a918c543dba30786066959f801212e7fb5cd4ec53cf7b8d227711ed358834feb9e5141f7f88ec7c642bb39757330a5a8917e3b22e0ff9084940d35f0d70
+  languageName: node
+  linkType: hard
+
 "@types/keygrip@npm:*":
   version: 1.0.2
   resolution: "@types/keygrip@npm:1.0.2"
@@ -5351,6 +5363,15 @@ __metadata:
     "@types/koa-compose": "*"
     "@types/node": "*"
   checksum: 35a54e68944f74d6763537d55d01f8ed870d0ef816b5f27fce97a317b237540b7c249dc4a54abab44ad0afd0ce010b335122c9efb490b9589affe7929201d707
+  languageName: node
+  linkType: hard
+
+"@types/koa__cors@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@types/koa__cors@npm:3.3.0"
+  dependencies:
+    "@types/koa": "*"
+  checksum: c1aeb10b070e72b6c01a2f6abb4b0a936017794ef4eab3469697a4e24ef2054bc371519afa90c8e6c5ea9dbeda58395a64400bd499c3fda207cb593b751b44ca
   languageName: node
   linkType: hard
 
