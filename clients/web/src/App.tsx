@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Dashboard } from './pages';
+import { CreateProject, Dashboard, ProjectList } from './pages';
 import { theme } from './theme';
 
 export const App = () => (
@@ -8,6 +8,8 @@ export const App = () => (
     <Router>
       <Routes>
         <Route index element={<Dashboard />}></Route>
+        <Route path="/projects/create" element={<CreateProject />}></Route>
+        <Route path="/projects" element={<ProjectList />}></Route>
       </Routes>
     </Router>
   </ChakraProvider>

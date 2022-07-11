@@ -1,10 +1,14 @@
-import * as React from 'react';
-import { Box, Divider, useColorModeValue } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import React, { useContext } from 'react';
+import { Button, Box, Divider, useColorModeValue } from '@chakra-ui/react';
+import { AddIcon, RepeatIcon } from '@chakra-ui/icons';
 import { SidebarHeader } from './sidebar-header';
 import { NavLink } from './nav-link';
+import { UserContext } from '../../providers/user-provider';
+import { useNavigate } from 'react-router-dom';
 
 export const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
+  const { selectedProject } = useContext(UserContext);
   const variantChange = '0.2s linear';
   const sidebarBg = useColorModeValue('white', 'gray.700');
 
@@ -28,6 +32,13 @@ export const Sidebar: React.FC = () => {
       >
         <SidebarHeader />
         <Divider />
+        <Button
+          onClick={() => navigate('/projects')}
+          rightIcon={<RepeatIcon />}
+          style={{ width: '100%', overflow: 'ellipsis' }}
+        >
+          {selectedProject ? selectedProject.name : '...'}
+        </Button>
         <NavLink to="/" icon={<AddIcon />} title="Dashboard" />
         <NavLink to="/profile" icon={<AddIcon />} title="Profile" />
       </Box>

@@ -49,6 +49,7 @@
     "seed": "compd --file docker-compose.yml serverless invoke local -f seeder-up"
   },
   "dependencies": {
+    "@koa/cors": "^3.3.0",
     "@koa/router": "^10.1.1",
     "argon2": "^0.28.5",
     "aws-lambda": "^1.0.7",

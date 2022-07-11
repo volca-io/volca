@@ -4178,6 +4178,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@koa/cors@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@koa/cors@npm:3.3.0"
+  dependencies:
+    vary: ^1.1.2
+  checksum: bb49c680e0d151aec1b19c24c14d61b65f430eb379e63d83789602cc7d8e52706ebcd74867cdb60b1d50ddb6f3d59be04e1c46328fae5721aeaf50e0d4fc2d28
+  languageName: node
+  linkType: hard
+
 "@koa/router@npm:^10.1.1":
   version: 10.1.1
   resolution: "@koa/router@npm:10.1.1"
@@ -4409,6 +4418,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@saas-boilerplate/api@workspace:services/api"
   dependencies:
+    "@koa/cors": ^3.3.0
     "@koa/router": ^10.1.1
     "@types/aws-lambda": ^8.10.93
     "@types/chai": ^4.3.0

@@ -3,6 +3,7 @@ import Application from 'koa';
 import body from 'koa-bodyparser';
 
 import { helloWorldAction, signIn, listProjects, createProject, updateProject, register } from './actions';
+import { getMe } from './actions/get-me';
 import { CustomContext } from './types';
 
 export const createRouter = (): Router<Application.DefaultState, CustomContext> => {
@@ -18,6 +19,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.get('/hello-world', helloWorldAction);
   router.get('/authn/sign-in', signIn);
   router.post('/users', register);
+  router.get('/me', getMe);
 
   // Post action middlewares
 

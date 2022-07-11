@@ -1,4 +1,5 @@
 import Koa from 'koa';
+import cors from '@koa/cors';
 import { createRouter } from './router';
 import {
   requestLoggingMiddleware,
@@ -11,6 +12,7 @@ export const createServer = (): Koa => {
   const app = new Koa();
   const router = createRouter();
 
+  app.use(cors());
   app.use(correlationIdMiddleware);
   app.use(errorHandlingMiddleware);
   app.use(requestLoggingMiddleware);
