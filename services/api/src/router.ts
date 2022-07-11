@@ -12,6 +12,8 @@ import {
   deleteProject,
   register,
   getMe,
+  createProjectInvitation,
+  acceptProjectInvitation,
 } from './actions';
 import { authenticationMiddleware } from './middlewares';
 import { CustomContext } from './types';
@@ -31,11 +33,15 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.post('/projects', authenticationMiddleware, createProject);
   router.put('/projects/:id', authenticationMiddleware, updateProject);
 
+  // Project invitations
+  router.post('/project-invitations', authenticationMiddleware, createProjectInvitation);
+  router.get('/project-invitations/:key', authenticationMiddleware, acceptProjectInvitation);
+
   // Hello world
   router.get('/hello-world', helloWorldAction);
 
   // Users
-  router.post('/users', authenticationMiddleware, register);
+  router.post('/users', register);
   router.get('/me', authenticationMiddleware, getMe);
 
   // Authentication

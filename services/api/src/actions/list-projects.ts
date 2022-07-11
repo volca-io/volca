@@ -6,7 +6,9 @@ import { useApiAction } from './utils/api-action';
 export const listProjects = useApiAction(async (ctx: CustomContext) => {
   const projectService = container.get<ProjectService>(DI_TYPES.ProjectService);
 
+  const projects = await projectService.list(ctx.user.id);
+
   ctx.body = {
-    projects: await projectService.list(ctx.user.id),
+    projects,
   };
 });

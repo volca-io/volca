@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { ProjectService as ProjectServiceInterface, CreateProjectInput, UpdateProjectInput } from '../interfaces';
-import { Project } from '../entities';
+import { Project, ProjectUser } from '../entities';
 
 @injectable()
 export class ProjectService implements ProjectServiceInterface {
@@ -9,15 +9,21 @@ export class ProjectService implements ProjectServiceInterface {
   }
 
   public async list(adminId: string): Promise<Project[]> {
-    return Project.query().where({ admin_id: adminId });
+    const memberProjects = await ProjectUser.query().where({ userId: adminId });
+    return Project.query()
+      .where({ adminId })
+      .orWhereIn(
+        'id',
+        memberProjects.map((p) => p.projectId)
+      );
   }
 
   public async create({ adminId, name }: CreateProjectInput): Promise<Project> {
-    return Project.query().insert({ admin_id: adminId, name });
+    return Project.query().insert({ adminId, name });
   }
 
   public async update({ id, adminId, name }: UpdateProjectInput): Promise<Project | undefined> {
-    await Project.query().where({ id }).update({ admin_id: adminId, name });
+    await Project.query().where({ id }).update({ adminId, name });
     return Project.query().findById(id);
   }
 

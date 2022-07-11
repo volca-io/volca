@@ -8,3 +8,5 @@ export * from './create-project';
 export * from './update-project';
 export * from './register';
 export * from './get-me';
+export * from './create-project-invitation';
+export * from './accept-project-invitation';

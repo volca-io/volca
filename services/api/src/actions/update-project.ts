@@ -9,11 +9,12 @@ export const updateProject = useApiAction(async (ctx: CustomContext) => {
   const { name, adminId } = ctx.request.body;
   const { id } = ctx.params;
 
-  const project = await projectService.get(id);
+  const oldProject = await projectService.get(id);
+  const project = await projectService.update({ ...oldProject, id, adminId, name });
 
   return {
     body: {
-      project: await projectService.update({ ...project, id, adminId, name }),
+      project,
     },
   };
 });

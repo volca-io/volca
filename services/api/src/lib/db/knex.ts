@@ -25,7 +25,7 @@ export const initialize = ({ client, port, user, password, database }: Initializ
       user,
       password,
       database,
-      pool: { min: 1, max: 1 },
+      pool: { min: 1, max: 1, idleTimeoutMillis: 1000 },
     },
     ...knexSnakeCaseMappers(),
   });
