@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { currentUser } from '../state';
 
 interface AuthenticatedRouteProps {
@@ -8,7 +8,7 @@ interface AuthenticatedRouteProps {
 }
 
 export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({ children }) => {
-  const [user] = useRecoilState(currentUser);
+  const user = useRecoilValue(currentUser);
   const navigate = useNavigate();
   const location = useLocation();
 

@@ -1,4 +1,4 @@
-import { Heading, Box, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Heading, Text, useColorModeValue, Flex } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
 import { SignInForm } from '../components/forms';
@@ -36,11 +36,13 @@ export const SignInPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <Box>
-        <Heading color={titleColor}>Welcome!</Heading>
-        <Text color={textColor}>Enter your e-mail and password to sign in</Text>
-        <SignInForm onSubmit={authnPassword} />
-      </Box>
+      <Flex flexDirection="column" flex={1} alignItems="center" justifyContent="center">
+        <Box>
+          <Heading color={titleColor}>Welcome!</Heading>
+          <Text color={textColor}>Enter your e-mail and password to sign in</Text>
+          <SignInForm onSubmit={authnPassword} />
+        </Box>
+      </Flex>
     </DefaultLayout>
   );
 };
