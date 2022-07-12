@@ -59,10 +59,12 @@ export class ApiClient {
   }
 
   static async createProject({ name }: { name: string }): Promise<Project> {
-    return fetch(`${baseUrl}/projects`, {
+    const { project } = await fetch(`${baseUrl}/projects`, {
       ...postOptions,
       body: JSON.stringify({ name }),
     }).then((response) => response.json());
+
+    return project;
   }
 
   static async getProject(id: string): Promise<Project> {

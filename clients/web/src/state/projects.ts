@@ -2,16 +2,6 @@ import { atom, selector, DefaultValue } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
 import { Project } from '../types';
 
-export const currentProject = atom<Project | null>({
-  key: 'current-project',
-  default: null,
-});
-
-export const projects = atom<Project[]>({
-  key: 'projects',
-  default: [],
-});
-
 export const projectsSelector = selector<Project[]>({
   key: 'projects-selector',
   get: async ({ get }) => {
@@ -34,13 +24,20 @@ export const currentProjectSelector = selector<Project | null>({
     set(currentProject, newValue);
   },
   get: async ({ get }) => {
-    const currentValue = get(currentProject);
-    if (currentValue) return currentValue;
-
     const id = localStorage.getItem('selected_project_id');
     if (!id) return null;
 
     const res = await ApiClient.getProject(id);
     return res;
   },
+});
+
+export const projects = atom<Project[]>({
+  key: 'projects',
+  default: projectsSelector,
+});
+
+export const currentProject = atom<Project | null>({
+  key: 'current-project',
+  default: currentProjectSelector,
 });

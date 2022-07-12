@@ -9,7 +9,7 @@ interface SignOutButtonProps {
 }
 
 export const SignOutButton: React.FC<SignOutButtonProps> = ({ children }) => {
-  const [_, setUser] = useRecoilState(currentUser);
+  const [, setUser] = useRecoilState(currentUser);
 
   const onClick = async () => {
     await ApiClient.signOut();

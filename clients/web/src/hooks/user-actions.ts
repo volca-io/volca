@@ -3,7 +3,7 @@ import { ApiClient } from '../lib/clients/api-client';
 import { currentUser } from '../state';
 
 export const useUserActions = () => {
-  const [_, setUser] = useRecoilState(currentUser);
+  const [, setUser] = useRecoilState(currentUser);
 
   const signIn = async (email: string, password: string): Promise<void> => {
     const authResponse = await ApiClient.authnPassword(email, password);

@@ -2,9 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormLabel, Heading, Input, Button, Text } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { useRecoilState } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
 import { ApiClient } from '../lib/clients/api-client';
+import { currentProject, projects as projectsState } from '../state';
 
 type FormValues = {
   name: string;
@@ -17,10 +19,14 @@ export const CreateProject: React.FC = () => {
     formState: { errors },
   } = useForm<FormValues>();
   const navigate = useNavigate();
+  const [projects, setProjects] = useRecoilState(projectsState);
+  const [, setCurrentProject] = useRecoilState(currentProject);
 
   const onSubmit = async ({ name }: { name: string }) => {
     try {
-      await ApiClient.createProject({ name });
+      const res = await ApiClient.createProject({ name });
+      setProjects([...projects, res]);
+      setCurrentProject(res);
       navigate('/projects');
     } catch (error) {
       console.log(error);

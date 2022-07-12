@@ -2,16 +2,16 @@ import { AddIcon, CheckIcon } from '@chakra-ui/icons';
 import { Button, TableContainer, Table, Thead, Tr, Th, Td, Tbody, Heading } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { currentProjectSelector, projectsSelector } from '../state/projects';
+import { currentProject, projects as projectsState } from '../state';
 import { Project } from '../types';
 
 export const ProjectList: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedProject, setProject] = useRecoilState(currentProjectSelector);
-  const projects = useRecoilValue(projectsSelector);
+  const [selectedProject, setProject] = useRecoilState(currentProject);
+  const [projects] = useRecoilState(projectsState);
 
   useEffect(() => {
     if (projects.length === 0) {
