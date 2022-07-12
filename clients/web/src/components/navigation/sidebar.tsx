@@ -34,11 +34,19 @@ export const Sidebar: React.FC = () => {
         <SidebarHeader />
         <Divider />
         <Button
-          onClick={() => navigate('/projects')}
+          onClick={() => (selectedProject ? navigate('/projects') : {})}
           rightIcon={<RepeatIcon />}
-          style={{ width: '100%', overflow: 'ellipsis' }}
+          style={{ width: '100%', overflow: 'ellipsis', ...(selectedProject ? {} : { color: '#ccc' }) }}
+          {...(selectedProject
+            ? {}
+            : {
+                _hover: {
+                  background: 'gray.100',
+                  cursor: 'not-allowed',
+                },
+              })}
         >
-          {selectedProject ? selectedProject.name : '...'}
+          {selectedProject ? selectedProject.name : 'No project'}
         </Button>
         <NavLink to="/" icon={<AddIcon />} title="Dashboard" />
         <NavLink to="/profile" icon={<AddIcon />} title="Profile" />

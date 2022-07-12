@@ -8,18 +8,18 @@ export class ProjectService implements ProjectServiceInterface {
     return Project.query().findById(id);
   }
 
-  public async list(adminId: string): Promise<Project[]> {
-    const memberProjects = await ProjectUser.query().where({ userId: adminId });
-    return Project.query()
-      .where({ adminId })
-      .orWhereIn(
-        'id',
-        memberProjects.map((p) => p.projectId)
-      );
+  public async list(userId: string): Promise<Project[]> {
+    const memberProjects = await ProjectUser.query().where({ userId });
+    return Project.query().whereIn(
+      'id',
+      memberProjects.map((p) => p.projectId)
+    );
   }
 
   public async create({ adminId, name }: CreateProjectInput): Promise<Project> {
-    return Project.query().insert({ adminId, name });
+    const project = await Project.query().insert({ adminId, name });
+    await ProjectUser.query().insert({ userId: adminId, projectId: project.id });
+    return project;
   }
 
   public async update({ id, adminId, name }: UpdateProjectInput): Promise<Project | undefined> {

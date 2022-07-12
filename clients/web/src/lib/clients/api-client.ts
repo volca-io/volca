@@ -1,4 +1,4 @@
-import { Project, User } from '../../types';
+import { Project, ProjectInvitation, User } from '../../types';
 
 const baseUrl = 'http://127.0.0.1:4000';
 
@@ -88,5 +88,32 @@ export class ApiClient {
     })
       .then((response) => response.json())
       .then((response) => response);
+  }
+
+  static async getProjectUsers(id: string): Promise<User[]> {
+    return fetch(`${baseUrl}/projects/users/${id}`, getOptions)
+      .then((response) => response.json())
+      .then((response) => response.users);
+  }
+
+  static async createProjectInvitation({
+    projectId,
+    toUserEmail,
+  }: {
+    projectId: string;
+    toUserEmail: string;
+  }): Promise<ProjectInvitation> {
+    return fetch(`${baseUrl}/project-invitations`, {
+      ...postOptions,
+      body: JSON.stringify({ projectId, toUserEmail }),
+    })
+      .then((response) => response.json())
+      .then((response) => response.project_invitation);
+  }
+
+  static async acceptProjectInvitation({ key }: { key: string }): Promise<void> {
+    await fetch(`${baseUrl}/project-invitations/${key}`, {
+      ...getOptions,
+    });
   }
 }

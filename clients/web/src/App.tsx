@@ -2,7 +2,16 @@ import React from 'react';
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { CreateProject, Dashboard, ProjectList, SignInPage, ProjectDetails, LoadingPage, NotFoundPage } from './pages';
+import {
+  CreateProject,
+  Dashboard,
+  ProjectList,
+  SignInPage,
+  ProjectDetails,
+  AcceptProjectInvitation,
+  LoadingPage,
+  NotFoundPage,
+} from './pages';
 import { theme } from './theme';
 import { AuthenticatedRoute } from './routing/AuthenticatedRoute';
 
@@ -43,6 +52,15 @@ export const App = () => (
               element={
                 <AuthenticatedRoute>
                   <ProjectDetails />
+                </AuthenticatedRoute>
+              }
+            ></Route>
+
+            <Route
+              path="/invitations/:key"
+              element={
+                <AuthenticatedRoute>
+                  <AcceptProjectInvitation />
                 </AuthenticatedRoute>
               }
             ></Route>
