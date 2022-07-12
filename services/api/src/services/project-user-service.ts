@@ -1,11 +1,19 @@
 import { injectable } from 'inversify';
 import { ProjectUserService as ProjectUserServiceInterface } from '../interfaces';
-import { ProjectUser } from '../entities';
+import { ProjectUser, User } from '../entities';
 
 @injectable()
 export class ProjectUserService implements ProjectUserServiceInterface {
   public async get(userId: string, projectId: string): Promise<ProjectUser | undefined> {
     return ProjectUser.query().where({ userId }).andWhere({ projectId }).first();
+  }
+
+  public async list(projectId: string): Promise<User[]> {
+    const projectUsers = await ProjectUser.query().where({ projectId });
+    return User.query().whereIn(
+      'id',
+      projectUsers.map((pu) => pu.userId)
+    );
   }
 
   public async create({ userId, projectId }: { userId: string; projectId: string }): Promise<ProjectUser> {

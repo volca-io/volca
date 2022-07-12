@@ -8,7 +8,7 @@ export const listProjects = useApiAction(async (ctx: CustomContext) => {
 
   const projects = await projectService.list(ctx.user.id);
 
-  ctx.body = {
-    projects,
+  return {
+    body: { projects },
   };
 });
