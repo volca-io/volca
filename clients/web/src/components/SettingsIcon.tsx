@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Avatar, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { SignOutButton } from './SignOutButton';
 
 export const SettingsIcon: React.FC = () => {
   return (
@@ -7,7 +8,7 @@ export const SettingsIcon: React.FC = () => {
       <MenuButton as={Avatar} size="sm" />
       <MenuList>
         <MenuItem>Settings</MenuItem>
-        <MenuItem onClick={() => {}}>Sign out</MenuItem>
+        <SignOutButton>Sign out</SignOutButton>
       </MenuList>
     </Menu>
   );

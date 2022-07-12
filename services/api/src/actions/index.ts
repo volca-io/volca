@@ -3,6 +3,7 @@ export * from './get-me';
 export * from './get-project';
 export * from './delete-project';
 export * from './authn/password';
+export * from './authn/sign-out';
 export * from './list-projects';
 export * from './create-project';
 export * from './update-project';

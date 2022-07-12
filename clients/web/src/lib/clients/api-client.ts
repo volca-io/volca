@@ -40,6 +40,12 @@ export class ApiClient {
     });
   }
 
+  static async signOut(): Promise<Response> {
+    return fetch(`${baseUrl}/authn/sign-out`, {
+      ...postOptions,
+    });
+  }
+
   static async getMe(): Promise<User> {
     return fetch(`${baseUrl}/me`, getOptions)
       .then((response) => response.json())

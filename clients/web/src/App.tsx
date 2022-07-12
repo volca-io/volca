@@ -1,14 +1,14 @@
+import React from 'react';
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { UserProvider } from './providers/user-provider';
+import { RecoilRoot } from 'recoil';
 import { CreateProject, Dashboard, ProjectList, SignInPage, ProjectDetails } from './pages';
 import { theme } from './theme';
 import { AuthenticatedRoute } from './routing/AuthenticatedRoute';
-import { ProjectProvider } from './providers/project-provider';
 
 export const App = () => (
-  <UserProvider>
-    <ProjectProvider>
+  <RecoilRoot>
+    <React.Suspense fallback={<div>Loading...</div>}>
       <ColorModeScript />
       <Router>
         <ChakraProvider theme={theme}>
@@ -52,6 +52,6 @@ export const App = () => (
           </Routes>
         </ChakraProvider>
       </Router>
-    </ProjectProvider>
-  </UserProvider>
+    </React.Suspense>
+  </RecoilRoot>
 );

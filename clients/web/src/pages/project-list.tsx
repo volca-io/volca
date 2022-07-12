@@ -1,31 +1,26 @@
 import { AddIcon, CheckIcon } from '@chakra-ui/icons';
 import { Button, TableContainer, Table, Thead, Tr, Th, Td, Tbody, Heading } from '@chakra-ui/react';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { ApiClient } from '../lib/clients/api-client';
-import { ProjectContext } from '../providers/project-provider';
+import { currentProjectSelector, projectsSelector } from '../state/projects';
 import { Project } from '../types';
 
 export const ProjectList: React.FC = () => {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([] as Project[]);
-  const { selectedProject, setSelectedProject } = useContext(ProjectContext);
+  const [selectedProject, setProject] = useRecoilState(currentProjectSelector);
+  const projects = useRecoilValue(projectsSelector);
 
   useEffect(() => {
-    const getProjects = async () => {
-      const data = await ApiClient.getProjects();
-      setProjects(data);
-      if (data.length === 0) {
-        navigate('/projects/create');
-      }
-    };
-    getProjects();
-  }, [navigate]);
+    if (projects.length === 0) {
+      navigate('/projects/create');
+    }
+  }, [navigate, projects]);
 
   const onSelectProject = (project: Project) => {
-    setSelectedProject(project);
+    setProject(project);
     navigate(`/projects/${project.id}`);
   };
 
@@ -41,22 +36,23 @@ export const ProjectList: React.FC = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {projects.map((project) => (
-              <Tr key={project.id}>
-                <Td>{project.name}</Td>
-                <Td style={{ textAlign: 'end' }}>
-                  {selectedProject && selectedProject.id === project.id ? (
-                    <Button minWidth={'160px'} rightIcon={<CheckIcon />}>
-                      Selected
-                    </Button>
-                  ) : (
-                    <Button minWidth={'160px'} onClick={() => onSelectProject(project)} colorScheme="blue">
-                      Select
-                    </Button>
-                  )}
-                </Td>
-              </Tr>
-            ))}
+            {projects &&
+              projects.map((project) => (
+                <Tr key={project.id}>
+                  <Td>{project.name}</Td>
+                  <Td style={{ textAlign: 'end' }}>
+                    {selectedProject && selectedProject.id === project.id ? (
+                      <Button minWidth={'160px'} rightIcon={<CheckIcon />}>
+                        Selected
+                      </Button>
+                    ) : (
+                      <Button minWidth={'160px'} onClick={() => onSelectProject(project)} colorScheme="blue">
+                        Select
+                      </Button>
+                    )}
+                  </Td>
+                </Tr>
+              ))}
           </Tbody>
         </Table>
       </TableContainer>

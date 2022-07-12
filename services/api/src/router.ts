@@ -14,6 +14,7 @@ import {
   getMe,
   createProjectInvitation,
   acceptProjectInvitation,
+  signOut,
 } from './actions';
 import { authenticationMiddleware } from './middlewares';
 import { CustomContext } from './types';
@@ -46,6 +47,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   // Authentication
   router.post('/authn/password', authnPassword);
+  router.post('/authn/sign-out', signOut);
 
   // Post action middlewares
 

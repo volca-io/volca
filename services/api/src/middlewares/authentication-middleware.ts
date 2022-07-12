@@ -14,7 +14,7 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
       message: 'Request is missing access token cookie',
-      debug: 'No authorization header was included in the request',
+      debug: 'No access token cookie was included in the request',
       statusCode: StatusCodes.UNAUTHORIZED,
     });
   }

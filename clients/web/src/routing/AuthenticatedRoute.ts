@@ -1,13 +1,14 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { UserContext } from '../providers/user-provider';
+import { useRecoilState } from 'recoil';
+import { currentUser } from '../state';
 
 interface AuthenticatedRouteProps {
   children: React.ReactElement;
 }
 
 export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({ children }) => {
-  const { user } = useContext(UserContext);
+  const [user] = useRecoilState(currentUser);
   const navigate = useNavigate();
   const location = useLocation();
 

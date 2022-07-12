@@ -1,14 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button, Box, Divider, useColorModeValue } from '@chakra-ui/react';
 import { AddIcon, RepeatIcon } from '@chakra-ui/icons';
+import { useRecoilValue } from 'recoil';
 import { SidebarHeader } from './sidebar-header';
 import { NavLink } from './nav-link';
 import { useNavigate } from 'react-router-dom';
-import { ProjectContext } from '../../providers/project-provider';
+import { currentProjectSelector } from '../../state/projects';
 
 export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
-  const { selectedProject } = useContext(ProjectContext);
+  const selectedProject = useRecoilValue(currentProjectSelector);
   const variantChange = '0.2s linear';
   const sidebarBg = useColorModeValue('white', 'gray.700');
 

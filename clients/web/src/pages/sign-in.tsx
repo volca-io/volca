@@ -3,14 +3,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
 import { SignInForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
-import { ApiClient } from '../lib/clients/api-client';
-import { useContext } from 'react';
-import { UserContext } from '../providers/user-provider';
+import { useUserActions } from '../hooks';
 
 export const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loadUser } = useContext(UserContext);
+  const { signIn } = useUserActions();
   const toast = useToast();
 
   const titleColor = useColorModeValue('teal.300', 'teal.200');
@@ -22,12 +20,10 @@ export const SignInPage: React.FC = () => {
   };
 
   const authnPassword = async ({ email, password }: { email: string; password: string }) => {
-    const resp = await ApiClient.authnPassword(email, password);
-
-    if (resp.status === 200) {
-      loadUser();
+    try {
+      await signIn(email, password);
       redirectUser();
-    } else {
+    } catch (err: unknown) {
       toast({
         title: 'Authentication failed',
         description: '',
