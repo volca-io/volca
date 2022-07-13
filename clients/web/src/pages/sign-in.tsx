@@ -1,4 +1,4 @@
-import { Box, Heading, Text, useColorModeValue, Flex } from '@chakra-ui/react';
+import { Box, Heading, Text, useColorModeValue, Flex, VStack } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
 import { SignInForm } from '../components/forms';
@@ -11,15 +11,15 @@ export const SignInPage: React.FC = () => {
   const { signIn } = useUserActions();
   const toast = useToast();
 
-  const titleColor = useColorModeValue('teal.300', 'teal.200');
-  const textColor = useColorModeValue('gray.400', 'white');
+  const titleColor = useColorModeValue('teal.400', 'teal.200');
+  const textColor = useColorModeValue('gray.600', 'white');
 
   const redirectUser = () => {
     const continueUrl = new URLSearchParams(location.search).get('continue');
-    navigate(continueUrl || '/test');
+    navigate(continueUrl || '/');
   };
 
-  const authnPassword = async ({ email, password }: { email: string; password: string }) => {
+  const onSubmit = async ({ email, password }: { email: string; password: string }) => {
     try {
       await signIn(email, password);
       redirectUser();
@@ -37,11 +37,17 @@ export const SignInPage: React.FC = () => {
   return (
     <DefaultLayout>
       <Flex flexDirection="column" flex={1} alignItems="center" justifyContent="center">
-        <Box>
-          <Heading color={titleColor}>Welcome!</Heading>
-          <Text color={textColor}>Enter your e-mail and password to sign in</Text>
-          <SignInForm onSubmit={authnPassword} />
-        </Box>
+        <VStack spacing="8" alignItems="flex-start">
+          <Box>
+            <Heading color={titleColor}>Welcome!</Heading>
+            <Text fontSize="sm" color={textColor}>
+              Enter your e-mail and password to sign in
+            </Text>
+          </Box>
+          <Box>
+            <SignInForm onSubmit={onSubmit} />
+          </Box>
+        </VStack>
       </Flex>
     </DefaultLayout>
   );

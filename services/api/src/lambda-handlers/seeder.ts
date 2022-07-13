@@ -21,7 +21,7 @@ export const up = async () => {
       email: 'stephen@hawking.com',
     });
     console.log('Successfully ran seeder', res);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to run seeder', error);
   } finally {
     knex.destroy();

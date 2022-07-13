@@ -10,12 +10,8 @@ export const authnPassword = useApiAction(async (ctx: CustomContext) => {
 
   const user = await authnService.verifyPassword(email, password);
 
-  const token = authnService.generateAccessToken({ sub: user.id });
+  const token = authnService.generateAccessToken(user);
+  const cookieConfig = authnService.getAccessTokenCookieSettings();
 
-  ctx.cookies.set('x-access-token', token, {
-    secure: process.env.ENVIRONMENT !== 'local',
-    httpOnly: true,
-    sameSite: 'lax',
-    domain: process.env.ENVIRONMENT === 'local' ? undefined : process.env.DOMAIN,
-  });
+  ctx.cookies.set('x-access-token', token, cookieConfig);
 });

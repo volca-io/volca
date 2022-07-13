@@ -2,6 +2,7 @@ import { injectable, inject } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
 import { DI_TYPES } from '../types/dependency-injection';
 import {
+  AccessTokenCookieSettings,
   AuthenticationService as AuthenticationServiceInterface,
   Security,
   UserService as UserServiceInterface,
@@ -17,8 +18,19 @@ export class AuthenticationService implements AuthenticationServiceInterface {
     @inject(DI_TYPES.Security) private security: Security
   ) {}
 
-  public generateAccessToken(payload: Record<string, unknown>) {
+  public generateAccessToken(user: User): string {
+    const payload = { sub: user.id };
+
     return this.security.createSignedToken(payload, '1d');
+  }
+
+  public getAccessTokenCookieSettings(): AccessTokenCookieSettings {
+    return {
+      secure: process.env.ENVIRONMENT !== 'local',
+      httpOnly: true,
+      sameSite: 'lax',
+      domain: process.env.ENVIRONMENT === 'local' ? undefined : process.env.DOMAIN,
+    };
   }
 
   public async verifyPassword(email: string, password: string): Promise<User> {

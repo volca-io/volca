@@ -5,6 +5,17 @@ import { currentUser } from '../state';
 export const useUserActions = () => {
   const [, setUser] = useRecoilState(currentUser);
 
+  const register = async (firstName: string, lastName: string, email: string, password: string): Promise<void> => {
+    const authResponse = await ApiClient.register(firstName, lastName, email, password);
+
+    if (authResponse.status === 200) {
+      const user = await ApiClient.getMe();
+      setUser(user);
+    } else {
+      throw new Error('Registration failed');
+    }
+  };
+
   const signIn = async (email: string, password: string): Promise<void> => {
     const authResponse = await ApiClient.authnPassword(email, password);
 
@@ -23,5 +34,5 @@ export const useUserActions = () => {
     }
   };
 
-  return { signIn, signOut };
+  return { register, signIn, signOut };
 };

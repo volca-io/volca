@@ -23,11 +23,7 @@ type InviteProjectUserProps = {
 };
 
 const InviteProjectUser: React.FC<InviteProjectUserProps> = ({ alert, onSubmit }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormProps>();
+  const { register, handleSubmit } = useForm<FormProps>();
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <InputGroup size="md">

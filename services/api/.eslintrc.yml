@@ -10,4 +10,6 @@ plugins:
 rules:
   no-useless-constructor: off
   '@typescript-eslint/no-useless-constructor': ['error']
-ignorePatterns: webpack.config.js
+ignorePatterns:
+  - webpack.config.js
+  - scripts

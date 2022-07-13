@@ -11,6 +11,7 @@ import {
   AcceptProjectInvitation,
   LoadingPage,
   NotFoundPage,
+  RegisterPage,
 } from './pages';
 import { theme } from './theme';
 import { AuthenticatedRoute } from './routing/AuthenticatedRoute';
@@ -67,6 +68,7 @@ export const App = () => (
 
             {/* PUBLIC ROUTES */}
             <Route path="/sign-in" element={<SignInPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
             <Route path=":any" element={<NotFoundPage />} />
           </Routes>

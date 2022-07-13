@@ -33,6 +33,13 @@ const deleteOptions = {
 };
 
 export class ApiClient {
+  static async register(firstName: string, lastName: string, email: string, password: string): Promise<Response> {
+    return fetch(`${baseUrl}/authn/register`, {
+      ...postOptions,
+      body: JSON.stringify({ firstName, lastName, email, password }),
+    });
+  }
+
   static async authnPassword(email: string, password: string): Promise<Response> {
     return fetch(`${baseUrl}/authn/password`, {
       ...postOptions,

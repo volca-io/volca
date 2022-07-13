@@ -46,12 +46,12 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.get('/hello-world', helloWorldAction);
 
   // Users
-  router.post('/users', register);
   router.get('/me', authenticationMiddleware, getMe);
 
   // Authentication
   router.post('/authn/password', authnPassword);
   router.post('/authn/sign-out', signOut);
+  router.post('/authn/register', register);
 
   // Post action middlewares
 

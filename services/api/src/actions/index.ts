@@ -7,7 +7,7 @@ export * from './authn/sign-out';
 export * from './list-projects';
 export * from './create-project';
 export * from './update-project';
-export * from './register';
+export * from './authn/register';
 export * from './get-me';
 export * from './create-project-invitation';
 export * from './accept-project-invitation';
