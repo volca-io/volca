@@ -8,6 +8,7 @@ import {
   ProjectService,
   ProjectInvitationService,
   ProjectUserService,
+  StripeService,
 } from './services';
 import { Logger } from './utils/logger';
 import {
@@ -18,6 +19,7 @@ import {
   Logger as LoggerInterface,
   Security as SecurityInterface,
   ProjectUserService as ProjectUserServiceInterface,
+  StripeService as StripeServiceInterface,
 } from './interfaces';
 import { Security } from './lib/security/security';
 
@@ -35,5 +37,6 @@ container.bind<ProjectServiceInterface>(DI_TYPES.ProjectService).to(ProjectServi
 container.bind<AuthenticationServiceInterface>(DI_TYPES.AuthenticationService).to(AuthenticationService);
 container.bind<ProjectInvitationServiceInterface>(DI_TYPES.ProjectInvitationService).to(ProjectInvitationService);
 container.bind<ProjectUserServiceInterface>(DI_TYPES.ProjectUserService).to(ProjectUserService);
+container.bind<StripeServiceInterface>(DI_TYPES.StripeService).to(StripeService);
 
 export { container };

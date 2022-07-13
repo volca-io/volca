@@ -16,6 +16,7 @@ import {
   acceptProjectInvitation,
   listProjectUsers,
   signOut,
+  createStripeSession,
 } from './actions';
 import { authenticationMiddleware } from './middlewares';
 import { CustomContext } from './types';
@@ -52,6 +53,9 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.post('/authn/password', authnPassword);
   router.post('/authn/sign-out', signOut);
   router.post('/authn/register', register);
+
+  // Stripe
+  router.post('/stripe/sessions', authenticationMiddleware, createStripeSession);
 
   // Post action middlewares
 

@@ -4,6 +4,7 @@ export class User extends Model {
   id!: string;
   firstName!: string;
   lastName!: string;
+  stripeId?: string;
   email!: string;
   password?: string;
 

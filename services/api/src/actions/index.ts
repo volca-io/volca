@@ -11,4 +11,5 @@ export * from './authn/register';
 export * from './get-me';
 export * from './create-project-invitation';
 export * from './accept-project-invitation';
+export * from './create-stripe-session';
 export * from './list-project-users';

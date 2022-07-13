@@ -51,6 +51,7 @@ thumb
 sketch
 
 ### Serverless ###
+.env
 # Ignore build directory
 .serverless
 

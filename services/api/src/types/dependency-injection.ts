@@ -8,6 +8,7 @@ const DI_TYPES = {
   Security: Symbol.for('Security'),
   ProjectInvitationService: Symbol.for('ProjectInvitationService'),
   ProjectUserService: Symbol.for('ProjectUserService'),
+  StripeService: Symbol.for('StripeService'),
 };
 
 export { DI_TYPES };
