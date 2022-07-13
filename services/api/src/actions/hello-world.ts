@@ -1,10 +1,9 @@
-import { CustomContext } from '../types';
 import { useApiAction } from './utils/api-action';
 
-export const helloWorldAction = useApiAction(async (ctx: CustomContext) => {
+export const helloWorldAction = useApiAction(async () => {
   return {
     body: {
-      message: `Hello, ${ctx.user.firstName}!`,
+      message: `Hello world!`,
     },
   };
 });

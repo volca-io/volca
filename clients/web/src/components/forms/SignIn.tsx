@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Input, Button, Link, useColorModeValue } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, Button, Link, useColorModeValue, FormErrorMessage } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,9 +10,10 @@ interface FormProps {
 
 interface SignInFormProps {
   onSubmit: (data: FormProps) => void;
+  loading: boolean;
 }
 
-export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
+export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading }) => {
   const linkColor = useColorModeValue('teal.400', 'teal.200');
 
   const {
@@ -24,14 +25,25 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormControl>
-        <FormLabel htmlFor="email" fontSize="sm">
-          Email address
-        </FormLabel>
-        <Input id="email" type="email" fontSize="sm" {...register('email', { required: true })} />
-        <FormLabel htmlFor="Password" fontSize="sm">
-          Password
-        </FormLabel>
-        <Input id="password" type="password" fontSize="sm" {...register('password', { required: true })} />
+        <FormControl isInvalid={!!errors.email}>
+          <FormLabel htmlFor="lastName" fontSize="sm">
+            Email address
+          </FormLabel>
+          <Input id="email" type="email" fontSize="sm" {...register('email', { required: 'Enter your email' })} />
+          {errors.email && <FormErrorMessage>{errors.email.message}</FormErrorMessage>}
+        </FormControl>
+        <FormControl isInvalid={!!errors.password}>
+          <FormLabel htmlFor="Password" fontSize="sm">
+            Password
+          </FormLabel>
+          <Input
+            id="password"
+            type="password"
+            fontSize="sm"
+            {...register('password', { required: 'Enter your password' })}
+          />
+          {errors.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}
+        </FormControl>
         <Link color={linkColor} to="/register" as={RouterLink}>
           Or register an account
         </Link>
@@ -50,6 +62,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
           _active={{
             bg: 'teal.400',
           }}
+          isLoading={loading}
         >
           SIGN IN
         </Button>

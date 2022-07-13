@@ -61,8 +61,8 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <Flex flexDirection="column" flex={1} alignItems="center" justifyContent="center">
-        <VStack spacing="8" alignItems="flex-start">
+      <Flex direction="column" p="10" flexGrow={1} justifyContent="center" alignItems="center">
+        <VStack spacing="8" w="100%" maxW="600px" alignItems="flex-start">
           <Box>
             <Heading color={titleColor}>Lets get you signed up!</Heading>
             <Text fontSize="sm" color={textColor}>
@@ -75,10 +75,10 @@ export const RegisterPage: React.FC = () => {
               <AlertTitle>{error.title}</AlertTitle>
               <AlertDescription>{error.description}</AlertDescription>
               <CloseButton
-                alignSelf="flex-start"
-                position="relative"
-                right={-1}
-                top={-1}
+                alignSelf="flex-end"
+                position="absolute"
+                right={0}
+                top={0}
                 onClick={() => {
                   setError(null);
                 }}

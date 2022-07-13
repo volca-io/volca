@@ -107,7 +107,7 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
           />
           {errors.confirmPassword && <FormErrorMessage>{errors.confirmPassword.message}</FormErrorMessage>}
         </FormControl>
-        <Link color={linkColor} to="/register" as={RouterLink}>
+        <Link color={linkColor} to="/sign-in" as={RouterLink}>
           Already have an account?
         </Link>
         <Button
@@ -127,7 +127,7 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
           }}
           isLoading={loading}
         >
-          SIGN IN
+          REGISTER
         </Button>
       </VStack>
     </form>
