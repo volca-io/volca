@@ -10,7 +10,7 @@ export const requestLoggingMiddleware = async (ctx: Koa.Context, next: Koa.Next)
   logger.info('Started handling request', {
     path: ctx.path,
     method: ctx.method,
-    body: ctx.body,
+    body: ctx.request.body,
   });
 
   await next();
@@ -18,7 +18,7 @@ export const requestLoggingMiddleware = async (ctx: Koa.Context, next: Koa.Next)
   logger.info('Completed handling request', {
     path: ctx.path,
     method: ctx.method,
-    body: ctx.body,
+    body: ctx.response.body,
     status: ctx.status,
   });
 };

@@ -1,13 +1,18 @@
 import { StatusCodes } from 'http-status-codes';
+import joi, { Schema } from 'joi';
+import { CustomContext, DI_TYPES } from '../../types';
+import { container } from '../../inversify.config';
+import { ProjectInvitationService, ProjectService, UserService } from '../../interfaces';
+import { useApiAction } from '../utils/api-action';
+import { ServiceError } from '../../errors/service-error';
+import { ErrorNames } from '../../constants';
 
-import { CustomContext, DI_TYPES } from '../types';
-import { container } from '../inversify.config';
-import { ProjectInvitationService, ProjectService, UserService } from '../interfaces';
-import { useApiAction } from './utils/api-action';
-import { ServiceError } from '../errors/service-error';
-import { ErrorNames } from '../constants';
+export const schema: Schema = joi.object({
+  toUserEmail: joi.string().required(),
+  projectId: joi.string().required(),
+});
 
-export const createProjectInvitation = useApiAction(async (ctx: CustomContext) => {
+export const action = useApiAction(async (ctx: CustomContext) => {
   const projectInvitationService = container.get<ProjectInvitationService>(DI_TYPES.ProjectInvitationService);
   const userService = container.get<UserService>(DI_TYPES.UserService);
   const projectService = container.get<ProjectService>(DI_TYPES.ProjectService);

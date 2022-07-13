@@ -29,7 +29,12 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading }) => 
           <FormLabel htmlFor="lastName" fontSize="sm">
             Email address
           </FormLabel>
-          <Input id="email" type="email" fontSize="sm" {...register('email', { required: 'Enter your email' })} />
+          <Input
+            id="email"
+            type="email"
+            fontSize="sm"
+            {...register('email', { required: 'Enter your email', validate: (val) => /.+@.+/.test(val) })}
+          />
           {errors.email && <FormErrorMessage>{errors.email.message}</FormErrorMessage>}
         </FormControl>
         <FormControl isInvalid={!!errors.password}>

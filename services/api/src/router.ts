@@ -3,22 +3,34 @@ import Application from 'koa';
 import body from 'koa-bodyparser';
 
 import {
-  helloWorldAction,
-  authnPassword,
-  listProjects,
-  getProject,
-  createProject,
-  updateProject,
-  deleteProject,
-  register,
-  getMe,
-  createProjectInvitation,
-  acceptProjectInvitation,
-  listProjectUsers,
-  signOut,
-  createStripeSession,
-} from './actions';
+  authnPasswordAction,
+  authnPasswordSchema,
+  registerAction,
+  registerSchema,
+  signOutAction,
+} from './actions/authn';
+import { helloWorldAction } from './actions/hello-world';
+import { getMeAction } from './actions/users';
+import {
+  createProjectInvitationAction,
+  createProjectInvitationSchema,
+  acceptProjectInvitationAction,
+} from './actions/project-invitations';
+import {
+  createProjectAction,
+  createProjectSchema,
+  deleteProjectAction,
+  getProjectAction,
+  listProjectsAction,
+  listProjectUsersAction,
+  updateProjectAction,
+  updateProjectSchema,
+} from './actions/projects';
+
+import { createStripeSessionAction } from './actions/stripe';
+
 import { authenticationMiddleware } from './middlewares';
+import { schemaValidationMiddleware } from './middlewares/schema-validation-middleware';
 import { CustomContext } from './types';
 
 export const createRouter = (): Router<Application.DefaultState, CustomContext> => {
@@ -30,32 +42,47 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   // Actions
 
   // Projects
-  router.get('/projects/:id', authenticationMiddleware, getProject);
-  router.delete('/projects/:id', authenticationMiddleware, deleteProject);
-  router.get('/projects', authenticationMiddleware, listProjects);
-  router.post('/projects', authenticationMiddleware, createProject);
-  router.put('/projects/:id', authenticationMiddleware, updateProject);
+  router.get('/projects/:id', authenticationMiddleware, getProjectAction);
+  router.delete('/projects/:id', authenticationMiddleware, deleteProjectAction);
+  router.get('/projects', authenticationMiddleware, listProjectsAction);
+  router.post(
+    '/projects',
+    authenticationMiddleware,
+    schemaValidationMiddleware(createProjectSchema),
+    createProjectAction
+  );
+  router.put(
+    '/projects/:id',
+    authenticationMiddleware,
+    schemaValidationMiddleware(updateProjectSchema),
+    updateProjectAction
+  );
 
   // Project users
-  router.get('/projects/users/:projectId', authenticationMiddleware, listProjectUsers);
+  router.get('/projects/users/:projectId', authenticationMiddleware, listProjectUsersAction);
 
   // Project invitations
-  router.post('/project-invitations', authenticationMiddleware, createProjectInvitation);
-  router.get('/project-invitations/:key', authenticationMiddleware, acceptProjectInvitation);
+  router.post(
+    '/project-invitations',
+    authenticationMiddleware,
+    schemaValidationMiddleware(createProjectInvitationSchema),
+    createProjectInvitationAction
+  );
+  router.get('/project-invitations/:key', authenticationMiddleware, acceptProjectInvitationAction);
 
   // Hello world
   router.get('/hello-world', helloWorldAction);
 
   // Users
-  router.get('/me', authenticationMiddleware, getMe);
+  router.get('/me', authenticationMiddleware, getMeAction);
 
   // Authentication
-  router.post('/authn/password', authnPassword);
-  router.post('/authn/sign-out', signOut);
-  router.post('/authn/register', register);
+  router.post('/authn/password', schemaValidationMiddleware(authnPasswordSchema), authnPasswordAction);
+  router.post('/authn/sign-out', signOutAction);
+  router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
 
   // Stripe
-  router.post('/stripe/sessions', authenticationMiddleware, createStripeSession);
+  router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);
 
   // Post action middlewares
 

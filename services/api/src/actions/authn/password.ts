@@ -1,9 +1,15 @@
+import joi, { Schema } from 'joi';
 import { CustomContext, DI_TYPES } from '../../types';
 import { container } from '../../inversify.config';
 import { AuthenticationService } from '../../services';
 import { useApiAction } from '../utils/api-action';
 
-export const authnPassword = useApiAction(async (ctx: CustomContext) => {
+export const schema: Schema = joi.object({
+  email: joi.string().required(),
+  password: joi.string().required(),
+});
+
+export const action = useApiAction(async (ctx: CustomContext) => {
   const authnService = container.get<AuthenticationService>(DI_TYPES.AuthenticationService);
 
   const { email, password } = ctx.request.body;

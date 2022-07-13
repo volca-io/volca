@@ -91,7 +91,8 @@ export class ApiClient {
   }
 
   static async getProjects(): Promise<Project[]> {
-    return this.handleApiError(this.client.get('projects').json());
+    const { projects } = await this.handleApiError(this.client.get('projects').json());
+    return projects;
   }
 
   static async createProject({ name }: { name: string }): Promise<Project> {
