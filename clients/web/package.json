@@ -1,5 +1,5 @@
 {
-  "name": "@saas-boilerplate/web",
+  "name": "@volca/web",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

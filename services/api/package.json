@@ -1,5 +1,5 @@
 {
-  "name": "@saas-boilerplate/api",
+  "name": "@volca/api",
   "private": true,
   "packageManager": "yarn@3.2.0",
   "devDependencies": {

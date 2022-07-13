@@ -1,4 +1,4 @@
-service: saas-boilerplate-api
+service: volca-api
 frameworkVersion: '3'
 useDotenv: true
 

@@ -4414,9 +4414,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@saas-boilerplate/api@workspace:services/api":
+"@volca/api@workspace:services/api":
   version: 0.0.0-use.local
-  resolution: "@saas-boilerplate/api@workspace:services/api"
+  resolution: "@volca/api@workspace:services/api"
   dependencies:
     "@koa/cors": ^3.3.0
     "@koa/router": ^10.1.1
@@ -4473,9 +4473,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@saas-boilerplate/root@workspace:.":
+"@volca/root@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@saas-boilerplate/root@workspace:."
+  resolution: "@volca/root@workspace:."
   dependencies:
     "@typescript-eslint/eslint-plugin": ^5.30.5
     "@typescript-eslint/parser": ^5.30.5
@@ -4491,9 +4491,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@saas-boilerplate/web@workspace:clients/web":
+"@volca/web@workspace:clients/web":
   version: 0.0.0-use.local
-  resolution: "@saas-boilerplate/web@workspace:clients/web"
+  resolution: "@volca/web@workspace:clients/web"
   dependencies:
     "@chakra-ui/icons": ^2.0.0
     "@chakra-ui/react": ^2.0.0
