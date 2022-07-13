@@ -6,7 +6,9 @@ import { useApiAction } from '../utils/api-action';
 export const action = useApiAction(async (ctx: CustomContext) => {
   const stripeService = container.get<StripeService>(DI_TYPES.StripeService);
 
-  const stripeSession = await stripeService.createSession({ userId: ctx.user.id, email: ctx.user.email });
+  const { user } = ctx;
+
+  const stripeSession = await stripeService.createSession({ user });
 
   return {
     body: {

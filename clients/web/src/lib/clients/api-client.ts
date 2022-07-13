@@ -38,6 +38,10 @@ type CreateStripeSessionResponse = {
   stripe_session: StripeSession;
 };
 
+type CreateStripeBillingPortalSessionResponse = {
+  stripe_billing_portal_session: StripeSession;
+};
+
 export class ApiError extends Error implements ApiErrorInterface {
   public name: string;
   constructor({ name, message }: { name: string; message: string }) {
@@ -150,5 +154,13 @@ export class ApiClient {
     );
 
     return stripe_session;
+  }
+
+  static async createStripeBillingPortalSession(): Promise<StripeSession> {
+    const { stripe_billing_portal_session } = await this.handleApiError(
+      this.client.post('stripe/billing-portal-sessions').json<CreateStripeBillingPortalSessionResponse>()
+    );
+
+    return stripe_billing_portal_session;
   }
 }

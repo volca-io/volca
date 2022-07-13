@@ -1,6 +1,11 @@
+import { User } from '../entities';
+
 export type CreateStripeSessionParams = {
-  userId: string;
-  email: string;
+  user: User;
+};
+
+export type CreateStripeBillingPortalSessionParams = {
+  stripeCustomerId: string;
 };
 
 export type StripeSession = {
@@ -10,4 +15,5 @@ export type StripeSession = {
 
 export interface StripeService {
   createSession(input: CreateStripeSessionParams): Promise<StripeSession>;
+  createBillingPortalSession(input: CreateStripeBillingPortalSessionParams): Promise<StripeSession>;
 }

@@ -27,7 +27,7 @@ import {
   updateProjectSchema,
 } from './actions/projects';
 
-import { createStripeSessionAction } from './actions/stripe';
+import { createStripeSessionAction, createStripeBillingPortalSessionAction } from './actions/stripe';
 
 import { authenticationMiddleware } from './middlewares';
 import { schemaValidationMiddleware } from './middlewares/schema-validation-middleware';
@@ -83,6 +83,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   // Stripe
   router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);
+  router.post('/stripe/billing-portal-sessions', authenticationMiddleware, createStripeBillingPortalSessionAction);
 
   // Post action middlewares
 

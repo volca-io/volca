@@ -13,6 +13,7 @@ import {
   NotFoundPage,
   RegisterPage,
   SubscribePage,
+  SettingsPage,
 } from './pages';
 import { theme } from './theme';
 import { AuthenticatedRoute } from './routing/AuthenticatedRoute';
@@ -72,6 +73,15 @@ export const App = () => (
               element={
                 <AuthenticatedRoute>
                   <SubscribePage />
+                </AuthenticatedRoute>
+              }
+            ></Route>
+
+            <Route
+              path="/settings"
+              element={
+                <AuthenticatedRoute>
+                  <SettingsPage />
                 </AuthenticatedRoute>
               }
             ></Route>
