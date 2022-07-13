@@ -12,8 +12,8 @@ const stripe = new Stripe(process.env.STRIPE_KEY as string, { apiVersion: '2020-
 export class StripeService implements StripeServiceInterface {
   public async createSession({ userId, email }: CreateStripeSessionParams): Promise<StripeSession> {
     const session = await stripe.checkout.sessions.create({
-      success_url: 'https://example.com/success', // TODO
-      cancel_url: 'https://example.com/cancel', // TODO
+      success_url: 'http://127.0.0.1:3000', // TODO: Set dynamically
+      cancel_url: 'http://127.0.0.1:3000/subscribe?status=warning', // TODO: Set dynamically
       customer_email: email,
       mode: 'subscription',
       line_items: [

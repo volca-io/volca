@@ -5601,7 +5601,7 @@ __metadata:
     react: ^18.1.0
     react-dom: ^18.1.0
     react-hook-form: ^7.33.1
-    react-icons: ^3.11.0
+    react-icons: ^4.4.0
     react-router-dom: ^6.3.0
     react-scripts: 5.0.1
     recoil: ^0.7.4
@@ -18065,14 +18065,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-icons@npm:^3.11.0":
-  version: 3.11.0
-  resolution: "react-icons@npm:3.11.0"
-  dependencies:
-    camelcase: ^5.0.0
+"react-icons@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "react-icons@npm:4.4.0"
   peerDependencies:
     react: "*"
-  checksum: 2d45d47387aa85692ee431abe814c3984bc303b0ff25146de86a3cecf7f144c75bc9755df296c626bf133a05622b812fbf95d99776d9a92c7edd90fa7fbbead1
+  checksum: dd93a1dcc8ac8a3cf46a2b33e80b586fa967331fa5fcb90d061abf276155a8363a331643e203d67cb9bab4261d00a757da854bcce1fce2c6e4258bf3e33f711b
   languageName: node
   linkType: hard
 

@@ -12,6 +12,7 @@ import {
   LoadingPage,
   NotFoundPage,
   RegisterPage,
+  SubscribePage,
 } from './pages';
 import { theme } from './theme';
 import { AuthenticatedRoute } from './routing/AuthenticatedRoute';
@@ -62,6 +63,15 @@ export const App = () => (
               element={
                 <AuthenticatedRoute>
                   <AcceptProjectInvitation />
+                </AuthenticatedRoute>
+              }
+            ></Route>
+
+            <Route
+              path="/subscribe"
+              element={
+                <AuthenticatedRoute>
+                  <SubscribePage />
                 </AuthenticatedRoute>
               }
             ></Route>

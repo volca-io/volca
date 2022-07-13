@@ -1,4 +1,4 @@
-import { Project, ProjectInvitation, User } from '../../types';
+import { Project, ProjectInvitation, StripeSession, User } from '../../types';
 
 const baseUrl = 'http://127.0.0.1:4000';
 
@@ -122,5 +122,13 @@ export class ApiClient {
     await fetch(`${baseUrl}/project-invitations/${key}`, {
       ...getOptions,
     });
+  }
+
+  static async createStripeSession(): Promise<StripeSession> {
+    return fetch(`${baseUrl}/stripe/sessions`, {
+      ...postOptions,
+    })
+      .then((response) => response.json())
+      .then((response) => response.stripe_session);
   }
 }
