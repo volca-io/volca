@@ -32,6 +32,7 @@ type AcceptProjectInvitationResponse = {
 type ApiErrorInterface = {
   name: string;
   message: string;
+  status: number;
 };
 
 type CreateStripeSessionResponse = {
@@ -44,9 +45,12 @@ type CreateStripeBillingPortalSessionResponse = {
 
 export class ApiError extends Error implements ApiErrorInterface {
   public name: string;
-  constructor({ name, message }: { name: string; message: string }) {
+  public status: number;
+
+  constructor({ name, message, status }: { name: string; message: string; status: number }) {
     super(message);
     this.name = name;
+    this.status = status;
   }
 }
 
@@ -61,6 +65,13 @@ export class ApiClient {
     return ['name', 'message'].every((item) => error.hasOwnProperty(item));
   }
 
+  private static async handleUnauthorizedResponse(err: ApiError) {
+    if (err.name === 'AUTHORIZATION_FAILED' && window.location.pathname !== '/sign-in') {
+      await this.signOut();
+      window.location.href = '/sign-in';
+    }
+  }
+
   private static async handleApiError<T>(action: Promise<T>): Promise<T> {
     try {
       const res = await action;
@@ -69,11 +80,19 @@ export class ApiClient {
       if (err instanceof HTTPError) {
         const body = await err.response.json();
         if (body && this.isCustomApiError(body)) {
-          throw new ApiError({ name: body.name, message: body.message });
+          const customError = new ApiError({ name: body.name, message: body.message, status: err.response.status });
+
+          if (err.response.status === 401) {
+            await this.handleUnauthorizedResponse(customError);
+          }
         }
       }
 
-      throw new ApiError({ name: 'UNKNOWN_ERROR', message: 'An unknown error occurred, please try again later' });
+      throw new ApiError({
+        name: 'UNKNOWN_ERROR',
+        message: 'An unknown error occurred, please try again later',
+        status: 500,
+      });
     }
   }
 
