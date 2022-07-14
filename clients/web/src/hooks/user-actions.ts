@@ -11,15 +11,32 @@ export const useUserActions = () => {
     setUser(user);
   };
 
-  const signIn = async (email: string, password: string): Promise<void> => {
+  const signIn = async (email: string, password: string, remember: boolean): Promise<void> => {
     await ApiClient.authnPassword(email, password);
     const user = await ApiClient.getMe();
     setUser(user);
+
+    if (remember) {
+      localStorage.setItem('remembered_user_identifier', email);
+    } else {
+      localStorage.removeItem('remembered_user_identifier');
+    }
+
+    localStorage.setItem('remember_toggled', remember ? 'true' : 'false');
   };
 
   const signOut = async () => {
     await ApiClient.signOut();
   };
 
-  return { register, signIn, signOut };
+  const getRememberInfo = (): { identifier: string | undefined; remember: boolean | undefined } => {
+    const identifier = localStorage.getItem('remembered_user_identifier') || undefined;
+
+    const rememberToggled = localStorage.getItem('remember_toggled');
+    const remember = rememberToggled ? rememberToggled === 'true' : undefined;
+
+    return { remember, identifier };
+  };
+
+  return { register, signIn, signOut, getRememberInfo };
 };

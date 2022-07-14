@@ -11,8 +11,9 @@ import {
   AlertDescription,
   AlertTitle,
   CloseButton,
+  Link,
 } from '@chakra-ui/react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { RegisterForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
@@ -31,6 +32,7 @@ export const RegisterPage: React.FC = () => {
 
   const titleColor = useColorModeValue('teal.400', 'teal.200');
   const textColor = useColorModeValue('gray.600', 'white');
+  const linkColor = useColorModeValue('teal.400', 'teal.200');
 
   const redirectUser = () => {
     const continueUrl = new URLSearchParams(location.search).get('continue');
@@ -64,9 +66,16 @@ export const RegisterPage: React.FC = () => {
       <Flex direction="column" p="10" flexGrow={1} justifyContent="center" alignItems="center">
         <VStack spacing="8" w="100%" maxW="600px" alignItems="flex-start">
           <Box>
+            <Heading color={titleColor}></Heading>
+            <Text fontSize="sm" color={textColor}></Text>
+          </Box>
+          <Box>
             <Heading color={titleColor}>Lets get you signed up!</Heading>
             <Text fontSize="sm" color={textColor}>
-              Enter your details in the form below to create a new account.
+              Enter your details in the form below to create a new account. Already have an account?{' '}
+              <Link color={linkColor} to="/sign-in" as={RouterLink}>
+                Sign in instead
+              </Link>
             </Text>
           </Box>
           {error && (

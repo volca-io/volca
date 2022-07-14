@@ -10,8 +10,9 @@ import {
   AlertTitle,
   AlertDescription,
   CloseButton,
+  Link,
 } from '@chakra-ui/react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { SignInForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
@@ -25,22 +26,23 @@ type ErrorDescription = {
 export const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn } = useUserActions();
+  const { signIn, getRememberInfo } = useUserActions();
   const [error, setError] = useState<ErrorDescription | null>(null);
   const [loading, setLoading] = useState(false);
 
   const titleColor = useColorModeValue('teal.400', 'teal.200');
   const textColor = useColorModeValue('gray.600', 'white');
+  const linkColor = useColorModeValue('teal.400', 'teal.200');
 
   const redirectUser = () => {
     const continueUrl = new URLSearchParams(location.search).get('continue');
     navigate(continueUrl || '/');
   };
 
-  const onSubmit = async ({ email, password }: { email: string; password: string }) => {
+  const onSubmit = async ({ email, password, remember }: { email: string; password: string; remember: boolean }) => {
     try {
       setLoading(true);
-      await signIn(email, password);
+      await signIn(email, password, remember);
       redirectUser();
     } catch (err: unknown) {
       // @ts-ignore
@@ -49,6 +51,8 @@ export const SignInPage: React.FC = () => {
     setLoading(false);
   };
 
+  const { identifier, remember } = getRememberInfo();
+
   return (
     <DefaultLayout>
       <Flex direction="column" p="10" flexGrow={1} justifyContent="center" alignItems="center">
@@ -56,7 +60,10 @@ export const SignInPage: React.FC = () => {
           <Box>
             <Heading color={titleColor}>Welcome!</Heading>
             <Text fontSize="sm" color={textColor}>
-              Enter your e-mail and password to sign in
+              Enter your e-mail and password to sign in. Or{' '}
+              <Link color={linkColor} to="/register" as={RouterLink}>
+                create a new account
+              </Link>
             </Text>
           </Box>
           {error && (
@@ -76,7 +83,12 @@ export const SignInPage: React.FC = () => {
             </Alert>
           )}
           <Box alignSelf="stretch">
-            <SignInForm onSubmit={onSubmit} loading={loading} />
+            <SignInForm
+              defaultIdentifier={identifier}
+              defaultRemember={remember}
+              onSubmit={onSubmit}
+              loading={loading}
+            />
           </Box>
         </VStack>
       </Flex>

@@ -1,26 +1,32 @@
-import { FormControl, FormLabel, Input, Button, Link, useColorModeValue, FormErrorMessage } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { FormControl, FormLabel, Input, Button, Switch, FormErrorMessage } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
 interface FormProps {
   email: string;
   password: string;
+  remember: boolean;
 }
 
 interface SignInFormProps {
   onSubmit: (data: FormProps) => void;
   loading: boolean;
+  defaultIdentifier?: string;
+  defaultRemember?: boolean | undefined;
 }
 
-export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading }) => {
-  const linkColor = useColorModeValue('teal.400', 'teal.200');
-
+export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading, defaultIdentifier, defaultRemember }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormProps>();
+  } = useForm<FormProps>({
+    defaultValues: {
+      email: defaultIdentifier,
+      password: undefined,
+      remember: defaultRemember === undefined ? true : defaultRemember,
+    },
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -49,9 +55,12 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading }) => 
           />
           {errors.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}
         </FormControl>
-        <Link color={linkColor} to="/register" as={RouterLink}>
-          Or register an account
-        </Link>
+        <FormControl display="flex" alignItems="center">
+          <FormLabel htmlFor="remember" fontSize="sm" mb="0">
+            Remember me
+          </FormLabel>
+          <Switch id="remember" {...register('remember')} colorScheme="teal" />
+        </FormControl>
         <Button
           fontSize="10px"
           type="submit"

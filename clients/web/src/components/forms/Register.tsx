@@ -1,15 +1,4 @@
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
-  Link,
-  useColorModeValue,
-  VStack,
-  FormErrorMessage,
-} from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
-import React from 'react';
+import { FormControl, FormLabel, Input, Button, VStack, FormErrorMessage } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 
 interface RegisterFormProps {
@@ -33,8 +22,6 @@ interface RegisterFormComponentProps {
 }
 
 export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, loading }) => {
-  const linkColor = useColorModeValue('teal.400', 'teal.200');
-
   const {
     register,
     handleSubmit,
@@ -107,9 +94,6 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
           />
           {errors.confirmPassword && <FormErrorMessage>{errors.confirmPassword.message}</FormErrorMessage>}
         </FormControl>
-        <Link color={linkColor} to="/sign-in" as={RouterLink}>
-          Already have an account?
-        </Link>
         <Button
           fontSize="10px"
           type="submit"
