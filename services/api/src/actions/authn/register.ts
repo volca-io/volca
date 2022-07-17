@@ -1,4 +1,5 @@
 import joi, { Schema } from 'joi';
+import zxcvbn from 'zxcvbn';
 import { CustomContext, DI_TYPES } from '../../types';
 import { container } from '../../inversify.config';
 import { AuthenticationService, UserService } from '../../interfaces';
@@ -8,7 +9,18 @@ export const schema: Schema = joi.object({
   firstName: joi.string().required(),
   lastName: joi.string().required(),
   email: joi.string().required(),
-  password: joi.string().required(),
+  password: joi
+    .string()
+    .required()
+    .custom((val: string) => {
+      const { score, feedback } = zxcvbn(val);
+
+      if (score < 2) {
+        throw new Error(`assword is not strong enough. ${feedback.warning}`);
+      }
+
+      return true;
+    }, 'Password strength validation'),
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {

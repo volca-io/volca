@@ -1,5 +1,8 @@
-import { FormControl, FormLabel, Input, Button, VStack, FormErrorMessage } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+import { FormControl, FormLabel, Input, Button, VStack, FormErrorMessage, Progress } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import zxcvbn, { ZXCVBNResult } from 'zxcvbn';
 
 interface RegisterFormProps {
   firstName: string;
@@ -21,13 +24,32 @@ interface RegisterFormComponentProps {
   loading: boolean;
 }
 
+type PasswordStrengthColorMap = {
+  [key: number]: 'gray' | 'red' | 'yellow' | 'green';
+};
+
+const passwordStrengthColorMap = {
+  0: 'red',
+  1: 'red',
+  2: 'yellow',
+  3: 'green',
+  4: 'green',
+} as PasswordStrengthColorMap;
+
 export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, loading }) => {
+  const [strengthCheck, setStrengthCheck] = useState<null | ZXCVBNResult>(null);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<RegisterFormProps>();
+
+  const password = watch('password');
+  useEffect(() => {
+    const result = password ? zxcvbn(password) : null;
+    setStrengthCheck(result);
+  }, [password]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -71,7 +93,29 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
             id="password"
             type="password"
             fontSize="sm"
-            {...register('password', { required: 'Enter your password' })}
+            {...register('password', {
+              required: 'Enter your password',
+              validate: () => {
+                if ((strengthCheck?.score || 0) < 2) {
+                  return `Choose a stronger password. ${strengthCheck?.feedback.warning}`;
+                }
+              },
+            })}
+          />
+          <Progress
+            size="sm"
+            value={strengthCheck?.score === undefined ? 0 : strengthCheck?.score + 1}
+            max={5}
+            min={0}
+            colorScheme={passwordStrengthColorMap[strengthCheck?.score || 0]}
+            sx={{
+              '& > div:first-child': {
+                transition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)',
+                transitionDuration: '.2s, .2s, .35s',
+                transitionProperty: 'width',
+                transitionTimingFunction: 'linear, linear, ease',
+              },
+            }}
           />
           {errors.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}
         </FormControl>

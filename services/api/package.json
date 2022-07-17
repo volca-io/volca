@@ -18,6 +18,7 @@
     "@types/node": "^17.0.23",
     "@types/supertest": "^2.0.12",
     "@types/uuid": "^8.3.4",
+    "@types/zxcvbn": "^4.4.1",
     "chai": "^4.3.6",
     "compd": "^4.1.1",
     "copy-webpack-plugin": "^11.0.0",
@@ -70,6 +71,7 @@
     "snakecase-keys": "^5.4.2",
     "stripe": "^9.12.0",
     "uuid": "^8.3.2",
-    "winston": "^3.8.0"
+    "winston": "^3.8.0",
+    "zxcvbn": "^4.4.2"
   }
 }
