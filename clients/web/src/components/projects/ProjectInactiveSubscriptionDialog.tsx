@@ -29,7 +29,7 @@ export const ProjectInactiveSubscriptionDialog = ({ project, user }: { project: 
 
   return (
     <>
-      <Button w={'100%'} colorScheme="orange" rightIcon={<MdWarning />} onClick={onOpen}>
+      <Button w="100%" colorScheme="orange" rightIcon={<MdWarning />} onClick={onOpen}>
         Not Available
       </Button>
 

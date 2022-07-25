@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
+import { ChakraProvider, ColorModeScript, localStorageManager } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import {
@@ -23,11 +23,10 @@ import { ProjectRoute } from './routing/ProjectRoute';
 export const App = () => (
   <RecoilRoot>
     <React.Suspense fallback={<LoadingPage />}>
-      <ColorModeScript />
+      <ColorModeScript initialColorMode="system" />
       <Router>
-        <ChakraProvider theme={theme}>
+        <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
           <Routes>
-            {/* AUTHENTICATED ROUTES */}
             <Route
               index
               element={
@@ -80,7 +79,6 @@ export const App = () => (
                 </AuthenticatedRoute>
               }
             ></Route>
-
             <Route
               path="/subscribe"
               element={
@@ -89,7 +87,6 @@ export const App = () => (
                 </AuthenticatedRoute>
               }
             ></Route>
-
             <Route
               path="/settings"
               element={
@@ -98,11 +95,9 @@ export const App = () => (
                 </AuthenticatedRoute>
               }
             ></Route>
-
             {/* PUBLIC ROUTES */}
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/register" element={<RegisterPage />} />
-
             <Route path=":any" element={<NotFoundPage />} />
           </Routes>
         </ChakraProvider>

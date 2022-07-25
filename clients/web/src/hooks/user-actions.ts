@@ -12,7 +12,10 @@ export const useUserActions = () => {
   };
 
   const signIn = async (email: string, password: string, remember: boolean): Promise<void> => {
-    await ApiClient.authnPassword(email, password);
+    const { access_token } = await ApiClient.authnPassword(email, password);
+
+    localStorage.setItem('access-token', access_token);
+
     const user = await ApiClient.getMe();
     setUser(user);
 
@@ -27,6 +30,7 @@ export const useUserActions = () => {
 
   const signOut = async () => {
     await ApiClient.signOut();
+    localStorage.removeItem('access-token');
   };
 
   const getRememberInfo = (): { identifier: string | undefined; remember: boolean | undefined } => {

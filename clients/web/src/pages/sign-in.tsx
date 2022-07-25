@@ -1,10 +1,10 @@
+import { useState } from 'react';
 import {
   Box,
   Heading,
   Text,
   useColorModeValue,
   Flex,
-  VStack,
   Alert,
   AlertIcon,
   AlertTitle,
@@ -16,7 +16,7 @@ import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { SignInForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
-import { useState } from 'react';
+import { SoftCard } from '../components/generic/SoftCard';
 
 type ErrorDescription = {
   title: string;
@@ -55,42 +55,35 @@ export const SignInPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <Flex direction="column" p="10" flexGrow={1} justifyContent="center" alignItems="center">
-        <VStack spacing="8" w="100%" maxW="600px" alignItems="flex-start">
-          <Box>
-            <Heading color={titleColor}>Welcome!</Heading>
-            <Text fontSize="sm" color={textColor}>
-              Enter your e-mail and password to sign in. Or{' '}
-              <Link color={linkColor} to="/register" as={RouterLink}>
-                create a new account
-              </Link>
-            </Text>
-          </Box>
-          {error && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertTitle>{error.title}</AlertTitle>
-              <AlertDescription>{error.description}</AlertDescription>
-              <CloseButton
-                alignSelf="flex-end"
-                position="absolute"
-                right={0}
-                top={0}
-                onClick={() => {
-                  setError(null);
-                }}
-              />
-            </Alert>
-          )}
-          <Box alignSelf="stretch">
-            <SignInForm
-              defaultIdentifier={identifier}
-              defaultRemember={remember}
-              onSubmit={onSubmit}
-              loading={loading}
+      <Flex minH="100vh" direction="column" justifyContent="center" maxW="600px" margin="0 auto">
+        <Box paddingY="8">
+          <Heading color={titleColor}>Welcome!</Heading>
+          <Text fontSize="sm" color={textColor}>
+            Enter your e-mail and password to sign in. Or{' '}
+            <Link color={linkColor} to="/register" as={RouterLink}>
+              create a new account
+            </Link>
+          </Text>
+        </Box>
+        {error && (
+          <Alert status="error">
+            <AlertIcon />
+            <AlertTitle>{error.title}</AlertTitle>
+            <AlertDescription>{error.description}</AlertDescription>
+            <CloseButton
+              alignSelf="flex-end"
+              position="absolute"
+              right={0}
+              top={0}
+              onClick={() => {
+                setError(null);
+              }}
             />
-          </Box>
-        </VStack>
+          </Alert>
+        )}
+        <SoftCard>
+          <SignInForm defaultIdentifier={identifier} defaultRemember={remember} onSubmit={onSubmit} loading={loading} />
+        </SoftCard>
       </Flex>
     </DefaultLayout>
   );

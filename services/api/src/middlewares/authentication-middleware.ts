@@ -8,19 +8,29 @@ import { StatusCodes } from 'http-status-codes';
 import { UserService } from '../services';
 
 export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Next) => {
-  const token = ctx.cookies.get('x-access-token');
+  const header = ctx.header.authorization;
 
-  if (!token) {
+  if (!header) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
-      message: 'Request is missing access token cookie',
-      debug: 'No access token cookie was included in the request',
+      message: 'Request is missing authorization header',
+      debug: 'No authorization header existed on the request',
       statusCode: StatusCodes.UNAUTHORIZED,
     });
   }
 
   const security = container.get<Security>(DI_TYPES.Security);
 
+  if (!header.startsWith('Bearer ')) {
+    throw new ServiceError({
+      name: ErrorNames.AUTHORIZATION_FAILED,
+      message: 'Invalid token type, authorization header should start with "Bearer ..."',
+      debug: 'Authorization header did not start with "Bearer "',
+      statusCode: StatusCodes.UNAUTHORIZED,
+    });
+  }
+
+  const token = header.replace('Bearer ', '');
   try {
     const { sub } =
       process.env.SKIP_TOKEN_VERIFICATION === 'true' ? security.decodeToken(token) : security.verifyToken(token);

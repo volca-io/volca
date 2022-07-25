@@ -14,6 +14,7 @@ export const SignOutButton: React.FC<SignOutButtonProps> = ({ children }) => {
   const onClick = async () => {
     await ApiClient.signOut();
     setUser(null);
+    localStorage.removeItem('access-token');
   };
 
   return <MenuItem onClick={onClick}>{children}</MenuItem>;

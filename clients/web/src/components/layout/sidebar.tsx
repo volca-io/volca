@@ -30,7 +30,7 @@ import { IconType } from 'react-icons';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentProject, currentUser } from '../../state';
 import { MdOutlineSync } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 import { SignOutButton } from '../authentication/SignOutButton';
 import { ThemeSwitcher } from './theme-switcher';
@@ -69,7 +69,11 @@ export const Sidebar = ({ children, hidden = false }: { children: ReactNode; hid
   );
 };
 
-const Logo = () => <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="64px" />;
+const Logo = () => (
+  <RouterLink to="/">
+    <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="64px" />
+  </RouterLink>
+);
 
 interface SidebarProps extends BoxProps {
   onClose: () => void;
@@ -201,11 +205,11 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
 
       <HStack spacing={{ base: '0', md: '6' }}>
         <ThemeSwitcher />
-        <Flex alignItems={'center'}>
+        <Flex alignItems="center">
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
               <HStack>
-                <Avatar size={'sm'} {...(user && { name: `${user.first_name} ${user.last_name}` })} />
+                <Avatar size="sm" {...(user && { name: `${user.first_name} ${user.last_name}` })} />
                 <VStack display={{ base: 'none', md: 'flex' }} alignItems="flex-start" spacing="1px" ml="2">
                   <Text fontSize="sm">{user && `${user.first_name} ${user.last_name}`}</Text>
                 </VStack>

@@ -1,10 +1,11 @@
 import { injectable } from 'inversify';
 import argon2 from 'argon2';
 import jwt, { Jwt, JwtPayload } from 'jsonwebtoken';
+import { StatusCodes } from 'http-status-codes';
+import crypto from 'crypto';
 import { Security as SecurityInterface } from '../../interfaces';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
-import { StatusCodes } from 'http-status-codes';
 
 interface SigningKey {
   kid: string;
@@ -29,10 +30,14 @@ export class Security implements SecurityInterface {
     return argon2.hash(password);
   }
 
-  public createSignedToken(payload: Record<string, unknown>, expiresIn: string | number | undefined): string {
+  public createAccessToken(payload: Record<string, unknown>, expiresIn: string | number | undefined): string {
     const { kid, secret } = this.signingKeys[0];
 
     return jwt.sign(payload, secret, { expiresIn, keyid: kid });
+  }
+
+  public createRefreshToken(): string {
+    return crypto.randomBytes(32).toString('base64');
   }
 
   public verifyToken(token: string): JwtPayload {

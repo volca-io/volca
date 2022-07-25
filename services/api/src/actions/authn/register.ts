@@ -40,8 +40,15 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     password,
   });
 
-  const token = authnService.generateAccessToken(user);
-  const cookieConfig = authnService.getAccessTokenCookieSettings();
+  const { accessToken, refreshToken, expiresIn } = await authnService.createNewSession(user);
+  const cookieConfig = authnService.getRefreshTokenCookieConfiguration();
 
-  ctx.cookies.set('x-access-token', token, cookieConfig);
+  ctx.cookies.set('x-refresh-token', refreshToken, cookieConfig);
+
+  return {
+    body: {
+      accessToken,
+      expiresIn,
+    },
+  };
 });

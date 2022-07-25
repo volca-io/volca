@@ -37,7 +37,7 @@ export const SubscribePage: React.FC = () => {
     <AuthenticatedLayout sidebar={false}>
       <Heading>{user?.free_trial_activated ? 'Subscribe' : 'Activate Free Trial'}</Heading>
       {searchParams.get('status') === 'warning' && (
-        <Alert status={'warning'}>
+        <Alert status="warning">
           <AlertIcon />
           <AlertTitle>Payment failed</AlertTitle>
           <AlertDescription>Something went wrong while processing your payment. Please try again.</AlertDescription>
@@ -71,7 +71,7 @@ export const SubscribePage: React.FC = () => {
 
       {!user?.free_trial_activated && (
         <Box>
-          <List paddingTop={'1em'} paddingBottom={'1em'}>
+          <List paddingTop="1em" paddingBottom="1em">
             <ListItem>
               <ListIcon as={MdChevronRight} />
               After the free trial is over you will be charged $10 / month.
@@ -88,7 +88,7 @@ export const SubscribePage: React.FC = () => {
         </Box>
       )}
 
-      <Button rightIcon={<MdOutbound />} colorScheme={'blue'} onClick={onActivate} type="submit" marginTop="1em">
+      <Button rightIcon={<MdOutbound />} colorScheme="blue" onClick={onActivate} type="submit" marginTop="1em">
         {user?.free_trial_activated ? 'Subscribe' : 'Activate!'}
       </Button>
     </AuthenticatedLayout>

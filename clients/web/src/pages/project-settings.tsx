@@ -73,14 +73,14 @@ export const ProjectSettingsPage: React.FC = () => {
             <FormLabel htmlFor="name">Name</FormLabel>
             <Input defaultValue={project.name} {...register('name', { required: true })} />
             {errors?.name && <p>Name is required</p>}
-            <Button marginTop="1em" type="submit" colorScheme={'blue'}>
+            <Button marginTop="1em" type="submit" colorScheme="blue">
               Save
             </Button>
           </form>
           <Heading as="h2" size="md" style={{ marginTop: '1em' }}>
             Manage
           </Heading>
-          <Button onClick={onDeleteProject} marginTop="1em" colorScheme={'red'}>
+          <Button onClick={onDeleteProject} marginTop="1em" colorScheme="red">
             Delete Project
           </Button>
         </SoftCard>

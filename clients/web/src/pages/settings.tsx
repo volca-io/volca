@@ -32,7 +32,7 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <AuthenticatedLayout sidebar={false}>
-      <Grid w={'100%'} templateColumns="repeat(3, 1fr)" gap={4}>
+      <Grid w="100%" templateColumns="repeat(3, 1fr)" gap={4}>
         <GridItem>
           <SoftCard>
             <PageHeading title="Profile" icon={MdPerson} />
@@ -47,7 +47,7 @@ export const SettingsPage: React.FC = () => {
                     size="lg"
                   />
                 </Flex>
-                <Flex pl={6} flexDirection={'column'} justifyContent="center">
+                <Flex pl={6} flexDirection="column" justifyContent="center">
                   <Text mt={4}>{user.email}</Text>
                   <Text>
                     {user.first_name} {user.last_name}
@@ -57,15 +57,15 @@ export const SettingsPage: React.FC = () => {
             )}
           </SoftCard>
         </GridItem>
-        <GridItem alignItems={'stretch'}>
+        <GridItem alignItems="stretch">
           <SoftCard>
             <PageHeading title="Subscriptions" icon={MdPayment} />
             {!user?.has_active_subscription && (
-              <Button mt={6} colorScheme={'blue'} rightIcon={<MdAddShoppingCart />} onClick={onActivate}>
+              <Button mt={6} colorScheme="blue" rightIcon={<MdAddShoppingCart />} onClick={onActivate}>
                 Activate Subscription
               </Button>
             )}
-            <Button mt={6} colorScheme={'blue'} rightIcon={<MdPayments />} onClick={onManageSubscriptions}>
+            <Button mt={6} colorScheme="blue" rightIcon={<MdPayments />} onClick={onManageSubscriptions}>
               Manage Subscription
             </Button>
           </SoftCard>

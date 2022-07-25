@@ -1,5 +1,11 @@
 import ky, { HTTPError } from 'ky';
+import jwt_decode from 'jwt-decode';
 import { Project, ProjectInvitation, User, StripeSession } from '../../types';
+
+type AccessToken = {
+  exp: number;
+  sub: string;
+};
 
 type GetMeResponse = {
   me: User;
@@ -43,6 +49,11 @@ type CreateStripeBillingPortalSessionResponse = {
   stripe_billing_portal_session: StripeSession;
 };
 
+type TokenResponse = {
+  access_token: string;
+  expires_in: number;
+};
+
 export class ApiError extends Error implements ApiErrorInterface {
   public name: string;
   public status: number;
@@ -55,10 +66,43 @@ export class ApiError extends Error implements ApiErrorInterface {
 }
 
 export class ApiClient {
+  private static prefixUrl = 'http://127.0.0.1:4000';
+
   static client = ky.create({
-    prefixUrl: 'http://127.0.0.1:4000',
+    prefixUrl: this.prefixUrl,
     credentials: 'include',
     mode: 'cors',
+    hooks: {
+      beforeRequest: [
+        async (request: Request) => {
+          let accessToken = localStorage.getItem('access-token');
+
+          if (!accessToken) {
+            return;
+          }
+
+          try {
+            const decoded = jwt_decode<AccessToken>(accessToken);
+            const expires = new Date(decoded.exp);
+
+            if (expires.getTime() * 1000 < new Date().getTime()) {
+              const { access_token } = await ky
+                .post('authn/refresh', { prefixUrl: this.prefixUrl, credentials: 'include', mode: 'cors' })
+                .json<TokenResponse>();
+
+              localStorage.setItem('access-token', access_token);
+              accessToken = access_token;
+            }
+          } catch (err: unknown) {
+            return;
+          }
+
+          if (accessToken) {
+            request.headers.set('authorization', `Bearer ${accessToken}`);
+          }
+        },
+      ],
+    },
   });
 
   private static isCustomApiError(error: Record<string, unknown>) {
@@ -88,6 +132,7 @@ export class ApiClient {
         }
       }
 
+      console.error(err);
       throw new ApiError({
         name: 'UNKNOWN_ERROR',
         message: 'An unknown error occurred, please try again later',
@@ -100,8 +145,12 @@ export class ApiClient {
     await this.handleApiError(this.client.post('authn/register', { json: { firstName, lastName, email, password } }));
   }
 
-  static async authnPassword(email: string, password: string): Promise<void> {
-    await this.handleApiError(this.client.post('authn/password', { json: { email, password } }));
+  static async authnPassword(email: string, password: string): Promise<TokenResponse> {
+    const { access_token, expires_in } = await this.handleApiError(
+      this.client.post('authn/password', { json: { email, password } }).json<TokenResponse>()
+    );
+
+    return { access_token, expires_in };
   }
 
   static async signOut(): Promise<void> {

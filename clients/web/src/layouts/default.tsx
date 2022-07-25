@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import React from 'react';
 
 interface DefaultLayoutProps {
@@ -6,5 +6,5 @@ interface DefaultLayoutProps {
 }
 
 export const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
-  return <Flex minH="100vh">{children}</Flex>;
+  return <Box minH="100vh">{children}</Box>;
 };

@@ -5,7 +5,6 @@ import {
   Text,
   useColorModeValue,
   Flex,
-  VStack,
   Alert,
   AlertIcon,
   AlertDescription,
@@ -17,6 +16,7 @@ import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { RegisterForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
+import { SoftCard } from '../components/generic/SoftCard';
 
 type ErrorDescription = {
   title: string;
@@ -63,41 +63,35 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <Flex direction="column" p="10" flexGrow={1} justifyContent="center" alignItems="center">
-        <VStack spacing="8" w="100%" maxW="600px" alignItems="flex-start">
-          <Box>
-            <Heading color={titleColor}></Heading>
-            <Text fontSize="sm" color={textColor}></Text>
-          </Box>
-          <Box>
-            <Heading color={titleColor}>Lets get you signed up!</Heading>
-            <Text fontSize="sm" color={textColor}>
-              Enter your details in the form below to create a new account. Already have an account?{' '}
-              <Link color={linkColor} to="/sign-in" as={RouterLink}>
-                Sign in instead
-              </Link>
-            </Text>
-          </Box>
-          {error && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertTitle>{error.title}</AlertTitle>
-              <AlertDescription>{error.description}</AlertDescription>
-              <CloseButton
-                alignSelf="flex-end"
-                position="absolute"
-                right={0}
-                top={0}
-                onClick={() => {
-                  setError(null);
-                }}
-              />
-            </Alert>
-          )}
-          <Box alignSelf="stretch">
-            <RegisterForm onSubmit={onSubmit} loading={loading} />
-          </Box>
-        </VStack>
+      <Flex minH="100vh" direction="column" justifyContent="center" maxW="600px" margin="0 auto">
+        <Box paddingY="8">
+          <Heading color={titleColor}>Lets get you signed up!</Heading>
+          <Text fontSize="sm" color={textColor}>
+            Enter your details in the form below to create a new account. Already have an account?{' '}
+            <Link color={linkColor} to="/sign-in" as={RouterLink}>
+              Sign in instead
+            </Link>
+          </Text>
+        </Box>
+        {error && (
+          <Alert status="error">
+            <AlertIcon />
+            <AlertTitle>{error.title}</AlertTitle>
+            <AlertDescription>{error.description}</AlertDescription>
+            <CloseButton
+              alignSelf="flex-end"
+              position="absolute"
+              right={0}
+              top={0}
+              onClick={() => {
+                setError(null);
+              }}
+            />
+          </Alert>
+        )}
+        <SoftCard>
+          <RegisterForm onSubmit={onSubmit} loading={loading} />
+        </SoftCard>
       </Flex>
     </DefaultLayout>
   );

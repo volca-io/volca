@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Input, Button, Switch, FormErrorMessage } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, Button, Switch, FormErrorMessage, VStack } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -30,7 +30,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading, defau
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormControl>
+      <VStack spacing="4">
         <FormControl isInvalid={!!errors.email}>
           <FormLabel htmlFor="lastName" fontSize="sm">
             Email address
@@ -80,7 +80,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading, defau
         >
           SIGN IN
         </Button>
-      </FormControl>
+      </VStack>
     </form>
   );
 };

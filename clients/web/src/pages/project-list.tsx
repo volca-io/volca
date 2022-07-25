@@ -32,7 +32,7 @@ export const ProjectListPage: React.FC = () => {
       return <ProjectInactiveSubscriptionDialog project={project} user={user} />;
     }
     return (
-      <Button w={'100%'} onClick={() => onSelectProject(project)} colorScheme="blue">
+      <Button w="100%" onClick={() => onSelectProject(project)} colorScheme="blue">
         Select
       </Button>
     );

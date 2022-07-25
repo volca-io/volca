@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { FormControl, FormLabel, Input, Button, VStack, FormErrorMessage, Progress } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, Button, VStack, FormErrorMessage, Progress, HStack } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn';
 
@@ -54,30 +54,33 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack spacing={4} alignItems="flex-start">
-        <FormControl isInvalid={!!errors.firstName}>
-          <FormLabel htmlFor="firstName" fontSize="sm">
-            First name
-          </FormLabel>
-          <Input
-            id="firstName"
-            type="text"
-            fontSize="sm"
-            {...register('firstName', { required: 'Enter your first name' })}
-          />
-          {errors.firstName && <FormErrorMessage>{errors.firstName.message}</FormErrorMessage>}
-        </FormControl>
-        <FormControl isInvalid={!!errors.lastName}>
-          <FormLabel htmlFor="lastName" fontSize="sm">
-            Last name
-          </FormLabel>
-          <Input
-            id="lastName"
-            type="text"
-            fontSize="sm"
-            {...register('lastName', { required: 'Enter your last name' })}
-          />
-          {errors.lastName && <FormErrorMessage>{errors.lastName.message}</FormErrorMessage>}
-        </FormControl>
+        <HStack alignSelf="stretch">
+          <FormControl isInvalid={!!errors.firstName}>
+            <FormLabel htmlFor="firstName" fontSize="sm">
+              First name
+            </FormLabel>
+            <Input
+              id="firstName"
+              type="text"
+              fontSize="sm"
+              {...register('firstName', { required: 'Enter your first name' })}
+            />
+            {errors.firstName && <FormErrorMessage>{errors.firstName.message}</FormErrorMessage>}
+          </FormControl>
+          <FormControl isInvalid={!!errors.lastName}>
+            <FormLabel htmlFor="lastName" fontSize="sm">
+              Last name
+            </FormLabel>
+            <Input
+              id="lastName"
+              type="text"
+              fontSize="sm"
+              {...register('lastName', { required: 'Enter your last name' })}
+            />
+            {errors.lastName && <FormErrorMessage>{errors.lastName.message}</FormErrorMessage>}
+          </FormControl>
+        </HStack>
+
         <FormControl isInvalid={!!errors.email}>
           <FormLabel htmlFor="lastName" fontSize="sm">
             Email address

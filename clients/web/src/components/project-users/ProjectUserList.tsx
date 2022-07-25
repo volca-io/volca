@@ -11,7 +11,7 @@ type ProjectUserListProps = {
 const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users }) => {
   return (
     <>
-      <TableContainer w={'100%'} mt={6}>
+      <TableContainer w="100%" mt={6}>
         <Table>
           <Thead>
             <Tr>
@@ -34,7 +34,7 @@ const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users }) => 
                 <Td style={{ textAlign: 'end' }}>
                   {/* TODO: Add action to this button and only show when the current user is admin */}
                   {user.id === project.admin_id ? null : (
-                    <Button minWidth={'160px'} colorScheme="red">
+                    <Button minWidth="160px" colorScheme="red">
                       Delete
                     </Button>
                   )}

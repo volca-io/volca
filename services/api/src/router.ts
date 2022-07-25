@@ -5,6 +5,7 @@ import body from 'koa-bodyparser';
 import {
   authnPasswordAction,
   authnPasswordSchema,
+  refreshAction,
   registerAction,
   registerSchema,
   signOutAction,
@@ -80,6 +81,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.post('/authn/password', schemaValidationMiddleware(authnPasswordSchema), authnPasswordAction);
   router.post('/authn/sign-out', signOutAction);
   router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
+  router.post('/authn/refresh', refreshAction);
 
   // Stripe
   router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);

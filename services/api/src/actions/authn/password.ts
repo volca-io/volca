@@ -1,7 +1,7 @@
 import joi, { Schema } from 'joi';
 import { CustomContext, DI_TYPES } from '../../types';
 import { container } from '../../inversify.config';
-import { AuthenticationService } from '../../services';
+import { AuthenticationService } from '../../interfaces';
 import { useApiAction } from '../utils/api-action';
 
 export const schema: Schema = joi.object({
@@ -16,8 +16,15 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   const user = await authnService.verifyPassword(email, password);
 
-  const token = authnService.generateAccessToken(user);
-  const cookieConfig = authnService.getAccessTokenCookieSettings();
+  const { accessToken, refreshToken, expiresIn } = await authnService.createNewSession(user);
+  const cookieConfig = authnService.getRefreshTokenCookieConfiguration();
 
-  ctx.cookies.set('x-access-token', token, cookieConfig);
+  ctx.cookies.set('x-refresh-token', refreshToken, cookieConfig);
+
+  return {
+    body: {
+      accessToken,
+      expiresIn,
+    },
+  };
 });
