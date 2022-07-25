@@ -27,8 +27,11 @@ export const currentProjectSelector = selector<Project | null>({
     const id = localStorage.getItem('selected_project_id');
     if (!id) return null;
 
-    const res = await ApiClient.getProject(id);
-    return res;
+    try {
+      return await ApiClient.getProject(id);
+    } catch (error) {
+      return null;
+    }
   },
 });
 

@@ -1,32 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import { useParams } from 'react-router-dom';
-import { DefaultLayout } from '../layouts';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AuthenticatedLayout } from '../layouts';
 import { ApiClient } from '../lib/clients/api-client';
 
-export const AcceptProjectInvitation: React.FC = () => {
+export const AcceptProjectInvitationPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [message, setMessage] = useState('Loading...');
   const { key } = useParams();
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const acceptInvitation = async () => {
       if (key) {
         try {
           await ApiClient.acceptProjectInvitation({ key });
-          setMessage('Invitation accepted. Log in to access your new project.');
+          setMessage('Invitation accepted. Redirecting...');
+          navigate('/projects');
         } catch (error) {
+          setMessage('Something went wrong. Make sure your invitation is still valid.');
           console.error(error);
         }
       }
     };
     acceptInvitation();
-  }, [key]);
+  }, [key, navigate]);
 
   return (
-    <DefaultLayout>
+    <AuthenticatedLayout sidebar={false}>
       <Box>
         <Text>{message}</Text>
       </Box>
-    </DefaultLayout>
+    </AuthenticatedLayout>
   );
 };

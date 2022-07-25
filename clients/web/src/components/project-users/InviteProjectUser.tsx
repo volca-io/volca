@@ -1,14 +1,6 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Button,
-  Input,
-  InputGroup,
-  InputRightElement,
-} from '@chakra-ui/react';
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, Input, InputGroup } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { MdPersonAddAlt1 } from 'react-icons/md';
 
 import { Alert as AlertContent } from '../../types';
 
@@ -22,22 +14,16 @@ type InviteProjectUserProps = {
   onSubmit: (data: FormProps) => void;
 };
 
+// TODO: Fix the alert message here (use new global alert or a dialog?)
 const InviteProjectUser: React.FC<InviteProjectUserProps> = ({ alert, onSubmit }) => {
   const { register, handleSubmit } = useForm<FormProps>();
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <InputGroup size="md">
-        <Input
-          backgroundColor={'white'}
-          type="text"
-          {...register('toUserEmail', { required: true })}
-          placeholder="Invite user e-mail"
-        />
-        <InputRightElement width="4.5rem">
-          <Button colorScheme={'blue'} size="md" type="submit">
-            Invite
-          </Button>
-        </InputRightElement>
+        <Input type="text" {...register('toUserEmail', { required: true })} placeholder="Invite user e-mail" />
+        <Button rightIcon={<MdPersonAddAlt1 />} px={6} size="md" ml={2} type="submit">
+          Invite
+        </Button>
       </InputGroup>
       {alert && (
         <Alert status={alert.status}>

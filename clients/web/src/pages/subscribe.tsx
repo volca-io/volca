@@ -17,9 +17,12 @@ import { MdVpnKey, MdPayments, MdBusinessCenter, MdLock, MdChevronRight, MdOutbo
 import { AuthenticatedLayout } from '../layouts';
 import { ApiClient } from '../lib/clients/api-client';
 import { useSearchParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { currentUser } from '../state';
 
 export const SubscribePage: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const user = useRecoilValue(currentUser);
 
   const onActivate = async () => {
     try {
@@ -31,8 +34,8 @@ export const SubscribePage: React.FC = () => {
   };
 
   return (
-    <AuthenticatedLayout>
-      <Heading>Activate Free Trial</Heading>
+    <AuthenticatedLayout sidebar={false}>
+      <Heading>{user?.free_trial_activated ? 'Subscribe' : 'Activate Free Trial'}</Heading>
       {searchParams.get('status') === 'warning' && (
         <Alert status={'warning'}>
           <AlertIcon />
@@ -40,7 +43,11 @@ export const SubscribePage: React.FC = () => {
           <AlertDescription>Something went wrong while processing your payment. Please try again.</AlertDescription>
         </Alert>
       )}
-      <Text>Activate the 7-day free trial to start using Volca.</Text>
+      <Text>
+        {user?.free_trial_activated
+          ? 'Subscribe to start using Volca.'
+          : 'Activate the 7-day free trial to start using Volca.'}
+      </Text>
       <Box>
         <List>
           <ListItem>
@@ -62,25 +69,27 @@ export const SubscribePage: React.FC = () => {
         </List>
       </Box>
 
-      <Box>
-        <List paddingTop={'1em'} paddingBottom={'1em'}>
-          <ListItem>
-            <ListIcon as={MdChevronRight} />
-            After the free trial is over you will be charged $10 / month.
-          </ListItem>
-          <ListItem>
-            <ListIcon as={MdChevronRight} />
-            If you cancel your subscription before the free trial is over, you will not be charged.
-          </ListItem>
-          <ListItem>
-            <ListIcon as={MdChevronRight} />
-            You can cancel your subscription at any time.{' '}
-          </ListItem>
-        </List>
-      </Box>
+      {!user?.free_trial_activated && (
+        <Box>
+          <List paddingTop={'1em'} paddingBottom={'1em'}>
+            <ListItem>
+              <ListIcon as={MdChevronRight} />
+              After the free trial is over you will be charged $10 / month.
+            </ListItem>
+            <ListItem>
+              <ListIcon as={MdChevronRight} />
+              If you cancel your subscription before the free trial is over, you will not be charged.
+            </ListItem>
+            <ListItem>
+              <ListIcon as={MdChevronRight} />
+              You can cancel your subscription at any time.{' '}
+            </ListItem>
+          </List>
+        </Box>
+      )}
 
       <Button rightIcon={<MdOutbound />} colorScheme={'blue'} onClick={onActivate} type="submit" marginTop="1em">
-        Activate!
+        {user?.free_trial_activated ? 'Subscribe' : 'Activate!'}
       </Button>
     </AuthenticatedLayout>
   );

@@ -9,9 +9,7 @@ export const MainPanel: React.FC<MainPanelProps> = ({ children }) => (
   <Box
     w={{
       base: '100%',
-      xl: 'calc(100% - 275px)',
     }}
-    float="right"
     maxW="100%"
     h="100vh"
     overflow="auto"

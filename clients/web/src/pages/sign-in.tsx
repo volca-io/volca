@@ -36,7 +36,7 @@ export const SignInPage: React.FC = () => {
 
   const redirectUser = () => {
     const continueUrl = new URLSearchParams(location.search).get('continue');
-    navigate(continueUrl || '/');
+    navigate(continueUrl || '/projects');
   };
 
   const onSubmit = async ({ email, password, remember }: { email: string; password: string; remember: boolean }) => {

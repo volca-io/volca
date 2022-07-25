@@ -4,6 +4,7 @@ import {
   StripeSession,
   CreateStripeSessionParams,
   CreateStripeBillingPortalSessionParams,
+  VerifyStripeWebhookSignatureParams,
 } from 'src/interfaces/stripe-service';
 import { StripeService as StripeServiceInterface } from '../interfaces';
 import { User } from '../entities';
@@ -40,7 +41,18 @@ export class StripeService implements StripeServiceInterface {
       metadata: {
         user_id: user.id,
       },
+      ...(user.freeTrialActivated
+        ? {}
+        : {
+            subscription_data: {
+              trial_period_days: 7, // TODO: Make configurable
+            },
+          }),
     });
+
+    if (process.env.ENVIRONMENT === 'local') {
+      await User.query().findById(user.id).update({ hasActiveSubscription: true });
+    }
 
     const stripeSession = {
       id: session.id,
@@ -56,10 +68,17 @@ export class StripeService implements StripeServiceInterface {
       customer: stripeCustomerId,
       return_url: 'http://127.0.0.1:3000/settings',
     });
+    if (process.env.ENVIRONMENT === 'local') {
+      await User.query().where({ stripeId: stripeCustomerId }).update({ hasActiveSubscription: false });
+    }
     const billingPortalSession = {
       id: session.id,
       url: session.url,
     };
     return billingPortalSession;
+  }
+
+  public async verifyWebhookSignature({ body, signature }: VerifyStripeWebhookSignatureParams) {
+    return stripe.webhooks.constructEventAsync(body, signature, process.env.STRIPE_KEY || '');
   }
 }

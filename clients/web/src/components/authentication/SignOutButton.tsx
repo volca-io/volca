@@ -1,8 +1,8 @@
 import { MenuItem } from '@chakra-ui/react';
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { ApiClient } from '../lib/clients/api-client';
-import { currentUser } from '../state';
+import { ApiClient } from '../../lib/clients/api-client';
+import { currentUser } from '../../state';
 
 interface SignOutButtonProps {
   children: React.ReactNode;

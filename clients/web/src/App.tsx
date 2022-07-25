@@ -3,12 +3,13 @@ import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import {
-  CreateProject,
-  Dashboard,
-  ProjectList,
+  CreateProjectPage,
+  DashboardPage,
+  ProjectListPage,
+  ProjectSettingsPage,
   SignInPage,
-  ProjectDetails,
-  AcceptProjectInvitation,
+  ProjectUsersPage,
+  AcceptProjectInvitationPage,
   LoadingPage,
   NotFoundPage,
   RegisterPage,
@@ -17,6 +18,7 @@ import {
 } from './pages';
 import { theme } from './theme';
 import { AuthenticatedRoute } from './routing/AuthenticatedRoute';
+import { ProjectRoute } from './routing/ProjectRoute';
 
 export const App = () => (
   <RecoilRoot>
@@ -30,7 +32,7 @@ export const App = () => (
               index
               element={
                 <AuthenticatedRoute>
-                  <Dashboard />
+                  <DashboardPage />
                 </AuthenticatedRoute>
               }
             />
@@ -38,7 +40,7 @@ export const App = () => (
               path="/projects/create"
               element={
                 <AuthenticatedRoute>
-                  <CreateProject />
+                  <CreateProjectPage />
                 </AuthenticatedRoute>
               }
             />
@@ -46,24 +48,35 @@ export const App = () => (
               path="/projects"
               element={
                 <AuthenticatedRoute>
-                  <ProjectList />
+                  <ProjectListPage />
                 </AuthenticatedRoute>
               }
             />
             <Route
-              path="/projects/:id"
+              path="/projects/:id/settings"
               element={
                 <AuthenticatedRoute>
-                  <ProjectDetails />
+                  <ProjectRoute>
+                    <ProjectSettingsPage />
+                  </ProjectRoute>
                 </AuthenticatedRoute>
               }
             ></Route>
-
+            <Route
+              path="/projects/:id/users"
+              element={
+                <AuthenticatedRoute>
+                  <ProjectRoute>
+                    <ProjectUsersPage />
+                  </ProjectRoute>
+                </AuthenticatedRoute>
+              }
+            ></Route>
             <Route
               path="/invitations/:key"
               element={
                 <AuthenticatedRoute>
-                  <AcceptProjectInvitation />
+                  <AcceptProjectInvitationPage />
                 </AuthenticatedRoute>
               }
             ></Route>

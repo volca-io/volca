@@ -1,24 +1,23 @@
 import React from 'react';
 import { VStack } from '@chakra-ui/react';
-import { Footer, Header, Sidebar } from '../components';
-import { MainPanel } from '../components/layout/main-panel';
-import { MainContent } from '../components/layout/main-content';
+import { Footer, Sidebar, MainPanel, MainContent } from '../components/layout';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
+  sidebar?: boolean;
 }
 
-export const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
+export const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children, sidebar = true }) => {
   return (
     <>
-      <Sidebar />
-      <MainPanel>
-        <Header />
-        <MainContent>
-          <VStack align="flex-start">{children}</VStack>
-        </MainContent>
-        <Footer />
-      </MainPanel>
+      <Sidebar hidden={!sidebar}>
+        <MainPanel>
+          <MainContent>
+            <VStack align="flex-start">{children}</VStack>
+          </MainContent>
+          <Footer />
+        </MainPanel>
+      </Sidebar>
     </>
   );
 };

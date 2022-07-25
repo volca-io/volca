@@ -7,6 +7,8 @@ export class User extends Model {
   stripeId?: string;
   email!: string;
   password?: string;
+  hasActiveSubscription!: boolean;
+  freeTrialActivated!: boolean;
 
   static get tableName() {
     return 'users';
@@ -18,6 +20,8 @@ export class User extends Model {
       firstName: this.firstName,
       lastName: this.lastName,
       email: this.email,
+      hasActiveSubscription: this.hasActiveSubscription,
+      freeTrialActivated: this.freeTrialActivated,
     };
   }
 }

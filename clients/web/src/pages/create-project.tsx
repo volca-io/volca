@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormLabel, Heading, Input, Button, Text } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
 import { ApiClient } from '../lib/clients/api-client';
-import { currentProject, projects as projectsState } from '../state';
+import { currentProject, currentUser, projects as projectsState } from '../state';
 
 type FormValues = {
   name: string;
 };
 
-export const CreateProject: React.FC = () => {
+export const CreateProjectPage: React.FC = () => {
   const {
     register,
     handleSubmit,
@@ -21,6 +21,13 @@ export const CreateProject: React.FC = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useRecoilState(projectsState);
   const [, setCurrentProject] = useRecoilState(currentProject);
+  const user = useRecoilValue(currentUser);
+
+  useEffect(() => {
+    if (user && !user.has_active_subscription) {
+      navigate('/subscribe');
+    }
+  }, [user, navigate]);
 
   const onSubmit = async ({ name }: { name: string }) => {
     try {
@@ -29,12 +36,12 @@ export const CreateProject: React.FC = () => {
       setCurrentProject(res);
       navigate('/projects');
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout sidebar={false}>
       <Heading>Create Project</Heading>
       <Text>
         To get started using SaaS Boilerplate, you need to create a project. Give your project a name and hit "Go!".

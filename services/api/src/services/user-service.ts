@@ -2,17 +2,17 @@ import { injectable, inject } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
 
 import { DI_TYPES } from '../types';
-import { UserService as UserServiceInterface, Security } from '../interfaces';
+import { UserService as UserServiceInterface, Security, UpdateUserProperties } from '../interfaces';
 import { User } from '../entities';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 
-interface RegisterUserProperties {
+type RegisterUserProperties = {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-}
+};
 
 @injectable()
 export class UserService implements UserServiceInterface {
@@ -24,6 +24,10 @@ export class UserService implements UserServiceInterface {
 
   public async findByEmail(email: string): Promise<User | undefined> {
     return User.query().where({ email }).first();
+  }
+
+  public async findByStripeId(stripeId: string): Promise<User | undefined> {
+    return User.query().where({ stripeId }).first();
   }
 
   public async register({ firstName, lastName, email, password }: RegisterUserProperties): Promise<User> {
@@ -47,5 +51,9 @@ export class UserService implements UserServiceInterface {
     });
 
     return user;
+  }
+
+  public async update({ id, stripeId, hasActiveSubscription }: UpdateUserProperties): Promise<User | undefined> {
+    return User.query().where({ id }).update({ stripeId, hasActiveSubscription }).returning('*').first();
   }
 }
