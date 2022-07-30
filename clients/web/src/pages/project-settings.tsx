@@ -11,6 +11,7 @@ import { Project } from '../types';
 import { PageHeading } from '../components/generic/PageHeading';
 import { MdSettings } from 'react-icons/md';
 import { SoftCard } from '../components/generic/SoftCard';
+import { DangerButton } from '../components/generic/DangerButton';
 
 type FormValues = {
   name: string;
@@ -77,12 +78,14 @@ export const ProjectSettingsPage: React.FC = () => {
               Save
             </Button>
           </form>
-          <Heading as="h2" size="md" style={{ marginTop: '1em' }}>
+          <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
             Manage
           </Heading>
-          <Button onClick={onDeleteProject} marginTop="1em" colorScheme="red">
-            Delete Project
-          </Button>
+          <DangerButton
+            onClick={onDeleteProject}
+            title={'Delete Project'}
+            body={'Are you sure you want to delete this project?'}
+          />
         </SoftCard>
       )}
     </AuthenticatedLayout>
