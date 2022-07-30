@@ -5,4 +5,5 @@ export type Project = {
   name: string;
   admin_id: string;
   admin: User;
+  users?: User[];
 };

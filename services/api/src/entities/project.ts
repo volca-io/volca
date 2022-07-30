@@ -23,5 +23,17 @@ export class Project extends Model {
         to: 'users.id',
       },
     },
+    users: {
+      relation: Model.ManyToManyRelation,
+      modelClass: User,
+      join: {
+        from: 'users.id',
+        through: {
+          from: 'project_users.projectId',
+          to: 'project_users.userId',
+        },
+        to: 'projects.id',
+      },
+    },
   };
 }

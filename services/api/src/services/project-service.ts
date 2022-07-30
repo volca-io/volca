@@ -5,7 +5,7 @@ import { Project, ProjectUser } from '../entities';
 @injectable()
 export class ProjectService implements ProjectServiceInterface {
   public async get(id: string): Promise<Project | undefined> {
-    return Project.query().findById(id).withGraphFetched('admin');
+    return Project.query().findById(id).withGraphFetched('admin').withGraphFetched('users');
   }
 
   public async list(userId: string): Promise<Project[]> {
@@ -15,7 +15,8 @@ export class ProjectService implements ProjectServiceInterface {
         'projects.id',
         memberProjects.map((p) => p.projectId)
       )
-      .withGraphFetched('admin');
+      .withGraphFetched('admin')
+      .withGraphFetched('users');
   }
 
   public async create({ adminId, name }: CreateProjectInput): Promise<Project> {

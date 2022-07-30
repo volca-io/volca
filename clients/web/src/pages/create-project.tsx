@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FormLabel, Heading, Input, Button, Text } from '@chakra-ui/react';
+import { Input, Button, Text, Box } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
 import { ApiClient } from '../lib/clients/api-client';
 import { currentProject, currentUser, projects as projectsState } from '../state';
+import { MdAdd, MdChevronRight } from 'react-icons/md';
+import { PageHeading } from '../components/generic/PageHeading';
+import { SoftCard } from '../components/generic/SoftCard';
 
 type FormValues = {
   name: string;
@@ -42,18 +45,21 @@ export const CreateProjectPage: React.FC = () => {
 
   return (
     <AuthenticatedLayout sidebar={false}>
-      <Heading>Create Project</Heading>
-      <Text>
-        To get started using SaaS Boilerplate, you need to create a project. Give your project a name and hit "Go!".
-      </Text>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <FormLabel htmlFor="name">Name</FormLabel>
-        <Input {...register('name', { required: true })} />
-        {errors?.name && <p>Name is required</p>}
-        <Button type="submit" marginTop="1em">
-          Go!
-        </Button>
-      </form>
+      <PageHeading title="Create Project" icon={MdAdd} />
+      {/* TODO: Add margin to all page headings? */}
+      <Box mt={8} />
+      <SoftCard>
+        <Text fontSize="lg" mb={4}>
+          Let's start with a name for your project.
+        </Text>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Input size={'lg'} placeholder="Enter your project name" {...register('name', { required: true })} />
+          {errors?.name && <p>Name is required</p>}
+          <Button size="lg" rightIcon={<MdChevronRight />} type="submit" mt={4}>
+            Continue
+          </Button>
+        </form>
+      </SoftCard>
     </AuthenticatedLayout>
   );
 };

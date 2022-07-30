@@ -1,11 +1,28 @@
 import * as React from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 
-export const SoftCard = ({ children, style = {} }: { children?: React.ReactNode; style?: any }) => {
+export const SoftCard = ({
+  children,
+  onClick,
+  ...rest
+}: {
+  children?: React.ReactNode;
+  onClick?: (...args: any[]) => void;
+  [x: string]: any;
+}) => {
   const background = useColorModeValue('white', 'gray.700');
+  const backgroundHover = useColorModeValue('gray.100', 'gray.800');
 
   return (
-    <Box style={style} background={background} borderRadius="lg" p="8" boxShadow="lg">
+    <Box
+      {...rest}
+      onClick={onClick}
+      _hover={onClick ? { background: backgroundHover } : {}}
+      background={background}
+      borderRadius="lg"
+      p="8"
+      boxShadow="lg"
+    >
       {children}
     </Box>
   );

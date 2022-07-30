@@ -1,72 +1,92 @@
-import { Button, TableContainer, Table, Thead, Tr, Th, Td, Tbody, Spacer } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import { Text, Grid, GridItem, Heading, Icon, Badge, Box } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { MdAdd, MdWork } from 'react-icons/md';
+import { MdAdd, MdGroup, MdWork } from 'react-icons/md';
 
 import { AuthenticatedLayout } from '../layouts';
 import { currentProject, projects as projectsState, currentUser } from '../state';
-import { Project, User } from '../types';
-import { ProjectInactiveSubscriptionDialog } from '../components/projects/ProjectInactiveSubscriptionDialog';
+import { Project } from '../types';
+import { InactiveProjectDialog } from '../components/projects/InactiveProjectDialog';
 import { PageHeading } from '../components/generic/PageHeading';
+import { SoftCard } from '../components/generic/SoftCard';
+
+const cardStyle = {
+  minHeight: '180px',
+  cursor: 'pointer',
+};
 
 export const ProjectListPage: React.FC = () => {
   const navigate = useNavigate();
+  const [inactiveProjectId, setInactiveProjectId] = useState<string | null>(null);
   const [, setProject] = useRecoilState(currentProject);
   const [projects] = useRecoilState(projectsState);
   const user = useRecoilValue(currentUser);
-
-  useEffect(() => {
-    if (projects.length === 0) {
-      navigate('/projects/create');
-    }
-  }, [navigate, projects]);
 
   const onSelectProject = (project: Project) => {
     setProject(project);
     navigate(`/projects/${project.id}/settings`);
   };
 
-  const ManageButton = ({ project, user }: { project: Project; user: User }) => {
-    if (!project?.admin.has_active_subscription) {
-      return <ProjectInactiveSubscriptionDialog project={project} user={user} />;
-    }
-    return (
-      <Button w="100%" onClick={() => onSelectProject(project)} colorScheme="blue">
-        Select
-      </Button>
-    );
-  };
+  const ProjectCard = ({ project }: { project: Project }) => (
+    <SoftCard
+      key={project.id}
+      style={{ ...cardStyle, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+      onClick={
+        project.admin.has_active_subscription ? () => onSelectProject(project) : () => setInactiveProjectId(project.id)
+      }
+    >
+      <Box>
+        <Heading size="md">{project.name}</Heading>
+        <Badge variant={project.admin.has_active_subscription ? 'solid' : 'subtle'}>
+          {project.admin.has_active_subscription ? 'Active' : 'Inactive'}
+        </Badge>
+      </Box>
+      <Box display="flex" flexDir="row">
+        <Icon as={MdGroup} boxSize="24px" />
+        <Text ml="2">{project.users?.length}</Text>
+      </Box>
+      {user && !project.admin.has_active_subscription && (
+        <InactiveProjectDialog
+          isOpen={inactiveProjectId === project.id}
+          onClose={() => setInactiveProjectId(null)}
+          project={project}
+          user={user}
+        />
+      )}
+    </SoftCard>
+  );
 
   return (
     <AuthenticatedLayout sidebar={false}>
       <PageHeading title="Projects" icon={MdWork} />
-      <TableContainer style={{ width: '100%' }}>
-        <Table marginTop="8" variant="striped">
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th w="180px"></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {user &&
-              projects &&
-              projects.map((project) => (
-                <Tr key={project.id}>
-                  <Td>{project.name}</Td>
-                  <Td style={{ textAlign: 'end' }}>
-                    {project && user && <ManageButton project={project} user={user} />}
-                  </Td>
-                </Tr>
-              ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <Spacer />
-      <Button leftIcon={<MdAdd />} onClick={() => navigate('/projects/create')}>
-        Create Project
-      </Button>
+      <Box mt={8} />
+      <Grid w="100%" templateColumns="repeat(4, 1fr)" gap={4}>
+        <GridItem>
+          <SoftCard
+            onClick={() => navigate('/projects/create')}
+            style={{
+              ...cardStyle,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Icon boxSize="48px" as={MdAdd} />
+            <Heading as="h3" size="sm">
+              Create Project
+            </Heading>
+          </SoftCard>
+        </GridItem>
+        {user &&
+          projects &&
+          projects.map((project) => (
+            <GridItem key={project.id}>
+              <ProjectCard project={project} />
+            </GridItem>
+          ))}
+      </Grid>
     </AuthenticatedLayout>
   );
 };
