@@ -27,13 +27,15 @@ import {
 } from '@chakra-ui/react';
 import { MdHomeFilled, MdSettings, MdMenu, MdKeyboardArrowDown, MdGroups } from 'react-icons/md';
 import { IconType } from 'react-icons';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { currentProject, currentUser } from '../../state';
 import { MdOutlineSync } from 'react-icons/md';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 import { SignOutButton } from '../authentication/SignOutButton';
 import { ThemeSwitcher } from './theme-switcher';
+import { LoadingBar } from '../generic/LoadingBar';
+import { MessageBar } from '../generic/MessageBar';
 
 interface LinkItemProps {
   name: string;
@@ -62,6 +64,8 @@ export const Sidebar = ({ children, hidden = false }: { children: ReactNode; hid
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} full={hidden} />
+      <LoadingBar full={hidden} />
+      <MessageBar full={hidden} />
       <Box ml={{ base: 0, md: hidden ? 0 : 60 }} p="4">
         {children}
       </Box>
@@ -80,7 +84,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const [selectedProject] = useRecoilState(currentProject);
+  const selectedProject = useRecoilValue(currentProject);
   const navigate = useNavigate();
 
   const LinkItems: Array<LinkItemProps> = [

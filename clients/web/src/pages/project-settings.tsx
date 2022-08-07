@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FormLabel, Heading, Input, Button, Spacer } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
+import { MdSettings } from 'react-icons/md';
+import { useRecoilRefresher_UNSTABLE } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { projects as projectsState } from '../state';
 import { ApiClient } from '../lib/clients/api-client';
+import { useApiActions } from '../hooks/api-actions';
 import { Project } from '../types';
 import { PageHeading } from '../components/generic/PageHeading';
-import { MdSettings } from 'react-icons/md';
 import { SoftCard } from '../components/generic/SoftCard';
 import { DangerButton } from '../components/generic/DangerButton';
+import { currentProject, projects } from '../state';
 
 type FormValues = {
   name: string;
@@ -25,44 +26,51 @@ export const ProjectSettingsPage: React.FC = () => {
     formState: { errors },
   } = useForm<FormValues>();
   const [project, setProject] = useState<Project>();
-  const [projects, setProjects] = useRecoilState(projectsState);
+  const clearProjectsCache = useRecoilRefresher_UNSTABLE(projects);
+  const clearCurrentProjectCache = useRecoilRefresher_UNSTABLE(currentProject);
+
+  const refreshProjects = () => {
+    clearProjectsCache();
+    clearCurrentProjectCache();
+  };
+
+  const { executeApiCall } = useApiActions();
   const { id } = useParams();
 
   useEffect(() => {
     const getProject = async () => {
-      try {
-        if (id) {
-          const data = await ApiClient.getProject(id);
-          setProject(data);
-        }
-      } catch (err: unknown) {
-        console.error(err);
-        navigate('/projects');
+      if (id) {
+        const data = await executeApiCall<Project>({
+          action: () => ApiClient.getProject(id),
+          onError: () => navigate('/projects'),
+          errorMessage: 'Failed to get project. Refresh to try again.',
+        });
+        if (data) setProject(data);
       }
     };
     getProject();
-  }, [id, navigate]);
+  }, [id, navigate, executeApiCall]);
 
   if (!id) return null;
 
-  const onSubmit = async (data: { name: string }) => {
-    try {
-      const updatedProject = await ApiClient.updateProject({ ...data, id });
-      setProject(updatedProject);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const onUpdateProject = (data: { name: string }) =>
+    executeApiCall({
+      action: () => ApiClient.updateProject({ ...data, id }),
+      onSuccess: () => refreshProjects(),
+      errorMessage: 'Failed to update project',
+      successMessage: 'Successfully updated project',
+    });
 
-  const onDeleteProject = async () => {
-    try {
-      await ApiClient.deleteProject(id);
-      setProjects(projects.filter((project) => project.id !== id));
-      navigate('/projects');
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const onDeleteProject = () =>
+    executeApiCall({
+      action: () => ApiClient.deleteProject(id),
+      onSuccess: () => {
+        refreshProjects();
+        navigate('/projects');
+      },
+      errorMessage: 'Failed to delete project',
+      successMessage: 'Successfully deleted project',
+    });
 
   return (
     <AuthenticatedLayout>
@@ -70,7 +78,7 @@ export const ProjectSettingsPage: React.FC = () => {
         <SoftCard>
           <PageHeading title="Settings" icon={MdSettings} />
           <Spacer mt={6} />
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onUpdateProject)}>
             <FormLabel htmlFor="name">Name</FormLabel>
             <Input defaultValue={project.name} {...register('name', { required: true })} />
             {errors?.name && <p>Name is required</p>}

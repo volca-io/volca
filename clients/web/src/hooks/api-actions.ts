@@ -1,31 +1,41 @@
+import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { loading } from '../state/loading';
+import { message } from '../state/message';
 
 export const useApiActions = () => {
   const [, setLoading] = useRecoilState(loading);
-  const executeApiCall = async ({
+  const [, setMessage] = useRecoilState(message);
+  const executeApiCall = async <T>({
     action,
+    onError,
+    onSuccess,
     errorMessage = null,
     successMessage = null,
   }: {
     action: Function;
-    errorMessage: string | null;
-    successMessage: string | null;
-  }) => {
+    onError?: Function;
+    onSuccess?: Function;
+    errorMessage?: string | null;
+    successMessage?: string | null;
+  }): Promise<T | void> => {
     setLoading(true);
     try {
-      await action();
+      const result = await action();
+      setLoading(false);
       if (successMessage) {
-        console.log(successMessage); // TODO: Trigger alert
+        setMessage(successMessage);
       }
+      if (onSuccess) onSuccess();
+      return result;
     } catch (error) {
+      if (onError) onError();
       if (errorMessage) {
-        console.log(errorMessage); // TODO: Trigger alert
+        setMessage(errorMessage);
       }
-      console.error(error);
     }
     setLoading(false);
   };
 
-  return { executeApiCall };
+  return { executeApiCall: useCallback(executeApiCall, [setLoading, setMessage]) };
 };
