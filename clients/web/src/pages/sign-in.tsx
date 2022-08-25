@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   Box,
-  Heading,
   Text,
   useColorModeValue,
   Flex,
@@ -11,6 +10,7 @@ import {
   AlertDescription,
   CloseButton,
   Link,
+  Image,
 } from '@chakra-ui/react';
 import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { SignInForm } from '../components/forms';
@@ -30,7 +30,6 @@ export const SignInPage: React.FC = () => {
   const [error, setError] = useState<ErrorDescription | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const titleColor = useColorModeValue('teal.400', 'teal.200');
   const textColor = useColorModeValue('gray.600', 'white');
   const linkColor = useColorModeValue('teal.400', 'teal.200');
 
@@ -56,15 +55,16 @@ export const SignInPage: React.FC = () => {
   return (
     <DefaultLayout>
       <Flex minH="100vh" direction="column" justifyContent="center" maxW="600px" margin="0 auto">
-        <Box paddingY="8">
-          <Heading color={titleColor}>Welcome!</Heading>
+        <Flex paddingY="8" direction="column" alignItems="center">
+          <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="128px" />
           <Text fontSize="sm" color={textColor}>
             Enter your e-mail and password to sign in. Or{' '}
-            <Link color={linkColor} to="/register" as={RouterLink}>
+            <Link color={linkColor} textDecoration="underline" textUnderlineOffset={1.5} to="/register" as={RouterLink}>
               create a new account
             </Link>
+            .
           </Text>
-        </Box>
+        </Flex>
         {error && (
           <Alert status="error">
             <AlertIcon />
