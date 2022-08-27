@@ -68,7 +68,7 @@ export const RegisterPage: React.FC = () => {
           <Heading color={titleColor}>Lets get you signed up!</Heading>
           <Text fontSize="sm" color={textColor}>
             Enter your details in the form below to create a new account. Already have an account?{' '}
-            <Link color={linkColor} to="/sign-in" as={RouterLink}>
+            <Link color={linkColor} textDecoration="underline" textUnderlineOffset={1.5} to="/sign-in" as={RouterLink}>
               Sign in instead
             </Link>
           </Text>
