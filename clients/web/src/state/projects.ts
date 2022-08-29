@@ -1,17 +1,9 @@
-import { atom, selector, DefaultValue } from 'recoil';
+import { atom, DefaultValue, selector } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
 import { Project } from '../types';
 
-export const projectsSelector = selector<Project[]>({
-  key: 'projects-selector',
-  get: async ({ get }) => {
-    const projects = await ApiClient.getProjects();
-    return projects;
-  },
-});
-
-export const currentProjectSelector = selector<Project | null>({
-  key: 'current-project-selector',
+const selectedProjectSelector = selector<Project | null>({
+  key: 'selected-project',
   set: ({ set }, newValue) => {
     if (newValue instanceof DefaultValue) return;
 
@@ -21,7 +13,7 @@ export const currentProjectSelector = selector<Project | null>({
       localStorage.removeItem('selected_project_id');
     }
 
-    set(currentProject, newValue);
+    set(selectedProject, newValue);
   },
   get: async ({ get }) => {
     const id = localStorage.getItem('selected_project_id');
@@ -35,12 +27,12 @@ export const currentProjectSelector = selector<Project | null>({
   },
 });
 
-export const projects = atom<Project[]>({
-  key: 'projects',
-  default: projectsSelector,
+export const selectedProject = atom<Project | null>({
+  key: 'selected-project',
+  default: selectedProjectSelector,
 });
 
-export const currentProject = atom<Project | null>({
-  key: 'current-project',
-  default: currentProjectSelector,
+export const projects = atom<Project[]>({
+  key: 'projects',
+  default: ApiClient.getProjects(),
 });

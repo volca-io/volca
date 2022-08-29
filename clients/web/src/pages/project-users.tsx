@@ -61,7 +61,7 @@ export const ProjectUsersPage: React.FC = () => {
   return (
     <AuthenticatedLayout>
       {project && (
-        <SoftCard>
+        <SoftCard w="100%">
           <Flex alignItems="center" justifyContent="space-between">
             <PageHeading title="Users" icon={MdGroups} />
             <InviteProjectUser alert={inviteAlert} onSubmit={onInvite} />

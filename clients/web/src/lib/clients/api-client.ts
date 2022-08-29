@@ -179,7 +179,7 @@ export class ApiClient {
     return project;
   }
 
-  static async updateProject({ id, name }: { id: string; name: string }): Promise<Project> {
+  static async updateProject({ id, name }: Partial<Project>): Promise<Project> {
     const { project } = await this.handleApiError(
       this.client.put(`projects/${id}`, { json: { id, name } }).json<UpdateProjectResponse>()
     );

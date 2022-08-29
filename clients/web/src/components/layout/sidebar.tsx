@@ -28,7 +28,7 @@ import {
 import { MdHomeFilled, MdSettings, MdMenu, MdKeyboardArrowDown, MdGroups } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { useRecoilValue } from 'recoil';
-import { currentProject, currentUser } from '../../state';
+import { selectedProject as selectedProjectState, currentUser } from '../../state';
 import { MdOutlineSync } from 'react-icons/md';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
@@ -84,7 +84,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const selectedProject = useRecoilValue(currentProject);
+  const selectedProject = useRecoilValue(selectedProjectState);
   const navigate = useNavigate();
 
   const LinkItems: Array<LinkItemProps> = [

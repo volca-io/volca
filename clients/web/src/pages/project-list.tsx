@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { MdAdd, MdGroup, MdWork } from 'react-icons/md';
 
 import { AuthenticatedLayout } from '../layouts';
-import { currentProject, projects as projectsState, currentUser } from '../state';
+import { selectedProject, projects as projectsState, currentUser } from '../state';
 import { Project } from '../types';
 import { InactiveProjectDialog } from '../components/projects/InactiveProjectDialog';
 import { PageHeading } from '../components/generic/PageHeading';
@@ -19,12 +19,12 @@ const cardStyle = {
 export const ProjectListPage: React.FC = () => {
   const navigate = useNavigate();
   const [inactiveProjectId, setInactiveProjectId] = useState<string | null>(null);
-  const [, setProject] = useRecoilState(currentProject);
-  const [projects] = useRecoilState(projectsState);
+  const [, setSelectedProject] = useRecoilState(selectedProject);
+  const projects = useRecoilValue(projectsState);
   const user = useRecoilValue(currentUser);
 
   const onSelectProject = (project: Project) => {
-    setProject(project);
+    setSelectedProject(project);
     navigate(`/projects/${project.id}/settings`);
   };
 
@@ -32,8 +32,8 @@ export const ProjectListPage: React.FC = () => {
     <SoftCard
       key={project.id}
       style={{ ...cardStyle, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
-      onClick={
-        project.admin.has_active_subscription ? () => onSelectProject(project) : () => setInactiveProjectId(project.id)
+      onClick={() =>
+        project.admin.has_active_subscription ? onSelectProject(project) : setInactiveProjectId(project.id)
       }
     >
       <Box>

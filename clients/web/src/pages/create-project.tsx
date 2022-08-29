@@ -6,7 +6,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
 import { ApiClient } from '../lib/clients/api-client';
-import { currentProject, currentUser, projects as projectsState } from '../state';
+import { selectedProject, currentUser, projects as projectsState } from '../state';
 import { MdAdd, MdChevronRight } from 'react-icons/md';
 import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
@@ -23,7 +23,7 @@ export const CreateProjectPage: React.FC = () => {
   } = useForm<FormValues>();
   const navigate = useNavigate();
   const [projects, setProjects] = useRecoilState(projectsState);
-  const [, setCurrentProject] = useRecoilState(currentProject);
+  const [, setSelectedProject] = useRecoilState(selectedProject);
   const user = useRecoilValue(currentUser);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const CreateProjectPage: React.FC = () => {
     try {
       const res = await ApiClient.createProject({ name });
       setProjects([...projects, res]);
-      setCurrentProject(res);
+      setSelectedProject(res);
       navigate('/projects');
     } catch (error) {
       console.error(error);

@@ -26,7 +26,7 @@ export const useApiActions = () => {
       if (successMessage) {
         setMessage(successMessage);
       }
-      if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess(result);
       return result;
     } catch (error) {
       if (onError) onError();

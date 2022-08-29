@@ -11,7 +11,7 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <AuthenticatedLayout>
-      <SoftCard>
+      <SoftCard w="100%">
         <PageHeading title="Dashboard" icon={MdDashboard} />
         <Text mt={6}>{`Welcome, ${user?.first_name} 👋`}</Text>
       </SoftCard>
