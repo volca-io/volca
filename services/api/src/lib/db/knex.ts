@@ -1,8 +1,7 @@
 import Knex from 'knex';
 import { Model, knexSnakeCaseMappers } from 'objection';
-import { Logger } from '../../interfaces';
-import { container } from '../../inversify.config';
-import { DI_TYPES } from '../../types';
+import { Logger } from '../../utils/logger';
+import { container } from 'tsyringe';
 
 interface InitializeKnexProperties {
   client: 'postgres';
@@ -13,7 +12,7 @@ interface InitializeKnexProperties {
 }
 
 export const initialize = ({ client, port, user, password, database }: InitializeKnexProperties) => {
-  const logger = container.get<Logger>(DI_TYPES.Logger);
+  const logger = container.resolve(Logger);
 
   logger.debug('Creating new knex client');
 

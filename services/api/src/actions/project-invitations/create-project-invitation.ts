@@ -1,11 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 import joi, { Schema } from 'joi';
-import { CustomContext, DI_TYPES } from '../../types';
-import { container } from '../../inversify.config';
-import { ProjectInvitationService, ProjectService, UserService } from '../../interfaces';
+import { CustomContext } from '../../types';
+import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
+import { ProjectInvitationService, ProjectService, UserService } from '../../services';
 
 export const schema: Schema = joi.object({
   toUserEmail: joi.string().required(),
@@ -13,9 +13,9 @@ export const schema: Schema = joi.object({
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const projectInvitationService = container.get<ProjectInvitationService>(DI_TYPES.ProjectInvitationService);
-  const userService = container.get<UserService>(DI_TYPES.UserService);
-  const projectService = container.get<ProjectService>(DI_TYPES.ProjectService);
+  const projectInvitationService = container.resolve(ProjectInvitationService);
+  const userService = container.resolve(UserService);
+  const projectService = container.resolve(ProjectService);
 
   const { toUserEmail, projectId } = ctx.request.body;
 

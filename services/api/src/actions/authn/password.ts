@@ -1,7 +1,8 @@
 import joi, { Schema } from 'joi';
-import { CustomContext, DI_TYPES } from '../../types';
-import { container } from '../../inversify.config';
-import { AuthenticationService } from '../../interfaces';
+import { container } from 'tsyringe';
+
+import { AuthenticationService } from '../../services';
+import { CustomContext } from '../../types';
 import { useApiAction } from '../utils/api-action';
 
 export const schema: Schema = joi.object({
@@ -10,7 +11,7 @@ export const schema: Schema = joi.object({
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const authnService = container.get<AuthenticationService>(DI_TYPES.AuthenticationService);
+  const authnService = container.resolve(AuthenticationService);
 
   const { email, password } = ctx.request.body;
 

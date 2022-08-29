@@ -1,9 +1,19 @@
-import { injectable } from 'inversify';
-import { ProjectService as ProjectServiceInterface, CreateProjectInput, UpdateProjectInput } from '../interfaces';
+import { injectable } from 'tsyringe';
 import { Project, ProjectUser } from '../entities';
 
+type CreateProjectInput = {
+  adminId: string;
+  name: string;
+};
+
+type UpdateProjectInput = {
+  id: string;
+  adminId: string;
+  name: string;
+};
+
 @injectable()
-export class ProjectService implements ProjectServiceInterface {
+export class ProjectService {
   public async get(id: string): Promise<Project | undefined> {
     return Project.query().findById(id).withGraphFetched('admin').withGraphFetched('users');
   }

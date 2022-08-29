@@ -1,11 +1,11 @@
 import Koa from 'koa';
-import { CustomContext, DI_TYPES } from '../types';
-import { container } from '../inversify.config';
-import { Security } from '../interfaces';
+import { CustomContext } from '../types';
+import { container } from 'tsyringe';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 import { StatusCodes } from 'http-status-codes';
 import { UserService } from '../services';
+import { Security } from '../lib/security/security';
 
 export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Next) => {
   const header = ctx.header.authorization;
@@ -19,7 +19,7 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
     });
   }
 
-  const security = container.get<Security>(DI_TYPES.Security);
+  const security = container.resolve(Security);
 
   if (!header.startsWith('Bearer ')) {
     throw new ServiceError({
@@ -44,7 +44,7 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
       });
     }
 
-    const userService = container.get<UserService>(DI_TYPES.UserService);
+    const userService = container.resolve(UserService);
     const user = await userService.findById(sub);
 
     if (!user) {

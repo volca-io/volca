@@ -5564,7 +5564,6 @@ __metadata:
     correlation-id: ^4.0.0
     eslint-plugin-jest: ^26.2.2
     http-status-codes: ^2.2.0
-    inversify: ^6.0.1
     jest: ^28.1.0
     joi: ^17.6.0
     jsonwebtoken: ^8.5.1
@@ -5589,6 +5588,7 @@ __metadata:
     supertest: ^6.2.2
     ts-jest: ^28.0.2
     ts-loader: ^9.3.1
+    tsyringe: ^4.7.0
     typescript: ^4.6.3
     uuid: ^8.3.2
     webpack-node-externals: ^3.0.0
@@ -12223,13 +12223,6 @@ __metadata:
   dependencies:
     loose-envify: ^1.0.0
   checksum: cc3182d793aad82a8d1f0af697b462939cb46066ec48bbf1707c150ad5fad6406137e91a262022c269702e01621f35ef60269f6c0d7fd178487959809acdfb14
-  languageName: node
-  linkType: hard
-
-"inversify@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "inversify@npm:6.0.1"
-  checksum: b6c9b56ef7817a71534b06101c2b0a0130b67c47a769f58794d9c0643591a83ac02be30a48c00cb729c0c83ece96dde369c419d48c32d0201c6cc7407629fbc5
   languageName: node
   linkType: hard
 
@@ -21017,7 +21010,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^1.0.0, tslib@npm:^1.8.1":
+"tslib@npm:^1.0.0, tslib@npm:^1.8.1, tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
@@ -21046,6 +21039,15 @@ __metadata:
   peerDependencies:
     typescript: ">=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta"
   checksum: 1843f4c1b2e0f975e08c4c21caa4af4f7f65a12ac1b81b3b8489366826259323feb3fc7a243123453d2d1a02314205a7634e048d4a8009921da19f99755cdc48
+  languageName: node
+  linkType: hard
+
+"tsyringe@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "tsyringe@npm:4.7.0"
+  dependencies:
+    tslib: ^1.9.3
+  checksum: 6d84e0767538fabf60eafb926bd285d08d25847875b635f8a3ab8b3093c8814aca4f47072fbb51837bd431259dc2464572e5c28a838b833c9ef097d5b1a895b3
   languageName: node
   linkType: hard
 

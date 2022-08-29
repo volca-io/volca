@@ -1,20 +1,30 @@
-import { injectable } from 'inversify';
-
-import {
-  StripeSession,
-  CreateStripeSessionParams,
-  CreateStripeBillingPortalSessionParams,
-  VerifyStripeWebhookSignatureParams,
-} from 'src/interfaces/stripe-service';
-import { StripeService as StripeServiceInterface } from '../interfaces';
+import { injectable } from 'tsyringe';
 import { User } from '../entities';
 
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_KEY as string, { apiVersion: '2020-08-27' });
 
+type CreateStripeSessionParams = {
+  user: User;
+};
+
+type CreateStripeBillingPortalSessionParams = {
+  stripeCustomerId: string;
+};
+
+type VerifyStripeWebhookSignatureParams = {
+  body: string;
+  signature: string;
+};
+
+type StripeSession = {
+  id: string;
+  url: string;
+};
+
 @injectable()
-export class StripeService implements StripeServiceInterface {
+export class StripeService {
   public async createSession({ user }: CreateStripeSessionParams): Promise<StripeSession> {
     const getStripeCustomerId = async () => {
       if (!user.stripeId) {

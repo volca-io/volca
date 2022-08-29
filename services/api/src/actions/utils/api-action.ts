@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { CustomContext } from 'src/types';
+import { CustomContext } from '../../types';
 import snakecase from 'snakecase-keys';
 
 interface ApiResult {

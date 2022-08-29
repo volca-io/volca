@@ -1,9 +1,9 @@
 import joi, { Schema } from 'joi';
 import zxcvbn from 'zxcvbn';
-import { CustomContext, DI_TYPES } from '../../types';
-import { container } from '../../inversify.config';
-import { AuthenticationService, UserService } from '../../interfaces';
+import { CustomContext } from '../../types';
+import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
+import { AuthenticationService, UserService } from '../../services';
 
 export const schema: Schema = joi.object({
   firstName: joi.string().required(),
@@ -30,8 +30,8 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     },
   } = ctx;
 
-  const userService = container.get<UserService>(DI_TYPES.UserService);
-  const authnService = container.get<AuthenticationService>(DI_TYPES.AuthenticationService);
+  const userService = container.resolve(UserService);
+  const authnService = container.resolve(AuthenticationService);
 
   const user = await userService.register({
     firstName,

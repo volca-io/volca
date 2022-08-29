@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import 'reflect-metadata';
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import serverless from 'serverless-http';
 

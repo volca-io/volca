@@ -1,11 +1,10 @@
-import { injectable, inject } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
+import { injectable, container } from 'tsyringe';
 
-import { DI_TYPES } from '../types';
-import { UserService as UserServiceInterface, Security, UpdateUserProperties } from '../interfaces';
 import { User } from '../entities';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
+import { Security } from '../lib/security/security';
 
 type RegisterUserProperties = {
   firstName: string;
@@ -14,9 +13,18 @@ type RegisterUserProperties = {
   password: string;
 };
 
+type UpdateUserProperties = {
+  id: string;
+  stripeId?: string;
+  hasActiveSubscription?: boolean;
+  freeTrialActivated?: boolean;
+};
+
 @injectable()
-export class UserService implements UserServiceInterface {
-  public constructor(@inject(DI_TYPES.Security) private security: Security) {}
+export class UserService {
+  public constructor(private security: Security) {
+    this.security = container.resolve(Security);
+  }
 
   public async findById(id: string): Promise<User | undefined> {
     return User.query().findById(id);

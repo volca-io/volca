@@ -1,7 +1,6 @@
 import winston from 'winston';
-import { injectable } from 'inversify';
+import { injectable } from 'tsyringe';
 import correlator from 'correlation-id';
-import { Logger as LoggerInterface } from '../interfaces';
 
 export enum LoggingFormat {
   JSON = 'json',
@@ -53,7 +52,7 @@ const createLogger = ({ level, format, defaultMeta = {}, silent = false }: Loggi
 };
 
 @injectable()
-export class Logger implements LoggerInterface {
+export class Logger {
   private logger;
 
   public constructor() {

@@ -1,25 +1,36 @@
-import { injectable, inject } from 'inversify';
+import { injectable, container } from 'tsyringe';
 import { StatusCodes } from 'http-status-codes';
 import { v4 as uuid } from 'uuid';
-import { DI_TYPES } from '../types/dependency-injection';
-import {
-  AccessTokenCookieSettings,
-  AuthenticationService as AuthenticationServiceInterface,
-  Security,
-  UserService as UserServiceInterface,
-  AccessTokenResponse,
-  SessionResponse,
-} from '../interfaces';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 import { RefreshToken, User } from '../entities';
+import { UserService } from './user-service';
+import { Security } from '../lib/security/security';
+
+export type AccessTokenCookieSettings = {
+  secure: boolean;
+  httpOnly: boolean;
+  sameSite: 'lax';
+  domain?: string;
+};
+
+export type AccessTokenResponse = {
+  accessToken: string;
+  expiresIn: number;
+};
+
+export type SessionResponse = {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+};
 
 @injectable()
-export class AuthenticationService implements AuthenticationServiceInterface {
-  public constructor(
-    @inject(DI_TYPES.UserService) private userService: UserServiceInterface,
-    @inject(DI_TYPES.Security) private security: Security
-  ) {}
+export class AuthenticationService {
+  public constructor(private userService: UserService, private security: Security) {
+    this.security = container.resolve(Security);
+    this.userService = container.resolve(UserService);
+  }
 
   public async createNewSession(user: User): Promise<SessionResponse> {
     const sessionId = uuid();

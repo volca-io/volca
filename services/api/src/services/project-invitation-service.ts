@@ -1,12 +1,14 @@
-import { injectable } from 'inversify';
-import {
-  ProjectInvitationService as ProjectInvitationServiceInterface,
-  CreateProjectInvitationInput,
-} from '../interfaces';
+import { injectable } from 'tsyringe';
 import { ProjectInvitation } from '../entities';
 
+type CreateProjectInvitationInput = {
+  projectId: string;
+  toUserId: string;
+  fromUserId: string;
+};
+
 @injectable()
-export class ProjectInvitationService implements ProjectInvitationServiceInterface {
+export class ProjectInvitationService {
   public async get(id: string): Promise<ProjectInvitation | undefined> {
     return ProjectInvitation.query().findById(id).returning('*');
   }

@@ -1,9 +1,8 @@
-import { injectable } from 'inversify';
+import { injectable } from 'tsyringe';
 import argon2 from 'argon2';
-import jwt, { Jwt, JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
 import crypto from 'crypto';
-import { Security as SecurityInterface } from '../../interfaces';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
@@ -13,7 +12,7 @@ interface SigningKey {
 }
 
 @injectable()
-export class Security implements SecurityInterface {
+export class Security {
   // TODO - This has to be moved to a config or a database
   public signingKeys = [
     {
@@ -68,7 +67,7 @@ export class Security implements SecurityInterface {
     return result;
   }
 
-  public decodeToken(token: string): Jwt {
+  public decodeToken(token: string): JwtPayload {
     const decoded = jwt.decode(token, { complete: true });
 
     if (!decoded) {
@@ -80,6 +79,16 @@ export class Security implements SecurityInterface {
       });
     }
 
-    return decoded;
+    const { payload } = decoded;
+
+    if (typeof decoded.payload !== 'object') {
+      throw new ServiceError({
+        name: ErrorNames.INTERNAL_SERVER_ERROR,
+        message: 'Token validation failed',
+        debug: `Token verification did not return an object. Returned type was ${typeof payload}`,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      });
+    }
+    return decoded.payload;
   }
 }

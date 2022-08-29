@@ -1,12 +1,11 @@
 import Koa from 'koa';
-import { container } from '../inversify.config';
+import { container } from 'tsyringe';
 import { ServiceError } from '../errors/service-error';
-import { DI_TYPES } from '../types';
-import { Logger } from '../interfaces';
 import { ErrorNames } from '../constants';
+import { Logger } from '../utils/logger';
 
 export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
-  const logger = container.get<Logger>(DI_TYPES.Logger);
+  const logger = container.resolve(Logger);
   try {
     await next();
   } catch (err: unknown) {

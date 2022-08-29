@@ -1,15 +1,15 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { CustomContext, DI_TYPES } from '../../types';
-import { container } from '../../inversify.config';
-import { ProjectInvitationService, ProjectUserService } from '../../interfaces';
+import { CustomContext } from '../../types';
+import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
+import { ProjectInvitationService, ProjectUserService } from '../../services';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const projectInvitationService = container.get<ProjectInvitationService>(DI_TYPES.ProjectInvitationService);
-  const projectUserService = container.get<ProjectUserService>(DI_TYPES.ProjectUserService);
+  const projectInvitationService = container.resolve(ProjectInvitationService);
+  const projectUserService = container.resolve(ProjectUserService);
 
   const { key } = ctx.params;
 

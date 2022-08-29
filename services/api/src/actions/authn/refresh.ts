@@ -1,5 +1,5 @@
-import { CustomContext, DI_TYPES } from '../../types';
-import { container } from '../../inversify.config';
+import { CustomContext } from '../../types';
+import { container } from 'tsyringe';
 import { AuthenticationService } from '../../services';
 import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
@@ -7,7 +7,7 @@ import { ErrorNames } from '../../constants';
 import { StatusCodes } from 'http-status-codes';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const authnService = container.get<AuthenticationService>(DI_TYPES.AuthenticationService);
+  const authnService = container.resolve(AuthenticationService);
   const refreshToken = ctx.cookies.get('x-refresh-token');
 
   if (!refreshToken) {

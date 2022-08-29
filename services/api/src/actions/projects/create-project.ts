@@ -1,15 +1,15 @@
 import joi, { Schema } from 'joi';
-import { CustomContext, DI_TYPES } from '../../types';
-import { container } from '../../inversify.config';
-import { ProjectService } from '../../interfaces';
+import { CustomContext } from '../../types';
+import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
+import { ProjectService } from '../../services';
 
 export const schema: Schema = joi.object({
   name: joi.string().required(),
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const projectService = container.get<ProjectService>(DI_TYPES.ProjectService);
+  const projectService = container.resolve(ProjectService);
 
   const { name } = ctx.request.body;
 

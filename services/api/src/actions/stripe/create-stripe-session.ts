@@ -1,10 +1,10 @@
-import { CustomContext, DI_TYPES } from '../../types';
-import { container } from '../../inversify.config';
-import { StripeService } from '../../interfaces';
+import { CustomContext } from '../../types';
+import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
+import { StripeService } from '../../services';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const stripeService = container.get<StripeService>(DI_TYPES.StripeService);
+  const stripeService = container.resolve(StripeService);
 
   const { user } = ctx;
 
