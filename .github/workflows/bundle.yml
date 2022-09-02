@@ -1,0 +1,19 @@
+name: bundle
+on:
+  push:
+    branches:
+      - main
+      - feature/bundling # TODO: Remove before merging
+jobs:
+  bundle:
+    name: bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.2
+      - name: Bundle
+        run: sh scripts/bundle.sh
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: volca
+          path: volca.zip
