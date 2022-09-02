@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { injectable, container } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { User } from '../entities';
 import { ServiceError } from '../errors/service-error';
@@ -22,9 +22,7 @@ type UpdateUserProperties = {
 
 @injectable()
 export class UserService {
-  public constructor(private security: Security) {
-    this.security = container.resolve(Security);
-  }
+  public constructor(private security: Security) {}
 
   public async findById(id: string): Promise<User | undefined> {
     return User.query().findById(id);
@@ -49,7 +47,7 @@ export class UserService {
       });
     }
 
-    const hashedPassword = await this.security.hashPassword(password);
+    const hashedPassword = this.security.hashPassword(password);
 
     const user = await User.query().insert({
       firstName,

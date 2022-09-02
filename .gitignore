@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,serverless,react,yarn
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,macos,serverless,react,yarn
 
+# AWS CDK
+cdk.out
+
 ### macOS ###
 # General
 .DS_Store
@@ -101,3 +104,4 @@ sketch
 
 # Build artifacts
 .webpack
+

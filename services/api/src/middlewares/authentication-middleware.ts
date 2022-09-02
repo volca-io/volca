@@ -6,8 +6,12 @@ import { ErrorNames } from '../constants';
 import { StatusCodes } from 'http-status-codes';
 import { UserService } from '../services';
 import { Security } from '../lib/security/security';
+import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
 
 export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Next) => {
+  const security = container.resolve(Security);
+  const environment = container.resolve(EnvironmentUtils);
+
   const header = ctx.header.authorization;
 
   if (!header) {
@@ -19,8 +23,6 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
     });
   }
 
-  const security = container.resolve(Security);
-
   if (!header.startsWith('Bearer ')) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
@@ -31,45 +33,34 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
   }
 
   const token = header.replace('Bearer ', '');
-  try {
-    const { sub } =
-      process.env.SKIP_TOKEN_VERIFICATION === 'true' ? security.decodeToken(token) : security.verifyToken(token);
 
-    if (!sub) {
-      throw new ServiceError({
-        name: ErrorNames.AUTHORIZATION_FAILED,
-        message: 'Subject missing from token',
-        debug: 'The token did not include a subject',
-        statusCode: StatusCodes.UNAUTHORIZED,
-      });
-    }
+  const { sub } =
+    environment.getVariable(EnvironmentVariable.SKIP_TOKEN_VERIFICATION) === 'true'
+      ? security.decodeToken(token)
+      : security.verifyToken(token);
 
-    const userService = container.resolve(UserService);
-    const user = await userService.findById(sub);
-
-    if (!user) {
-      throw new ServiceError({
-        name: ErrorNames.AUTHORIZATION_FAILED,
-        message: 'User not found',
-        debug: 'Unable to find matching user to token subject',
-        statusCode: StatusCodes.UNAUTHORIZED,
-      });
-    }
-
-    ctx.user = user;
-  } catch (error: unknown) {
-    let message = 'unknown';
-    if (error instanceof Error) {
-      message = error.message;
-    }
-
+  if (!sub) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
-      message: 'Invalid token',
-      debug: message,
+      message: 'Subject missing from token',
+      debug: 'The token did not include a subject',
       statusCode: StatusCodes.UNAUTHORIZED,
     });
   }
+
+  const userService = container.resolve(UserService);
+  const user = await userService.findById(sub);
+
+  if (!user) {
+    throw new ServiceError({
+      name: ErrorNames.AUTHORIZATION_FAILED,
+      message: 'User not found',
+      debug: 'Unable to find matching user to token subject',
+      statusCode: StatusCodes.UNAUTHORIZED,
+    });
+  }
+
+  ctx.user = user;
 
   await next();
 };

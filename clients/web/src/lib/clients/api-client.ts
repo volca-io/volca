@@ -66,54 +66,49 @@ export class ApiError extends Error implements ApiErrorInterface {
 }
 
 export class ApiClient {
-  private static prefixUrl = 'http://127.0.0.1:4000';
+  private static prefixUrl = process.env.REACT_APP_API_URL;
 
   static client = ky.create({
     prefixUrl: this.prefixUrl,
     credentials: 'include',
     mode: 'cors',
+  });
+
+  static tokenClient = ApiClient.client.extend({
     hooks: {
       beforeRequest: [
-        async (request: Request) => {
-          let accessToken = localStorage.getItem('access-token');
-
-          if (!accessToken) {
-            return;
+        async (request) => {
+          let token = localStorage.getItem('access-token');
+          if (token && this.accessTokenIsAboutToExpire()) {
+            token = await this.refreshToken();
           }
-
-          try {
-            const decoded = jwt_decode<AccessToken>(accessToken);
-            const expires = new Date(decoded.exp);
-
-            if (expires.getTime() * 1000 < new Date().getTime()) {
-              const { access_token } = await ky
-                .post('authn/refresh', { prefixUrl: this.prefixUrl, credentials: 'include', mode: 'cors' })
-                .json<TokenResponse>();
-
-              localStorage.setItem('access-token', access_token);
-              accessToken = access_token;
-            }
-          } catch (err: unknown) {
-            return;
-          }
-
-          if (accessToken) {
-            request.headers.set('authorization', `Bearer ${accessToken}`);
-          }
+          request.headers.set('authorization', `Bearer ${token}`);
         },
       ],
     },
   });
 
-  private static isCustomApiError(error: Record<string, unknown>) {
-    return ['name', 'message'].every((item) => error.hasOwnProperty(item));
+  private static async refreshToken(): Promise<string> {
+    const { access_token } = await this.client.post('authn/refresh').json<TokenResponse>();
+    localStorage.setItem('access-token', access_token);
+    return access_token;
   }
 
-  private static async handleUnauthorizedResponse(err: ApiError) {
-    if (err.name === 'AUTHORIZATION_FAILED' && window.location.pathname !== '/sign-in') {
-      await this.signOut();
-      window.location.href = '/sign-in';
+  private static accessTokenIsAboutToExpire() {
+    const accessToken = localStorage.getItem('access-token');
+
+    if (!accessToken) {
+      return true;
     }
+
+    const decoded = jwt_decode<AccessToken>(accessToken);
+    const expires = new Date(decoded.exp);
+
+    return expires.getTime() * 1000 + 10000 < new Date().getTime();
+  }
+
+  private static isCustomApiError(error: Record<string, unknown>) {
+    return ['name', 'message'].every((item) => error.hasOwnProperty(item));
   }
 
   private static async handleApiError<T>(action: Promise<T>): Promise<T> {
@@ -124,15 +119,10 @@ export class ApiClient {
       if (err instanceof HTTPError) {
         const body = await err.response.json();
         if (body && this.isCustomApiError(body)) {
-          const customError = new ApiError({ name: body.name, message: body.message, status: err.response.status });
-
-          if (err.response.status === 401) {
-            await this.handleUnauthorizedResponse(customError);
-          }
+          throw new ApiError({ name: body.name, message: body.message, status: err.response.status });
         }
       }
 
-      console.error(err);
       throw new ApiError({
         name: 'UNKNOWN_ERROR',
         message: 'An unknown error occurred, please try again later',
@@ -142,15 +132,19 @@ export class ApiClient {
   }
 
   static async register(firstName: string, lastName: string, email: string, password: string): Promise<void> {
-    await this.handleApiError(this.client.post('authn/register', { json: { firstName, lastName, email, password } }));
+    const { access_token } = await this.handleApiError(
+      this.client.post('authn/register', { json: { firstName, lastName, email, password } }).json<TokenResponse>()
+    );
+
+    localStorage.setItem('access-token', access_token);
   }
 
-  static async authnPassword(email: string, password: string): Promise<TokenResponse> {
-    const { access_token, expires_in } = await this.handleApiError(
+  static async authnPassword(email: string, password: string): Promise<void> {
+    const { access_token } = await this.handleApiError(
       this.client.post('authn/password', { json: { email, password } }).json<TokenResponse>()
     );
 
-    return { access_token, expires_in };
+    localStorage.setItem('access-token', access_token);
   }
 
   static async signOut(): Promise<void> {
@@ -158,41 +152,41 @@ export class ApiClient {
   }
 
   static async getMe(): Promise<User> {
-    const { me } = await this.handleApiError(this.client.get('me').json<GetMeResponse>());
+    const { me } = await this.handleApiError(this.tokenClient.get('me').json<GetMeResponse>());
     return me;
   }
 
   static async getProjects(): Promise<Project[]> {
-    const { projects } = await this.handleApiError(this.client.get('projects').json());
+    const { projects } = await this.handleApiError(this.tokenClient.get('projects').json());
     return projects;
   }
 
   static async createProject({ name }: { name: string }): Promise<Project> {
     const { project } = await this.handleApiError(
-      this.client.post('projects', { json: { name } }).json<CreateProjectResponse>()
+      this.tokenClient.post('projects', { json: { name } }).json<CreateProjectResponse>()
     );
     return project;
   }
 
   static async getProject(id: string): Promise<Project> {
-    const { project } = await this.handleApiError(this.client.get(`projects/${id}`).json<GetProjectResponse>());
+    const { project } = await this.handleApiError(this.tokenClient.get(`projects/${id}`).json<GetProjectResponse>());
     return project;
   }
 
   static async updateProject({ id, name }: Partial<Project>): Promise<Project> {
     const { project } = await this.handleApiError(
-      this.client.put(`projects/${id}`, { json: { id, name } }).json<UpdateProjectResponse>()
+      this.tokenClient.put(`projects/${id}`, { json: { id, name } }).json<UpdateProjectResponse>()
     );
     return project;
   }
 
   static async deleteProject(id: string): Promise<void> {
-    await this.client.delete(`projects/${id}`);
+    await this.tokenClient.delete(`projects/${id}`);
   }
 
   static async getProjectUsers(id: string): Promise<User[]> {
     const { users } = await this.handleApiError(
-      this.client.get(`projects/users/${id}`).json<GetProjectUsersResponse>()
+      this.tokenClient.get(`projects/users/${id}`).json<GetProjectUsersResponse>()
     ); // TODO - Change url structure to have id after projects
     return users;
   }
@@ -205,7 +199,7 @@ export class ApiClient {
     toUserEmail: string;
   }): Promise<ProjectInvitation> {
     const { project_invitation } = await this.handleApiError(
-      this.client
+      this.tokenClient
         .post('project-invitations', { json: { projectId, toUserEmail } })
         .json<CreateProjectInvitationResponse>()
     );
@@ -213,12 +207,12 @@ export class ApiClient {
   }
 
   static async acceptProjectInvitation({ key }: { key: string }): Promise<AcceptProjectInvitationResponse> {
-    return this.handleApiError(this.client.get(`project-invitations/${key}`).json());
+    return this.handleApiError(this.tokenClient.get(`project-invitations/${key}`).json());
   }
 
   static async createStripeSession(): Promise<StripeSession> {
     const { stripe_session } = await this.handleApiError(
-      this.client.post('stripe/sessions').json<CreateStripeSessionResponse>()
+      this.tokenClient.post('stripe/sessions').json<CreateStripeSessionResponse>()
     );
 
     return stripe_session;
@@ -226,7 +220,7 @@ export class ApiClient {
 
   static async createStripeBillingPortalSession(): Promise<StripeSession> {
     const { stripe_billing_portal_session } = await this.handleApiError(
-      this.client.post('stripe/billing-portal-sessions').json<CreateStripeBillingPortalSessionResponse>()
+      this.tokenClient.post('stripe/billing-portal-sessions').json<CreateStripeBillingPortalSessionResponse>()
     );
 
     return stripe_billing_portal_session;

@@ -1,18 +1,8 @@
 import { initialize } from '../lib/db/knex';
 
-const getDbInstance = () => {
-  return initialize({
-    client: 'postgres',
-    port: 5432,
-    user: 'postgres',
-    password: 'postgres',
-    database: 'postgres',
-  });
-};
-
 export const up = async () => {
   console.log('Running up seeder');
-  const knex = getDbInstance();
+  const knex = initialize();
 
   try {
     const res = await knex('users').insert({

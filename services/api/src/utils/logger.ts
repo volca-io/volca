@@ -1,6 +1,7 @@
 import winston from 'winston';
 import { injectable } from 'tsyringe';
 import correlator from 'correlation-id';
+import { EnvironmentUtils, EnvironmentVariable } from './environment';
 
 export enum LoggingFormat {
   JSON = 'json',
@@ -55,11 +56,14 @@ const createLogger = ({ level, format, defaultMeta = {}, silent = false }: Loggi
 export class Logger {
   private logger;
 
-  public constructor() {
-    const definedLevel = process.env.LOG_LEVEL || 'info';
+  public constructor(private environment: EnvironmentUtils) {
+    const definedLevel = this.environment.getVariable(EnvironmentVariable.LOG_LEVEL) || 'info';
     const level = LogLevel[definedLevel as keyof typeof LogLevel];
 
-    this.logger = createLogger({ level, format: LoggingFormat.SIMPLE });
+    this.logger = createLogger({
+      level,
+      format: this.environment.getVariable(EnvironmentVariable.STAGE) ? LoggingFormat.SIMPLE : LoggingFormat.JSON,
+    });
   }
 
   private buildMetadata(meta?: Record<string, unknown>): Record<string, unknown> {

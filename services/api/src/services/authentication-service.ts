@@ -1,4 +1,4 @@
-import { injectable, container } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { StatusCodes } from 'http-status-codes';
 import { v4 as uuid } from 'uuid';
 import { ServiceError } from '../errors/service-error';
@@ -6,6 +6,7 @@ import { ErrorNames } from '../constants';
 import { RefreshToken, User } from '../entities';
 import { UserService } from './user-service';
 import { Security } from '../lib/security/security';
+import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
 
 export type AccessTokenCookieSettings = {
   secure: boolean;
@@ -27,10 +28,11 @@ export type SessionResponse = {
 
 @injectable()
 export class AuthenticationService {
-  public constructor(private userService: UserService, private security: Security) {
-    this.security = container.resolve(Security);
-    this.userService = container.resolve(UserService);
-  }
+  public constructor(
+    private userService: UserService,
+    private security: Security,
+    private environment: EnvironmentUtils
+  ) {}
 
   public async createNewSession(user: User): Promise<SessionResponse> {
     const sessionId = uuid();
@@ -44,7 +46,7 @@ export class AuthenticationService {
   private generateAccessToken(user: User): AccessTokenResponse {
     const payload = { sub: user.id };
 
-    const expiresIn = 60 * 15; // 15 minutes
+    const expiresIn = 60 * 15;
     const accessToken = this.security.createAccessToken(payload, expiresIn);
 
     return { accessToken, expiresIn };
@@ -100,10 +102,10 @@ export class AuthenticationService {
 
   public getRefreshTokenCookieConfiguration(): AccessTokenCookieSettings {
     return {
-      secure: process.env.ENVIRONMENT !== 'local',
+      secure: this.environment.getVariable(EnvironmentVariable.STAGE) !== 'local',
       httpOnly: true,
       sameSite: 'lax',
-      domain: process.env.ENVIRONMENT === 'local' ? undefined : process.env.DOMAIN,
+      domain: this.environment.getVariable(EnvironmentVariable.STAGE) ? undefined : process.env.APP_DOMAIN,
     };
   }
 
@@ -128,7 +130,7 @@ export class AuthenticationService {
       });
     }
 
-    const match = await this.security.verifyPassword(user.password, password);
+    const match = this.security.verifyPassword(user.password, password);
 
     if (!match) {
       throw new ServiceError({

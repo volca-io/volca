@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import argon2 from 'argon2';
+import bcrypt from 'bcryptjs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
 import crypto from 'crypto';
@@ -21,12 +21,12 @@ export class Security {
     },
   ] as Array<SigningKey>;
 
-  public verifyPassword(hash: string, plain: string): Promise<boolean> {
-    return argon2.verify(hash, plain);
+  public verifyPassword(hash: string, plain: string): boolean {
+    return bcrypt.compareSync(plain, hash);
   }
 
-  public hashPassword(password: string): Promise<string> {
-    return argon2.hash(password);
+  public hashPassword(password: string): string {
+    return bcrypt.hashSync(password);
   }
 
   public createAccessToken(payload: Record<string, unknown>, expiresIn: string | number | undefined): string {
@@ -40,31 +40,44 @@ export class Security {
   }
 
   public verifyToken(token: string): JwtPayload {
-    const { header } = this.decodeToken(token);
+    const decoded = this.decodeToken(token);
 
-    const key = this.signingKeys.find((key) => key.kid === header.kid);
+    const key = this.signingKeys.find((key) => key.kid === decoded.header.kid);
 
     if (!key) {
       throw new ServiceError({
         name: ErrorNames.AUTHORIZATION_FAILED,
         message: 'Token validation failed',
-        debug: `Unable to find a matching signing kid for kid ${header.kid}`,
+        debug: `Unable to find a matching signing kid for kid ${decoded.header.kid}`,
         statusCode: StatusCodes.UNAUTHORIZED,
       });
     }
 
-    const result = jwt.verify(token, key.secret);
+    try {
+      const result = jwt.verify(token, key.secret);
 
-    if (typeof result !== 'object') {
+      if (typeof result !== 'object') {
+        throw new ServiceError({
+          name: ErrorNames.INTERNAL_SERVER_ERROR,
+          message: 'Token validation failed',
+          debug: `Token verification did not return an object. Returned type was ${typeof result}`,
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        });
+      }
+
+      return result;
+    } catch (error: unknown) {
+      if (!(error instanceof Error)) {
+        throw error;
+      }
+
       throw new ServiceError({
-        name: ErrorNames.INTERNAL_SERVER_ERROR,
+        name: ErrorNames.AUTHORIZATION_FAILED,
         message: 'Token validation failed',
-        debug: `Token verification did not return an object. Returned type was ${typeof result}`,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        debug: error.message,
+        statusCode: StatusCodes.UNAUTHORIZED,
       });
     }
-
-    return result;
   }
 
   public decodeToken(token: string): JwtPayload {
@@ -89,6 +102,6 @@ export class Security {
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       });
     }
-    return decoded.payload;
+    return decoded;
   }
 }

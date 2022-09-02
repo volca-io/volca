@@ -29,8 +29,11 @@
     "zxcvbn": "^4.4.2"
   },
   "scripts": {
-    "start:dev": "HOST=127.0.0.1 PORT=3000 react-scripts start",
+    "start:dev": "env-cmd -e local react-scripts start",
     "build": "react-scripts build",
+    "build:local": "env-cmd -e local yarn build",
+    "build:staging": "env-cmd -e staging yarn build",
+    "build:production": "env-cmd -e production yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -50,6 +53,7 @@
     ]
   },
   "devDependencies": {
-    "@types/zxcvbn": "^4.4.1"
+    "@types/zxcvbn": "^4.4.1",
+    "env-cmd": "^10.1.0"
   }
 }

@@ -6,20 +6,19 @@ import serverless from 'serverless-http';
 
 import { createServer } from '../server';
 import { initialize } from '../lib/db/knex';
+import { Knex } from 'knex';
 
-// @ts-ignore
-const knex = initialize({
-  client: 'postgres',
-  port: 5432,
-  user: 'postgres',
-  password: 'postgres',
-  database: 'postgres',
-});
+let knex: Knex;
 
 const server = createServer();
 const serverlessHandler = serverless(server);
 
 export const handler = async (event: APIGatewayProxyEvent, context: Context) => {
   context.callbackWaitsForEmptyEventLoop = false;
+
+  if (!knex) {
+    knex = initialize();
+  }
+
   return serverlessHandler(event, context);
 };

@@ -12,9 +12,7 @@ export const useUserActions = () => {
   };
 
   const signIn = async (email: string, password: string, remember: boolean): Promise<void> => {
-    const { access_token } = await ApiClient.authnPassword(email, password);
-
-    localStorage.setItem('access-token', access_token);
+    await ApiClient.authnPassword(email, password);
 
     const user = await ApiClient.getMe();
     setUser(user);

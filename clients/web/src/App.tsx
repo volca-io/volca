@@ -21,11 +21,12 @@ import { AuthenticatedRoute } from './routing/AuthenticatedRoute';
 import { ProjectRoute } from './routing/ProjectRoute';
 
 export const App = () => (
-  <RecoilRoot>
-    <React.Suspense fallback={<LoadingPage />}>
-      <ColorModeScript initialColorMode="system" />
-      <Router>
-        <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
+  <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
+    <ColorModeScript initialColorMode="system" />
+
+    <RecoilRoot>
+      <React.Suspense fallback={<LoadingPage />}>
+        <Router>
           <Routes>
             <Route
               index
@@ -100,8 +101,8 @@ export const App = () => (
             <Route path="/register" element={<RegisterPage />} />
             <Route path=":any" element={<NotFoundPage />} />
           </Routes>
-        </ChakraProvider>
-      </Router>
-    </React.Suspense>
-  </RecoilRoot>
+        </Router>
+      </React.Suspense>
+    </RecoilRoot>
+  </ChakraProvider>
 );

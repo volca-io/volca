@@ -1,18 +1,9 @@
+import 'reflect-metadata';
 import { initialize } from '../lib/db/knex';
-
-const getDbInstance = () => {
-  return initialize({
-    client: 'postgres',
-    port: 5432,
-    user: 'postgres',
-    password: 'postgres',
-    database: 'postgres',
-  });
-};
 
 export const up = async () => {
   console.log('Running up migration');
-  const knex = getDbInstance();
+  const knex = initialize();
 
   try {
     const res = await knex.migrate.up();
@@ -27,7 +18,7 @@ export const up = async () => {
 export const latest = async () => {
   console.log('Running latest migration');
 
-  const knex = getDbInstance();
+  const knex = initialize();
 
   try {
     const res = await knex.migrate.latest();
@@ -42,7 +33,7 @@ export const latest = async () => {
 export const down = async () => {
   console.log('Running down migration');
 
-  const knex = getDbInstance();
+  const knex = initialize();
 
   try {
     const res = await knex.migrate.down();
@@ -57,7 +48,7 @@ export const down = async () => {
 export const rollback = async () => {
   console.log('Running rollback migration');
 
-  const knex = getDbInstance();
+  const knex = initialize();
 
   try {
     const res = await knex.migrate.rollback();

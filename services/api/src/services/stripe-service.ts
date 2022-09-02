@@ -1,9 +1,7 @@
 import { injectable } from 'tsyringe';
-import { User } from '../entities';
-
 import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_KEY as string, { apiVersion: '2020-08-27' });
+import { User } from '../entities';
+import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
 
 type CreateStripeSessionParams = {
   user: User;
@@ -25,10 +23,18 @@ type StripeSession = {
 
 @injectable()
 export class StripeService {
+  private stripe: Stripe;
+
+  constructor(private environment: EnvironmentUtils) {
+    this.stripe = new Stripe(this.environment.getVariable(EnvironmentVariable.STRIPE_KEY), {
+      apiVersion: '2020-08-27',
+    });
+  }
+
   public async createSession({ user }: CreateStripeSessionParams): Promise<StripeSession> {
     const getStripeCustomerId = async () => {
       if (!user.stripeId) {
-        const { id: stripeId } = await stripe.customers.create({ email: user.email });
+        const { id: stripeId } = await this.stripe.customers.create({ email: user.email });
         await User.query().where({ id: user.id }).update({ stripeId });
         return stripeId;
       }
@@ -37,14 +43,14 @@ export class StripeService {
 
     const customer = await getStripeCustomerId();
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await this.stripe.checkout.sessions.create({
       success_url: 'http://127.0.0.1:3000', // TODO: Set dynamically
       cancel_url: 'http://127.0.0.1:3000/subscribe?status=warning', // TODO: Set dynamically
       customer,
       mode: 'subscription',
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: this.environment.getVariable(EnvironmentVariable.STRIPE_PRICE_ID),
           quantity: 1,
         },
       ],
@@ -60,7 +66,7 @@ export class StripeService {
           }),
     });
 
-    if (process.env.ENVIRONMENT === 'local') {
+    if (this.environment.getVariable(EnvironmentVariable.STAGE)) {
       await User.query().findById(user.id).update({ hasActiveSubscription: true });
     }
 
@@ -74,11 +80,11 @@ export class StripeService {
   public async createBillingPortalSession({
     stripeCustomerId,
   }: CreateStripeBillingPortalSessionParams): Promise<StripeSession> {
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
       return_url: 'http://127.0.0.1:3000/settings',
     });
-    if (process.env.ENVIRONMENT === 'local') {
+    if (this.environment.getVariable(EnvironmentVariable.STAGE)) {
       await User.query().where({ stripeId: stripeCustomerId }).update({ hasActiveSubscription: false });
     }
     const billingPortalSession = {
@@ -89,6 +95,10 @@ export class StripeService {
   }
 
   public async verifyWebhookSignature({ body, signature }: VerifyStripeWebhookSignatureParams) {
-    return stripe.webhooks.constructEventAsync(body, signature, process.env.STRIPE_KEY || '');
+    return this.stripe.webhooks.constructEventAsync(
+      body,
+      signature,
+      this.environment.getVariable(EnvironmentVariable.STRIPE_KEY)
+    );
   }
 }

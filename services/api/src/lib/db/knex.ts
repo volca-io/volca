@@ -1,30 +1,29 @@
 import Knex from 'knex';
 import { Model, knexSnakeCaseMappers } from 'objection';
-import { Logger } from '../../utils/logger';
 import { container } from 'tsyringe';
+import { EnvironmentUtils, EnvironmentVariable } from '../../utils/environment';
+import { Logger } from '../../utils/logger';
+import { MigrationSource } from './migration-source';
 
-interface InitializeKnexProperties {
-  client: 'postgres';
-  port: number;
-  user: string;
-  password: string;
-  database: string;
-}
-
-export const initialize = ({ client, port, user, password, database }: InitializeKnexProperties) => {
+export const initialize = () => {
   const logger = container.resolve(Logger);
+  const environment = container.resolve(EnvironmentUtils);
 
   logger.debug('Creating new knex client');
 
   const knex = Knex({
-    client,
+    client: 'postgres',
     useNullAsDefault: true,
     connection: {
-      port,
-      user,
-      password,
-      database,
+      host: environment.getVariable(EnvironmentVariable.DB_HOST),
+      port: 5432,
+      user: environment.getVariable(EnvironmentVariable.DB_USER),
+      password: environment.getVariable(EnvironmentVariable.DB_PASSWORD),
+      database: 'postgres',
       pool: { min: 1, max: 1, idleTimeoutMillis: 1000 },
+    },
+    migrations: {
+      migrationSource: new MigrationSource(),
     },
     ...knexSnakeCaseMappers(),
   });
