@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - feature/bundling # TODO: Remove before merging
 jobs:
   bundle:
     name: bundle
