@@ -1,6 +1,7 @@
 #!/bin/bash
 
 rm -rf ./bundle
-rm -rf volca.zip
+rm -rf bundle.zip
 rsync --prune-empty-dirs -a --exclude-from .gitignore --exclude-from exclude ./ bundle/
-zip volca.zip ./bundle
+cp -r .yarn ./bundle/
+zip -r bundle.zip ./bundle

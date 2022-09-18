@@ -1,0 +1,14 @@
+clients/*
+services/api/src/actions/authn/*
+services/api/src/actions/project-invitations/*
+services/api/src/actions/projects/*
+services/api/src/actions/stripe/*
+services/api/src/actions/users/*
+services/api/src/entities/*
+services/api/src/services/authentication-service.ts
+services/api/src/services/project-invitation-service.ts
+services/api/src/services/project-service.ts
+services/api/src/services/project-user-service.ts
+services/api/src/services/stripe-service.ts
+services/api/src/services/user-service.ts
+services/api/src/middlewares/authentication-middleware.ts

@@ -1,3 +1,6 @@
+.git
 exclude
+exclude-os
 .github/workflows/bundle.yml
-scripts/bundle.js
+scripts/bundle.sh
+scripts/bundle-open-source.sh

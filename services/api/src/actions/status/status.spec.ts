@@ -7,20 +7,20 @@ import { createServer } from '../../server';
 
 const expect = chai.expect;
 
-describe('Hello world', function () {
+describe('Status', () => {
   let server: Server;
 
-  beforeAll(function () {
+  beforeAll(() => {
     server = createServer().listen();
   });
 
-  afterAll(function () {
-    server.close();
+  afterAll(() => {
+    server?.close();
   });
 
-  it('get /hello-world returns message', async function () {
-    const res = await request(server).get('/hello-world');
+  it('get /status returns OK', async () => {
+    const res = await request(server).get('/status');
     expect(res.statusCode).to.eql(200);
-    expect(res.body).to.eql({ message: 'Hello world!' });
+    expect(res.body).to.eql({ status: 'OK' });
   });
 });

@@ -3,16 +3,31 @@ on:
   push:
     branches:
       - main
+      - feature/bundle-open-source # TODO: REMOVE THIS BEFORE MERGING
+env:
+  YARN_ENABLE_IMMUTABLE_INSTALLS: false
 jobs:
   bundle:
+    strategy:
+      matrix:
+        outputs:
+          [
+            { 'name': 'volca', 'script': 'bundle.sh' },
+            { 'name': 'volca-open-source', 'script': 'bundle-open-source.sh' },
+          ]
     name: bundle
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.0.2
       - name: Bundle
-        run: sh scripts/bundle.sh
+        run: sh scripts/${{ matrix.outputs.script }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Test
+        run: cd bundle && yarn && yarn test:ci
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: volca
-          path: volca.zip
+          name: ${{ matrix.outputs.name }}
+          path: bundle.zip

@@ -2,6 +2,9 @@ import Router from '@koa/router';
 import Application from 'koa';
 import body from 'koa-bodyparser';
 
+import { statusAction } from './actions/status';
+
+/* volca-exclude-start os */
 import {
   authnPasswordAction,
   authnPasswordSchema,
@@ -10,7 +13,7 @@ import {
   registerSchema,
   signOutAction,
 } from './actions/authn';
-import { helloWorldAction } from './actions/hello-world';
+
 import { getMeAction } from './actions/users';
 import {
   createProjectInvitationAction,
@@ -32,6 +35,7 @@ import { createStripeSessionAction, createStripeBillingPortalSessionAction } fro
 
 import { authenticationMiddleware } from './middlewares';
 import { schemaValidationMiddleware } from './middlewares/schema-validation-middleware';
+/* volca-exclude-end os */
 import { CustomContext } from './types';
 
 export const createRouter = (): Router<Application.DefaultState, CustomContext> => {
@@ -42,6 +46,10 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   // Actions
 
+  // Status
+  router.get('/status', statusAction);
+
+  /* volca-exclude-start os */
   // Projects
   router.get('/projects/:id', authenticationMiddleware, getProjectAction);
   router.delete('/projects/:id', authenticationMiddleware, deleteProjectAction);
@@ -71,9 +79,6 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   );
   router.get('/project-invitations/:key', authenticationMiddleware, acceptProjectInvitationAction);
 
-  // Hello world
-  router.get('/hello-world', helloWorldAction);
-
   // Users
   router.get('/me', authenticationMiddleware, getMeAction);
 
@@ -86,6 +91,8 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   // Stripe
   router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);
   router.post('/stripe/billing-portal-sessions', authenticationMiddleware, createStripeBillingPortalSessionAction);
+
+  /* volca-exclude-end os */
 
   // Post action middlewares
 

@@ -105,5 +105,4 @@ sketch
 # Build artifacts
 .webpack
 bundle
-volca.zip
-
+bundle.zip
