@@ -35,7 +35,7 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
   const token = header.replace('Bearer ', '');
 
   const { sub } =
-    environment.getVariable(EnvironmentVariable.SKIP_TOKEN_VERIFICATION) === 'true'
+    environment.getOrFail(EnvironmentVariable.SKIP_TOKEN_VERIFICATION) === 'true'
       ? security.decodeToken(token)
       : security.verifyToken(token);
 

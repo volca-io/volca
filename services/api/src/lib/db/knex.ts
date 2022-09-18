@@ -15,10 +15,10 @@ export const initialize = () => {
     client: 'postgres',
     useNullAsDefault: true,
     connection: {
-      host: environment.getVariable(EnvironmentVariable.DB_HOST),
+      host: environment.getOrFail(EnvironmentVariable.DB_HOST),
       port: 5432,
-      user: environment.getVariable(EnvironmentVariable.DB_USER),
-      password: environment.getVariable(EnvironmentVariable.DB_PASSWORD),
+      user: environment.getOrFail(EnvironmentVariable.DB_USER),
+      password: environment.getOrFail(EnvironmentVariable.DB_PASSWORD),
       database: 'postgres',
       pool: { min: 1, max: 1, idleTimeoutMillis: 1000 },
     },

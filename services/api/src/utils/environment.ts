@@ -14,12 +14,13 @@ export enum EnvironmentVariable {
   STRIPE_PRICE_ID = 'STRIPE_PRICE_ID',
   STRIPE_KEY = 'STRIPE_KEY',
   LOG_LEVEL = 'LOG_LEVEL',
+  LOGGING_DISABLED = 'LOGGING_DISABLED',
 }
 
 @singleton()
 export class EnvironmentUtils {
-  getVariable(key: EnvironmentVariable): string {
-    const value = process.env[key];
+  getOrFail(key: EnvironmentVariable): string {
+    const value = this.get(key);
 
     if (!value) {
       throw new ServiceError({
@@ -31,5 +32,9 @@ export class EnvironmentUtils {
     }
 
     return value;
+  }
+
+  get(key: EnvironmentVariable): string | undefined {
+    return process.env[key];
   }
 }

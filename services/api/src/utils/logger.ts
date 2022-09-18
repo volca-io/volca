@@ -57,12 +57,15 @@ export class Logger {
   private logger;
 
   public constructor(private environment: EnvironmentUtils) {
-    const definedLevel = this.environment.getVariable(EnvironmentVariable.LOG_LEVEL) || 'info';
+    const definedLevel = this.environment.get(EnvironmentVariable.LOG_LEVEL) || 'info';
+    const disabled = this.environment.get(EnvironmentVariable.LOGGING_DISABLED) || 'false';
+
     const level = LogLevel[definedLevel as keyof typeof LogLevel];
 
     this.logger = createLogger({
       level,
-      format: this.environment.getVariable(EnvironmentVariable.STAGE) ? LoggingFormat.SIMPLE : LoggingFormat.JSON,
+      format: this.environment.getOrFail(EnvironmentVariable.STAGE) ? LoggingFormat.SIMPLE : LoggingFormat.JSON,
+      silent: disabled === 'true',
     });
   }
 

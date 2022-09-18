@@ -1,0 +1,79 @@
+name: deploy-web-client
+on:
+  push:
+    paths:
+      - 'clients/web/**'
+      - '.github/workflows/deploy-webapp.yml'
+    branches:
+      - main
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials from staging account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::428245413678:role/volca-staging-github-actions-webapp-deployment-role
+          aws-region: eu-central-1
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Yarn Install
+        run: |
+          yarn install --immutable
+      - name: Production Build
+        working-directory: clients/web
+        run: |
+          yarn build:staging
+      - name: Deploy to S3
+        working-directory: clients/web
+        run: |
+          aws s3 sync ./build s3://volca-staging-webapp-hosting-bucket --delete
+      - name: Invalidate cache
+        working-directory: clients/web
+        run: |
+          aws cloudfront create-invalidation --distribution-id E1VT76P50RM0HL --paths "/*"
+  deploy-production:
+    needs:
+      - deploy-staging
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials from production account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::428245413678:role/volca-production-github-actions-webapp-deployment-role
+          aws-region: eu-central-1
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Yarn Install
+        run: |
+          yarn install --immutable
+      - name: Production Build
+        working-directory: clients/web
+        run: |
+          yarn build:production
+      - name: Deploy to S3
+        working-directory: clients/web
+        run: |
+          aws s3 sync ./build s3://volca-production-webapp-hosting-bucket --delete
+      - name: Invalidate cache
+        working-directory: clients/web
+        run: |
+          aws cloudfront create-invalidation --distribution-id EQDWC9RZWT46L --paths "/*"

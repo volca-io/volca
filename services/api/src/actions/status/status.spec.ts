@@ -1,11 +1,8 @@
 import 'reflect-metadata';
-import chai from 'chai';
 import request from 'supertest';
 import { Server } from 'http';
 
 import { createServer } from '../../server';
-
-const expect = chai.expect;
 
 describe('Status', () => {
   let server: Server;
@@ -20,7 +17,7 @@ describe('Status', () => {
 
   it('get /status returns OK', async () => {
     const res = await request(server).get('/status');
-    expect(res.statusCode).to.eql(200);
-    expect(res.body).to.eql({ status: 'OK' });
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual({ status: 'OK' });
   });
 });

@@ -34,7 +34,7 @@
     "build:local": "env-cmd -e local yarn build",
     "build:staging": "env-cmd -e staging yarn build",
     "build:production": "env-cmd -e production yarn build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -55,5 +55,10 @@
   "devDependencies": {
     "@types/zxcvbn": "^4.4.1",
     "env-cmd": "^10.1.0"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(ky))"
+    ]
   }
 }

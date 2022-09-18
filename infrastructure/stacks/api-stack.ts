@@ -29,7 +29,7 @@ import { CertificateValidation, DnsValidatedCertificate } from 'aws-cdk-lib/aws-
 import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 
-import { StackStrategy } from '../../volca.config';
+import { StackStrategy } from '../../types/volca';
 
 interface ApiStackProps extends StackProps {
   service: string;

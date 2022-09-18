@@ -14,9 +14,9 @@ export const createServer = (): Koa => {
   app.use(
     cors({
       origin:
-        environment.getVariable(EnvironmentVariable.STAGE) === 'local'
+        environment.getOrFail(EnvironmentVariable.STAGE) === 'local'
           ? 'http://127.0.0.1:3000'
-          : `https://${environment.getVariable(EnvironmentVariable.APP_DOMAIN)}`,
+          : `https://${environment.getOrFail(EnvironmentVariable.APP_DOMAIN)}`,
       credentials: true,
     })
   );

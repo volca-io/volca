@@ -1,0 +1,63 @@
+name: deploy-api-service
+on:
+  push:
+    paths:
+      - 'services/api/**'
+      - '.github/workflows/deploy-api.yml'
+    branches:
+      - main
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials from staging account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::428245413678:role/volca-staging-github-actions-api-deployment-role
+          aws-region: eu-central-1
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Yarn Install
+        run: |
+          yarn install --immutable
+      - name: Deploy api
+        working-directory: services/api
+        run: |
+          yarn deploy:staging
+  deploy-production:
+    needs:
+      - deploy-staging
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials from production account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::428245413678:role/volca-production-github-actions-api-deployment-role
+          aws-region: eu-central-1
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Yarn Install
+        run: |
+          yarn install --immutable
+      - name: Deploy api
+        working-directory: services/api
+        run: |
+          yarn deploy:production

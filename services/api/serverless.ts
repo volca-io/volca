@@ -1,5 +1,6 @@
 /* eslint-disable no-template-curly-in-string */
 import type { AWS } from '@serverless/typescript';
+import { Environment } from '../../types/volca';
 import { config } from '../../volca.config';
 
 type EnvironmentConfig = {
@@ -18,9 +19,7 @@ type EnvironmentConfig = {
     | string;
 };
 
-const stage = process.env.STAGE || 'local';
-
-const getEnvironment = (): EnvironmentConfig => {
+const getEnvironment = (stage: string): EnvironmentConfig => {
   switch (stage) {
     case 'local':
       return {
@@ -45,7 +44,7 @@ const getEnvironment = (): EnvironmentConfig => {
         stripePriceId: 'STRIPE_PRICE_ID',
         stripeKey: 'STRIPE_KEY',
       };
-    case 'demo':
+    case 'production':
       return {
         logLevel: 'debug',
         appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
@@ -59,6 +58,19 @@ const getEnvironment = (): EnvironmentConfig => {
   }
 };
 
+const resolveStage = (): Environment => {
+  const stage = (process.env.STAGE as Environment) || Environment.LOCAL;
+
+  if (!Object.values(Environment).includes(stage)) {
+    throw new Error(`Unhandled stage ${stage}. Add the environment to your volca.config.ts and try again`);
+  }
+
+  return stage;
+};
+
+const stage = resolveStage();
+const stageConfig = config.environments[stage];
+
 const serverlessConfiguration: AWS = {
   service: `${config.name}-api`,
   frameworkVersion: '3',
@@ -69,13 +81,16 @@ const serverlessConfiguration: AWS = {
   plugins: ['serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
+    iam: {
+      deploymentRole: `arn:aws:iam::${stageConfig?.aws.account}:role/${config.name}-\${self:provider.stage}-github-actions-cloudformation-deployment-role`,
+    },
     stackName: `${config.name}-${stage}-api-service`,
     runtime: 'nodejs16.x',
     lambdaHashingVersion: '20201221',
     stage,
     region: config.environments[stage]?.aws.region,
     apiGateway:
-      stage !== 'local'
+      stage !== Environment.LOCAL
         ? {
             restApiId: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiGatewayID}`,
             restApiRootResourceId: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiGatewayRootResourceID}`,
@@ -95,7 +110,7 @@ const serverlessConfiguration: AWS = {
     },
   },
   custom: {
-    environment: getEnvironment(),
+    environment: getEnvironment(stage),
     'serverless-offline': {
       httpPort: 4000,
       noPrependStageInUrl: true,
@@ -118,17 +133,8 @@ const serverlessConfiguration: AWS = {
         },
       ],
     },
-    'migrate-up': {
-      handler: 'src/lambda-handlers/migrations.up',
-    },
-    'migrate-latest': {
-      handler: 'src/lambda-handlers/migrations.latest',
-    },
-    'migrate-down': {
-      handler: 'src/lambda-handlers/migrations.down',
-    },
-    'migrate-rollback': {
-      handler: 'src/lambda-handlers/migrations.rollback',
+    migrate: {
+      handler: 'src/lambda-handlers/migrate.handler',
     },
   },
 };

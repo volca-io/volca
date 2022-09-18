@@ -21,11 +21,12 @@ interface WebappStackProps extends StackProps {
 
 export class WebappStack extends Stack {
   public distribution: CloudFrontWebDistribution;
+  public bucket: Bucket;
 
   constructor(scope: Construct, id: string, props: WebappStackProps) {
     super(scope, id, props);
 
-    const bucket = new Bucket(this, 'WebappHostingBucket', {
+    this.bucket = new Bucket(this, 'WebappHostingBucket', {
       bucketName: `${props.service}-${props.stage}-webapp-hosting-bucket`, // TODO - Append random characters to end to enforce uniqueness
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
@@ -35,7 +36,7 @@ export class WebappStack extends Stack {
     });
 
     const oai = new OriginAccessIdentity(this, 'WebappCloudFrontOriginAccessIdentity');
-    bucket.grantRead(oai.grantPrincipal);
+    this.bucket.grantRead(oai.grantPrincipal);
 
     let certificate: DnsValidatedCertificate | null = null;
     if (props.hostedZone) {
@@ -61,7 +62,7 @@ export class WebappStack extends Stack {
       originConfigs: [
         {
           s3OriginSource: {
-            s3BucketSource: bucket,
+            s3BucketSource: this.bucket,
             originAccessIdentity: oai,
           },
           behaviors: [{ isDefaultBehavior: true }],
@@ -77,7 +78,7 @@ export class WebappStack extends Stack {
       ],
     });
 
-    bucket.grantRead(oai.grantPrincipal);
+    this.bucket.grantRead(oai.grantPrincipal);
 
     if (props.hostedZone) {
       new ARecord(this, 'WebappARecord', {

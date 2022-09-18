@@ -1,4 +1,4 @@
-name: pr-review
+name: code-quality
 on: [pull_request]
 jobs:
   eslint:
@@ -7,11 +7,14 @@ jobs:
     steps:
       - name: Check out code.
         uses: actions/checkout@v3.0.2
-      - uses: actions/setup-node@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
+          cache: yarn
+          cache-dependency-path: yarn.lock
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --immutable
       - name: eslint
         uses: reviewdog/action-eslint@v1
         with:
@@ -41,10 +44,13 @@ jobs:
     steps:
       - name: Check out code.
         uses: actions/checkout@v3.0.2
-      - uses: actions/setup-node@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
+          cache: yarn
+          cache-dependency-path: yarn.lock
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --immutable
       - name: Run tests
-        run: yarn test:ci
+        run: yarn test

@@ -2,7 +2,7 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Vpc, SubnetType } from 'aws-cdk-lib/aws-ec2';
 
 import { Construct } from 'constructs';
-import { StackStrategy } from '../../volca.config';
+import { StackStrategy } from '../../types/volca';
 
 interface VpcStackProps extends StackProps {
   service: string;

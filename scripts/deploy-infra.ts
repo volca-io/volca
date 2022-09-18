@@ -3,6 +3,7 @@ import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-clo
 import { program } from 'commander';
 
 import { config } from '../volca.config';
+import { Environment } from '../types/volca';
 
 const isBootstrapped = async (region: string): Promise<boolean> => {
   const client = new CloudFormationClient({ region });
@@ -79,10 +80,10 @@ program.parse();
 
 const { stage, stacks } = program.opts();
 
-const env = config.environments[stage];
+const env = config.environments[stage as Environment];
 
 if (!env) {
-  console.log(`[ Error ] Could not find a configured stage in volca.config.ts for stage ${stage}`);
+  throw new Error(`[ Error ] Could not find a configured stage in volca.config.ts for stage ${stage}`);
 }
 
 run(env.aws.region, stage, stacks);

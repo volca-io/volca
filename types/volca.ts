@@ -38,14 +38,28 @@ type AwsConfig = {
   stackStrategy: StackStrategy;
 };
 
-type EnvironmentConfig = {
+type DeployableEnvironmentConfig = {
   aws: AwsConfig;
   domain?: string;
 };
 
-export type VolcaConfig = {
+type GithubConfig = {
+  organization: string;
+  repository: string;
+};
+
+export enum Environment {
+  LOCAL = 'local',
+  STAGING = 'staging',
+  PRODUCTION = 'production',
+}
+
+export type Config = {
   environments: {
-    [environment: string]: EnvironmentConfig;
+    [Environment.LOCAL]: null;
+    [Environment.STAGING]: DeployableEnvironmentConfig;
+    [Environment.PRODUCTION]: DeployableEnvironmentConfig;
   };
   name: string;
+  github: GithubConfig;
 };

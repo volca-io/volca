@@ -1,8 +1,13 @@
-import { VolcaConfig, StackStrategy } from './config';
+import { Config, StackStrategy } from './types/volca';
 
-export const config: VolcaConfig = {
+export const config: Config = {
   name: 'volca',
+  github: {
+    organization: 'okarlsson',
+    repository: 'volca',
+  },
   environments: {
+    local: null,
     staging: {
       domain: 'staging.volca.io',
       aws: {
@@ -11,7 +16,7 @@ export const config: VolcaConfig = {
         stackStrategy: StackStrategy.COST,
       },
     },
-    demo: {
+    production: {
       domain: 'demo.volca.io',
       aws: {
         account: '428245413678',

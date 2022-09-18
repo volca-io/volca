@@ -102,10 +102,10 @@ export class AuthenticationService {
 
   public getRefreshTokenCookieConfiguration(): AccessTokenCookieSettings {
     return {
-      secure: this.environment.getVariable(EnvironmentVariable.STAGE) !== 'local',
+      secure: this.environment.getOrFail(EnvironmentVariable.STAGE) !== 'local',
       httpOnly: true,
       sameSite: 'lax',
-      domain: this.environment.getVariable(EnvironmentVariable.STAGE) ? undefined : process.env.APP_DOMAIN,
+      domain: this.environment.getOrFail(EnvironmentVariable.STAGE) ? undefined : process.env.APP_DOMAIN,
     };
   }
 

@@ -26,7 +26,7 @@ export class StripeService {
   private stripe: Stripe;
 
   constructor(private environment: EnvironmentUtils) {
-    this.stripe = new Stripe(this.environment.getVariable(EnvironmentVariable.STRIPE_KEY), {
+    this.stripe = new Stripe(this.environment.getOrFail(EnvironmentVariable.STRIPE_KEY), {
       apiVersion: '2020-08-27',
     });
   }
@@ -50,7 +50,7 @@ export class StripeService {
       mode: 'subscription',
       line_items: [
         {
-          price: this.environment.getVariable(EnvironmentVariable.STRIPE_PRICE_ID),
+          price: this.environment.getOrFail(EnvironmentVariable.STRIPE_PRICE_ID),
           quantity: 1,
         },
       ],
@@ -66,7 +66,7 @@ export class StripeService {
           }),
     });
 
-    if (this.environment.getVariable(EnvironmentVariable.STAGE)) {
+    if (this.environment.getOrFail(EnvironmentVariable.STAGE)) {
       await User.query().findById(user.id).update({ hasActiveSubscription: true });
     }
 
@@ -84,7 +84,7 @@ export class StripeService {
       customer: stripeCustomerId,
       return_url: 'http://127.0.0.1:3000/settings',
     });
-    if (this.environment.getVariable(EnvironmentVariable.STAGE)) {
+    if (this.environment.getOrFail(EnvironmentVariable.STAGE)) {
       await User.query().where({ stripeId: stripeCustomerId }).update({ hasActiveSubscription: false });
     }
     const billingPortalSession = {
@@ -98,7 +98,7 @@ export class StripeService {
     return this.stripe.webhooks.constructEventAsync(
       body,
       signature,
-      this.environment.getVariable(EnvironmentVariable.STRIPE_KEY)
+      this.environment.getOrFail(EnvironmentVariable.STRIPE_KEY)
     );
   }
 }
