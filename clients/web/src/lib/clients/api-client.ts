@@ -147,6 +147,10 @@ export class ApiClient {
     localStorage.setItem('access-token', access_token);
   }
 
+  static async resetPassword(email: string): Promise<void> {
+    await this.handleApiError(this.client.post('authn/reset-password', { json: { email } }).json());
+  }
+
   static async signOut(): Promise<void> {
     await this.handleApiError(this.client.post('authn/sign-out'));
   }

@@ -82,6 +82,19 @@ export const SignInPage: React.FC = () => {
         )}
         <SoftCard>
           <SignInForm defaultIdentifier={identifier} defaultRemember={remember} onSubmit={onSubmit} loading={loading} />
+          <Text fontSize="sm" mt={4} color={textColor}>
+            Forgot your password?{' '}
+            <Link
+              color={linkColor}
+              textDecoration="underline"
+              textUnderlineOffset={1.5}
+              to="/reset-password"
+              as={RouterLink}
+            >
+              Reset password
+            </Link>
+            .
+          </Text>
         </SoftCard>
       </Flex>
     </DefaultLayout>

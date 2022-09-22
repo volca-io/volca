@@ -59,6 +59,7 @@
     "test": "jest ./src/**/*.spec.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.170.0",
     "@koa/cors": "^3.3.0",
     "@koa/router": "^10.1.1",
     "aws-lambda": "^1.0.7",

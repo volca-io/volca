@@ -8,6 +8,8 @@ import { statusAction } from './actions/status';
 import {
   authnPasswordAction,
   authnPasswordSchema,
+  authnResetPasswordAction,
+  authnResetPasswordSchema,
   refreshAction,
   registerAction,
   registerSchema,
@@ -84,6 +86,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   // Authentication
   router.post('/authn/password', schemaValidationMiddleware(authnPasswordSchema), authnPasswordAction);
+  router.post('/authn/reset-password', schemaValidationMiddleware(authnResetPasswordSchema), authnResetPasswordAction);
   router.post('/authn/sign-out', signOutAction);
   router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
   router.post('/authn/refresh', refreshAction);

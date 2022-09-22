@@ -41,6 +41,7 @@ type AwsConfig = {
 type DeployableEnvironmentConfig = {
   aws: AwsConfig;
   domain?: string;
+  fromEmail: string;
 };
 
 type GithubConfig = {

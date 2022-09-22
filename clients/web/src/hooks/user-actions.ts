@@ -26,6 +26,10 @@ export const useUserActions = () => {
     localStorage.setItem('remember_toggled', remember ? 'true' : 'false');
   };
 
+  const resetPassword = async (email: string): Promise<void> => {
+    await ApiClient.resetPassword(email);
+  };
+
   const signOut = async () => {
     await ApiClient.signOut();
     localStorage.removeItem('access-token');
@@ -40,5 +44,5 @@ export const useUserActions = () => {
     return { remember, identifier };
   };
 
-  return { register, signIn, signOut, getRememberInfo };
+  return { register, signIn, signOut, getRememberInfo, resetPassword };
 };

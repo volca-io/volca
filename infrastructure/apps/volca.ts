@@ -46,6 +46,7 @@ if (domain) {
     stage,
     domain,
     env: aws,
+    email: environmentConfig.fromEmail,
   });
 
   hostedZone = routingStack.hostedZone;

@@ -6,14 +6,16 @@
     "clients/*"
   ],
   "scripts": {
-    "infra:deploy": "ts-node ./scripts/deploy-infra",
-    "infra:destroy": "ts-node ./scripts/destroy-infra",
+    "ts-node": "node_modules/ts-node/dist/bin.js",
+    "infra:deploy": "yarn ts-node ./scripts/deploy-infra",
+    "infra:destroy": "yarn ts-node ./scripts/destroy-infra",
     "start": "yarn workspaces foreach --exclude @volca/root -vpi run start:dev",
     "check:lint": "yarn workspaces foreach --exclude @volca/root -vpi run check:lint",
     "test": "yarn workspaces foreach --exclude @volca/root -vpi run test"
   },
   "devDependencies": {
     "@aws-sdk/client-cloudformation": "^3.160.0",
+    "@seeebiii/ses-verify-identities": "^4.1.0",
     "@types/jest": "^27.5.2",
     "@types/node": "10.17.27",
     "@types/prettier": "2.6.0",

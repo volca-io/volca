@@ -8,5 +8,9 @@
     "eu-west-1a",
     "eu-west-1b",
     "eu-west-1c"
-  ]
+  ],
+  "hosted-zone:account=428245413678:domainName=staging.volca.io:region=eu-central-1": {
+    "Id": "/hostedzone/Z0634214175Z84LG2HIO1",
+    "Name": "staging.volca.io."
+  }
 }

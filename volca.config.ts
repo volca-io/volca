@@ -10,6 +10,7 @@ export const config: Config = {
     local: null,
     staging: {
       domain: 'staging.volca.io',
+      fromEmail: 'admin@volca.io',
       aws: {
         account: '428245413678',
         region: 'eu-central-1',
@@ -18,6 +19,7 @@ export const config: Config = {
     },
     production: {
       domain: 'demo.volca.io',
+      fromEmail: 'admin@volca.io',
       aws: {
         account: '428245413678',
         region: 'eu-central-1',

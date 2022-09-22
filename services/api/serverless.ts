@@ -6,6 +6,7 @@ import { config } from '../../volca.config';
 type EnvironmentConfig = {
   logLevel: string;
   appDomain: string;
+  fromEmail: string;
   skipTokenVerification: string;
   stripePriceId: string;
   stripeKey: string;
@@ -28,6 +29,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         skipTokenVerification: 'false',
         stripePriceId: 'STRIPE_PRICE_ID',
         stripeKey: 'STRIPE_KEY',
+        fromEmail: 'admin@volca.io', // TODO: Pick from config
         credentials: {
           host: 'localhost',
           port: '5432',
@@ -43,6 +45,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         skipTokenVerification: 'false',
         stripePriceId: 'STRIPE_PRICE_ID',
         stripeKey: 'STRIPE_KEY',
+        fromEmail: config.environments.staging.fromEmail,
       };
     case 'production':
       return {
@@ -52,6 +55,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         skipTokenVerification: 'false',
         stripePriceId: 'STRIPE_PRICE_ID',
         stripeKey: 'STRIPE_KEY',
+        fromEmail: config.environments.demo.fromEmail,
       };
     default:
       throw new Error(`Unsupported environment ${stage}`);
@@ -107,6 +111,7 @@ const serverlessConfiguration: AWS = {
       SKIP_TOKEN_VERIFICATION: '${self:custom.environment.skipTokenVerification}',
       STRIPE_PRICE_ID: '${self:custom.environment.stripePriceId}',
       STRIPE_KEY: '${self:custom.environment.stripeKey}',
+      FROM_EMAIL: '${self:custom.environment.fromEmail}',
     },
   },
   custom: {
