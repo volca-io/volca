@@ -26,12 +26,12 @@ jobs:
           yarn install --immutable
       - name: Export AWS role
         run: |
-          echo "DEPLOYMENT_ROLE=$(yarn dlx -q ts-node ./scripts/print-aws-role.ts --environment staging --service api)" >> $GITHUB_ENV
+          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment staging >> $GITHUB_ENV
       - name: Configure AWS credentials from staging account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ env.DEPLOYMENT_ROLE }}
-          aws-region: eu-central-1
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-staging-github-actions-api-deployment-role
+          aws-region: ${{ AWS_REGION }}
       - name: Deploy api
         working-directory: services/api
         run: |
@@ -57,12 +57,12 @@ jobs:
           yarn install --immutable
       - name: Export AWS role
         run: |
-          echo "DEPLOYMENT_ROLE=$(yarn dlx -q ts-node ./scripts/print-aws-role.ts --environment production --service api)" >> $GITHUB_ENV
-      - name: Configure AWS credentials from production account
+          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment production >> $GITHUB_ENV
+      - name: Configure AWS credentials from staging account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ env.DEPLOYMENT_ROLE }}
-          aws-region: eu-central-1
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-production-github-actions-api-deployment-role
+          aws-region: ${{ AWS_REGION }}
       - name: Deploy api
         working-directory: services/api
         run: |

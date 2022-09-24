@@ -30,11 +30,11 @@ jobs:
           yarn build:staging
       - name: Export AWS role
         run: |
-          echo "DEPLOYMENT_ROLE=$(yarn dlx -q ts-node ./scripts/print-aws-role.ts --environment staging --service webapp)" >> $GITHUB_ENV
+          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment staging >> $GITHUB_ENV
       - name: Configure AWS credentials from staging account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ env.DEPLOYMENT_ROLE }}
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-staging-github-actions-webapp-deployment-role
           aws-region: eu-central-1
       - name: Deploy to S3
         working-directory: clients/web
@@ -43,7 +43,9 @@ jobs:
       - name: Invalidate cache
         working-directory: clients/web
         run: |
-          aws cloudfront create-invalidation --distribution-id E1VT76P50RM0HL --paths "/*"
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[*].{id:Id,origin:Origins.Items[0].DomainName}[?starts_with(origin, 'volca-staging')].id" --output text)
+          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+
   deploy-production:
     needs:
       - deploy-staging
@@ -69,11 +71,11 @@ jobs:
           yarn build:production
       - name: Export AWS role
         run: |
-          echo "DEPLOYMENT_ROLE=$(yarn dlx -q ts-node ./scripts/print-aws-role.ts --environment production --service webapp)" >> $GITHUB_ENV
-      - name: Configure AWS credentials from production account
+          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment production >> $GITHUB_ENV
+      - name: Configure AWS credentials from staging account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ env.DEPLOYMENT_ROLE }}
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-production-github-actions-webapp-deployment-role
           aws-region: eu-central-1
       - name: Deploy to S3
         working-directory: clients/web
@@ -82,4 +84,5 @@ jobs:
       - name: Invalidate cache
         working-directory: clients/web
         run: |
-          aws cloudfront create-invalidation --distribution-id EQDWC9RZWT46L --paths "/*"
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[*].{id:Id,origin:Origins.Items[0].DomainName}[?starts_with(origin, 'volca-production')].id" --output text)
+          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
