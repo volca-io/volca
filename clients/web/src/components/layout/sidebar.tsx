@@ -88,15 +88,19 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const navigate = useNavigate();
 
   const LinkItems: Array<LinkItemProps> = [
-    { name: 'Dashboard', onClick: () => navigate('/'), icon: MdHomeFilled },
+    {
+      name: 'Dashboard',
+      onClick: () => navigate(selectedProject ? `/projects/${selectedProject.id}/dashboard` : '/'),
+      icon: MdHomeFilled,
+    },
     {
       name: 'Users',
-      onClick: () => navigate(selectedProject ? `/projects/${selectedProject?.id}/users` : '/'),
+      onClick: () => navigate(selectedProject ? `/projects/${selectedProject.id}/users` : '/'),
       icon: MdGroups,
     },
     {
       name: 'Settings',
-      onClick: () => navigate(selectedProject ? `/projects/${selectedProject?.id}/settings` : '/'),
+      onClick: () => navigate(selectedProject ? `/projects/${selectedProject.id}/settings` : '/'),
       icon: MdSettings,
     },
   ];
