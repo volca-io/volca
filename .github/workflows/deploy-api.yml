@@ -31,7 +31,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-staging-github-actions-api-deployment-role
-          aws-region: ${{ AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
       - name: Deploy api
         working-directory: services/api
         run: |
@@ -62,7 +62,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-production-github-actions-api-deployment-role
-          aws-region: ${{ AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
       - name: Deploy api
         working-directory: services/api
         run: |
