@@ -8,14 +8,14 @@ type EnvironmentConfig = {
   appDomain: string;
   fromEmail: string;
   skipTokenVerification: string;
-  stripePriceId: string;
-  stripeKey: string;
   credentials:
     | {
         host: string;
         port: string;
         username: string;
         password: string;
+        stripePriceId: string;
+        stripeKey: string;
       }
     | string;
 };
@@ -27,14 +27,14 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         logLevel: 'debug',
         appDomain: '127.0.0.1:4000',
         skipTokenVerification: 'false',
-        stripePriceId: process.env.STRIPE_PRICE_ID || '',
-        stripeKey: process.env.STRIPE_KEY || '',
-        fromEmail: 'admin@volca.io', // TODO: Pick from config
+        fromEmail: 'admin@volca.io', // TODO: Pick email from config
         credentials: {
           host: 'localhost',
           port: '5432',
           username: 'postgres',
           password: 'postgres',
+          stripePriceId: process.env.STRIPE_PRICE_ID || '',
+          stripeKey: process.env.STRIPE_KEY || '',
         },
       };
     case 'staging':
@@ -43,8 +43,6 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
         credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
         skipTokenVerification: 'false',
-        stripePriceId: 'STRIPE_PRICE_ID',
-        stripeKey: 'STRIPE_KEY',
         fromEmail: config.environments.staging.fromEmail,
       };
     case 'production':
@@ -53,8 +51,6 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
         credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
         skipTokenVerification: 'false',
-        stripePriceId: 'STRIPE_PRICE_ID',
-        stripeKey: 'STRIPE_KEY',
         fromEmail: config.environments.production.fromEmail,
       };
     default:
@@ -109,8 +105,8 @@ const serverlessConfiguration: AWS = {
       DB_PASSWORD: '${self:custom.environment.credentials.password}',
       DB_PORT: '${self:custom.environment.credentials.port}',
       SKIP_TOKEN_VERIFICATION: '${self:custom.environment.skipTokenVerification}',
-      STRIPE_PRICE_ID: '${self:custom.environment.stripePriceId}',
-      STRIPE_KEY: '${self:custom.environment.stripeKey}',
+      STRIPE_PRICE_ID: '${self:custom.environment.credentials.stripePriceId}',
+      STRIPE_KEY: '${self:custom.environment.credentials.stripeKey}',
       FROM_EMAIL: '${self:custom.environment.fromEmail}',
     },
   },
