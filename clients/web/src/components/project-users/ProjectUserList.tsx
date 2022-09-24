@@ -6,9 +6,10 @@ import { User, Project } from '../../types';
 type ProjectUserListProps = {
   project: Project;
   users: User[];
+  deleteUser: (projectId: string, userId: string) => void;
 };
 
-const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users }) => {
+const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users, deleteUser }) => {
   return (
     <>
       <TableContainer w="100%" mt={6}>
@@ -32,9 +33,8 @@ const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users }) => 
                 <Td>{user.email}</Td>
                 <Td>{user.id === project.admin_id ? 'Admin' : 'Member'}</Td>
                 <Td style={{ textAlign: 'end' }}>
-                  {/* TODO: Add action to this button and only show when the current user is admin */}
                   {user.id === project.admin_id ? null : (
-                    <Button minWidth="160px" colorScheme="red">
+                    <Button minWidth="160px" colorScheme="red" onClick={() => deleteUser(project.id, user.id)}>
                       Delete
                     </Button>
                   )}

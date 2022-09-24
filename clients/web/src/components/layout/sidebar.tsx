@@ -91,12 +91,12 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     { name: 'Dashboard', onClick: () => navigate('/'), icon: MdHomeFilled },
     {
       name: 'Users',
-      onClick: () => navigate(selectedProject ? `/projects/${selectedProject?.id}/users` : '/projects'),
+      onClick: () => navigate(selectedProject ? `/projects/${selectedProject?.id}/users` : '/'),
       icon: MdGroups,
     },
     {
       name: 'Settings',
-      onClick: () => navigate(selectedProject ? `/projects/${selectedProject?.id}/settings` : '/projects'),
+      onClick: () => navigate(selectedProject ? `/projects/${selectedProject?.id}/settings` : '/'),
       icon: MdSettings,
     },
   ];
@@ -118,7 +118,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       </Flex>
       <Box px={4} w="100%">
         <Button
-          onClick={() => navigate('/projects')}
+          onClick={() => navigate('/')}
           rightIcon={<MdOutlineSync />}
           padding="4"
           mb="4"
@@ -226,7 +226,7 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
               bg={useColorModeValue('white', 'gray.900')}
               borderColor={useColorModeValue('gray.200', 'gray.700')}
             >
-              <MenuItem onClick={() => navigate('/projects')}>Projects</MenuItem>
+              <MenuItem onClick={() => navigate('/')}>Projects</MenuItem>
               <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
               <MenuDivider />
               <SignOutButton>Sign out</SignOutButton>

@@ -27,8 +27,8 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         logLevel: 'debug',
         appDomain: '127.0.0.1:4000',
         skipTokenVerification: 'false',
-        stripePriceId: 'STRIPE_PRICE_ID',
-        stripeKey: 'STRIPE_KEY',
+        stripePriceId: process.env.STRIPE_PRICE_ID || '',
+        stripeKey: process.env.STRIPE_KEY || '',
         fromEmail: 'admin@volca.io', // TODO: Pick from config
         credentials: {
           host: 'localhost',

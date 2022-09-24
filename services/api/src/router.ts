@@ -26,6 +26,7 @@ import {
   createProjectAction,
   createProjectSchema,
   deleteProjectAction,
+  deleteProjectUserAction,
   getProjectAction,
   listProjectsAction,
   listProjectUsersAction,
@@ -70,7 +71,8 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   );
 
   // Project users
-  router.get('/projects/users/:projectId', authenticationMiddleware, listProjectUsersAction);
+  router.get('/projects/:projectId/users', authenticationMiddleware, listProjectUsersAction);
+  router.delete('/projects/:projectId/users/:userId', authenticationMiddleware, deleteProjectUserAction);
 
   // Project invitations
   router.post(

@@ -4,31 +4,14 @@ import { MdPayments, MdAddShoppingCart, MdPerson, MdPayment } from 'react-icons/
 import { useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { ApiClient } from '../lib/clients/api-client';
 import { currentUser } from '../state';
 import { SoftCard } from '../components/generic/SoftCard';
 import { PageHeading } from '../components/generic/PageHeading';
+import { useSettingsActions } from '../hooks';
 
 export const SettingsPage: React.FC = () => {
   const user = useRecoilValue(currentUser);
-
-  const onActivate = async () => {
-    try {
-      const session = await ApiClient.createStripeSession();
-      window.location.replace(session.url);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const onManageSubscriptions = async () => {
-    try {
-      const { url } = await ApiClient.createStripeBillingPortalSession();
-      window.location.replace(url);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { manageSubscriptions, activateSubscription } = useSettingsActions();
 
   return (
     <AuthenticatedLayout sidebar={false}>
@@ -61,11 +44,11 @@ export const SettingsPage: React.FC = () => {
           <SoftCard>
             <PageHeading title="Subscriptions" icon={MdPayment} />
             {!user?.has_active_subscription && (
-              <Button mt={6} colorScheme="blue" rightIcon={<MdAddShoppingCart />} onClick={onActivate}>
+              <Button mt={6} colorScheme="blue" rightIcon={<MdAddShoppingCart />} onClick={activateSubscription}>
                 Activate Subscription
               </Button>
             )}
-            <Button mt={6} colorScheme="blue" rightIcon={<MdPayments />} onClick={onManageSubscriptions}>
+            <Button mt={6} colorScheme="blue" rightIcon={<MdPayments />} onClick={manageSubscriptions}>
               Manage Subscription
             </Button>
           </SoftCard>

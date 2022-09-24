@@ -19,5 +19,5 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({ children
     }
   }, [navigate, location, user]);
 
-  return children;
+  return user && children;
 };

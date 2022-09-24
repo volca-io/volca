@@ -155,7 +155,8 @@ export class ApiClient {
     await this.handleApiError(this.client.post('authn/sign-out'));
   }
 
-  static async getMe(): Promise<User> {
+  static async getMe(): Promise<User | null> {
+    if (!localStorage.getItem('access-token')) return null;
     const { me } = await this.handleApiError(this.tokenClient.get('me').json<GetMeResponse>());
     return me;
   }
@@ -190,9 +191,13 @@ export class ApiClient {
 
   static async getProjectUsers(id: string): Promise<User[]> {
     const { users } = await this.handleApiError(
-      this.tokenClient.get(`projects/users/${id}`).json<GetProjectUsersResponse>()
-    ); // TODO - Change url structure to have id after projects
+      this.tokenClient.get(`projects/${id}/users`).json<GetProjectUsersResponse>()
+    );
     return users;
+  }
+
+  static async deleteProjectUser(projectId: string, userId: string): Promise<void> {
+    await this.tokenClient.delete(`projects/${projectId}/users/${userId}`);
   }
 
   static async createProjectInvitation({

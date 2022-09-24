@@ -13,9 +13,9 @@ export const useProjectActions = () => {
   const { executeApiCall } = useApiActions();
 
   const getProject = async (id: string) =>
-    await executeApiCall<Project>({
+    executeApiCall<Project>({
       action: () => ApiClient.getProject(id),
-      onError: () => navigate('/projects'),
+      onError: () => navigate('/'),
       errorMessage: 'Failed to load project. Refresh to try again.',
     });
 
@@ -40,7 +40,7 @@ export const useProjectActions = () => {
         if (selectedProject?.id === id) {
           setSelectedProject(null);
         }
-        navigate('/projects');
+        navigate('/');
       },
       errorMessage: 'Failed to delete project',
       successMessage: 'Successfully deleted project',

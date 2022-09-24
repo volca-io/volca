@@ -95,7 +95,7 @@ export const SubscribePage: React.FC = () => {
       )}
       <Grid w="100%" templateColumns="repeat(4, 1fr)" gap={4}>
         {features.map((feature) => (
-          <FeatureCard feature={feature} />
+          <FeatureCard key={feature.title} feature={feature} />
         ))}
       </Grid>
 

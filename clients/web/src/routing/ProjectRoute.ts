@@ -14,7 +14,7 @@ export const ProjectRoute: React.FC<ProjectRouteProps> = ({ children }) => {
 
   useEffect(() => {
     if (!project?.admin?.has_active_subscription) {
-      navigate(`/projects`);
+      navigate('/');
     }
   }, [navigate, project, location]);
 

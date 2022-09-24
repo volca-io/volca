@@ -51,6 +51,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading, defau
             id="password"
             type="password"
             fontSize="sm"
+            autoComplete="current-password"
             {...register('password', { required: 'Enter your password' })}
           />
           {errors.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}

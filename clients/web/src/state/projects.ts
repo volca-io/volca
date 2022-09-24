@@ -3,7 +3,7 @@ import { ApiClient } from '../lib/clients/api-client';
 import { Project } from '../types';
 
 const selectedProjectSelector = selector<Project | null>({
-  key: 'selected-project',
+  key: 'selected-project-selector',
   set: ({ set }, newValue) => {
     if (newValue instanceof DefaultValue) return;
 
@@ -27,6 +27,11 @@ const selectedProjectSelector = selector<Project | null>({
   },
 });
 
+const projectListSelector = selector<Project[]>({
+  key: 'project-list-selector',
+  get: () => ApiClient.getProjects(),
+});
+
 export const selectedProject = atom<Project | null>({
   key: 'selected-project',
   default: selectedProjectSelector,
@@ -34,5 +39,5 @@ export const selectedProject = atom<Project | null>({
 
 export const projects = atom<Project[]>({
   key: 'projects',
-  default: ApiClient.getProjects(),
+  default: projectListSelector,
 });

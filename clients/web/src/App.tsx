@@ -24,7 +24,6 @@ import { ResetPasswordPage } from './pages/reset-password';
 export const App = () => (
   <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
     <ColorModeScript initialColorMode="system" />
-
     <RecoilRoot>
       <React.Suspense fallback={<LoadingPage />}>
         <Router>
@@ -33,7 +32,7 @@ export const App = () => (
               index
               element={
                 <AuthenticatedRoute>
-                  <DashboardPage />
+                  <ProjectListPage />
                 </AuthenticatedRoute>
               }
             />
@@ -46,10 +45,12 @@ export const App = () => (
               }
             />
             <Route
-              path="/projects"
+              path="/projects/:id/dashboard"
               element={
                 <AuthenticatedRoute>
-                  <ProjectListPage />
+                  <ProjectRoute>
+                    <DashboardPage />
+                  </ProjectRoute>
                 </AuthenticatedRoute>
               }
             />

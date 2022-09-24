@@ -37,7 +37,7 @@ export const CreateProjectPage: React.FC = () => {
       const res = await ApiClient.createProject({ name });
       setProjects([...projects, res]);
       setSelectedProject(res);
-      navigate('/projects');
+      navigate('/');
     } catch (error) {
       console.error(error);
     }
@@ -46,7 +46,6 @@ export const CreateProjectPage: React.FC = () => {
   return (
     <AuthenticatedLayout sidebar={false}>
       <PageHeading title="Create Project" icon={MdAdd} />
-      {/* TODO: Add margin to all page headings? */}
       <Box mt={8} />
       <SoftCard>
         <Text fontSize="lg" mb={4}>

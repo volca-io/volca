@@ -14,7 +14,6 @@ type InviteProjectUserProps = {
   onSubmit: (data: FormProps) => void;
 };
 
-// TODO: Fix the alert message here (use new global alert or a dialog?)
 const InviteProjectUser: React.FC<InviteProjectUserProps> = ({ alert, onSubmit }) => {
   const { register, handleSubmit } = useForm<FormProps>();
   return (
