@@ -36,7 +36,7 @@ export const ProjectListPage: React.FC = () => {
         project.admin.has_active_subscription ? onSelectProject(project) : setInactiveProjectId(project.id)
       }
     >
-      <Box>
+      <Box textAlign="center">
         <Heading size="md">{project.name}</Heading>
         <Badge variant={project.admin.has_active_subscription ? 'solid' : 'subtle'}>
           {project.admin.has_active_subscription ? 'Active' : 'Inactive'}
@@ -74,7 +74,7 @@ export const ProjectListPage: React.FC = () => {
             }}
           >
             <Icon boxSize="48px" as={MdAdd} />
-            <Heading as="h3" size="sm">
+            <Heading as="h3" size="sm" textAlign="center">
               Create Project
             </Heading>
           </SoftCard>

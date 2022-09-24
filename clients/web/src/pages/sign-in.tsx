@@ -1,21 +1,11 @@
 import { useState } from 'react';
-import {
-  Text,
-  useColorModeValue,
-  Flex,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
-  Link,
-  Image,
-} from '@chakra-ui/react';
+import { Text, useColorModeValue, Flex, Link, Image } from '@chakra-ui/react';
 import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { SignInForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
 import { SoftCard } from '../components/generic/SoftCard';
+import { AlertBox } from '../components/generic/AlertBox';
 
 type ErrorDescription = {
   title: string;
@@ -53,48 +43,56 @@ export const SignInPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <Flex minH="100vh" direction="column" justifyContent="center" maxW="600px" margin="0 auto">
-        <Flex paddingY="8" direction="column" alignItems="center">
+      <Flex
+        minH="100vh"
+        direction="column"
+        justifyContent="center"
+        maxW="600px"
+        margin="0 auto"
+        p={{
+          base: 0,
+          sm: 8,
+        }}
+      >
+        <Flex direction="column" alignItems="center">
           <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="128px" />
-          <Text fontSize="sm" color={textColor}>
-            Enter your e-mail and password to sign in. Or{' '}
-            <Link color={linkColor} textDecoration="underline" textUnderlineOffset={1.5} to="/register" as={RouterLink}>
-              create a new account
-            </Link>
-            .
-          </Text>
         </Flex>
         {error && (
-          <Alert status="error">
-            <AlertIcon />
-            <AlertTitle>{error.title}</AlertTitle>
-            <AlertDescription>{error.description}</AlertDescription>
-            <CloseButton
-              alignSelf="flex-end"
-              position="absolute"
-              right={0}
-              top={0}
-              onClick={() => {
-                setError(null);
-              }}
-            />
-          </Alert>
+          <AlertBox
+            status="error"
+            title={error.title}
+            description={error.description}
+            onClose={() => {
+              setError(null);
+            }}
+          />
         )}
         <SoftCard>
           <SignInForm defaultIdentifier={identifier} defaultRemember={remember} onSubmit={onSubmit} loading={loading} />
-          <Text fontSize="sm" mt={4} color={textColor}>
-            Forgot your password?{' '}
-            <Link
-              color={linkColor}
-              textDecoration="underline"
-              textUnderlineOffset={1.5}
-              to="/reset-password"
-              as={RouterLink}
-            >
-              Reset password
-            </Link>
-            .
-          </Text>
+          <Flex justifyContent="space-between" mt={5}>
+            <Text fontSize="sm" color={textColor}>
+              <Link
+                color={linkColor}
+                textDecoration="underline"
+                textUnderlineOffset={1.5}
+                to="/register"
+                as={RouterLink}
+              >
+                Create new account
+              </Link>
+            </Text>
+            <Text fontSize="sm" color={textColor}>
+              <Link
+                color={linkColor}
+                textDecoration="underline"
+                textUnderlineOffset={1.5}
+                to="/reset-password"
+                as={RouterLink}
+              >
+                Forgot password{' '}
+              </Link>
+            </Text>
+          </Flex>
         </SoftCard>
       </Flex>
     </DefaultLayout>

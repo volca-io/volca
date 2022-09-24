@@ -55,7 +55,7 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack spacing={4} alignItems="flex-start">
         <HStack alignSelf="stretch">
-          <FormControl isInvalid={!!errors.firstName}>
+          <FormControl isInvalid={!!errors.firstName} minW={100}>
             <FormLabel htmlFor="firstName" fontSize="sm">
               First name
             </FormLabel>
@@ -67,7 +67,7 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
             />
             {errors.firstName && <FormErrorMessage>{errors.firstName.message}</FormErrorMessage>}
           </FormControl>
-          <FormControl isInvalid={!!errors.lastName}>
+          <FormControl isInvalid={!!errors.lastName} minW={100}>
             <FormLabel htmlFor="lastName" fontSize="sm">
               Last name
             </FormLabel>
@@ -110,6 +110,8 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
             value={strengthCheck?.score === undefined ? 0 : strengthCheck?.score + 1}
             max={5}
             min={0}
+            borderRadius={5}
+            mt={2}
             colorScheme={passwordStrengthColorMap[strengthCheck?.score || 0]}
             sx={{
               '& > div:first-child': {

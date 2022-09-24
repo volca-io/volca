@@ -36,6 +36,7 @@ import { SignOutButton } from '../authentication/SignOutButton';
 import { ThemeSwitcher } from './theme-switcher';
 import { LoadingBar } from '../generic/LoadingBar';
 import { MessageBar } from '../generic/MessageBar';
+import { DefaultLayout } from '../../layouts';
 
 interface LinkItemProps {
   name: string;
@@ -47,7 +48,7 @@ export const Sidebar = ({ children, hidden = false }: { children: ReactNode; hid
   const { isOpen, onOpen, onClose } = useDisclosure();
   const bg = useColorModeValue('gray.100', 'gray.900');
   return (
-    <Box minH="100vh" bg={bg}>
+    <DefaultLayout>
       {!hidden && <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />}
       <Drawer
         autoFocus={false}
@@ -62,14 +63,13 @@ export const Sidebar = ({ children, hidden = false }: { children: ReactNode; hid
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      {/* mobilenav */}
       <MobileNav onOpen={onOpen} full={hidden} />
       <LoadingBar full={hidden} />
       <MessageBar full={hidden} />
-      <Box ml={{ base: 0, md: hidden ? 0 : 60 }} p="4">
+      <Flex ml={{ base: 0, md: hidden ? 0 : 60 }} p="4" bg={bg} height="100%">
         {children}
-      </Box>
-    </Box>
+      </Flex>
+    </DefaultLayout>
   );
 };
 
@@ -112,7 +112,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       h="full"
       {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="center">
+      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Logo />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
@@ -203,7 +203,11 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
         icon={<MdMenu />}
       />
 
-      {full && <Logo />}
+      {full && (
+        <Box display={{ base: 'none', md: 'block' }}>
+          <Logo />
+        </Box>
+      )}
 
       <Spacer display={{ base: 'none', md: 'flex' }} />
 

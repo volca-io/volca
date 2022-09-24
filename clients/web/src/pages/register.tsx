@@ -1,22 +1,11 @@
 import { useState } from 'react';
-import {
-  Box,
-  Heading,
-  Text,
-  useColorModeValue,
-  Flex,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  AlertTitle,
-  CloseButton,
-  Link,
-} from '@chakra-ui/react';
+import { Box, Heading, Text, useColorModeValue, Flex, Link } from '@chakra-ui/react';
 import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { RegisterForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
 import { SoftCard } from '../components/generic/SoftCard';
+import { AlertBox } from '../components/generic/AlertBox';
 
 type ErrorDescription = {
   title: string;
@@ -63,31 +52,26 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <Flex minH="100vh" direction="column" justifyContent="center" maxW="600px" margin="0 auto">
+      <Flex minH="100vh" direction="column" justifyContent="center" maxW="600px" margin="0 auto" p={{ base: 4, md: 8 }}>
         <Box paddingY="8">
           <Heading color={titleColor}>Lets get you signed up!</Heading>
           <Text fontSize="sm" color={textColor}>
-            Enter your details in the form below to create a new account. Already have an account?{' '}
+            Enter your details in the form below to create a new account. <br />
+            Already have an account?{' '}
             <Link color={linkColor} textDecoration="underline" textUnderlineOffset={1.5} to="/sign-in" as={RouterLink}>
               Sign in instead
             </Link>
           </Text>
         </Box>
         {error && (
-          <Alert status="error">
-            <AlertIcon />
-            <AlertTitle>{error.title}</AlertTitle>
-            <AlertDescription>{error.description}</AlertDescription>
-            <CloseButton
-              alignSelf="flex-end"
-              position="absolute"
-              right={0}
-              top={0}
-              onClick={() => {
-                setError(null);
-              }}
-            />
-          </Alert>
+          <AlertBox
+            status="error"
+            title={error.title}
+            description={error.description}
+            onClose={() => {
+              setError(null);
+            }}
+          />
         )}
         <SoftCard>
           <RegisterForm onSubmit={onSubmit} loading={loading} />

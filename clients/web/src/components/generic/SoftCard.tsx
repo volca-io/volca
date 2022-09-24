@@ -19,8 +19,10 @@ export const SoftCard = ({
       onClick={onClick}
       _hover={onClick ? { background: backgroundHover } : {}}
       background={background}
-      borderRadius="lg"
-      p="8"
+      p={{
+        base: 4,
+        md: 8,
+      }}
       boxShadow="lg"
     >
       {children}
