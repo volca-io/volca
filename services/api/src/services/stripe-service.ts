@@ -42,7 +42,7 @@ export class StripeService {
     };
 
     const customer = await getStripeCustomerId();
-    const appDomain = this.environment.getOrFail(EnvironmentVariable.APP_DOMAIN);
+    const appDomain = `https://${this.environment.getOrFail(EnvironmentVariable.APP_DOMAIN)}`;
 
     const session = await this.stripe.checkout.sessions.create({
       success_url: appDomain,
