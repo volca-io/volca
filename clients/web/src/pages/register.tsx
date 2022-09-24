@@ -52,30 +52,48 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <Flex minH="100vh" direction="column" justifyContent="center" maxW="600px" margin="0 auto" p={{ base: 4, md: 8 }}>
-        <Box paddingY="8">
-          <Heading color={titleColor}>Lets get you signed up!</Heading>
-          <Text fontSize="sm" color={textColor}>
-            Enter your details in the form below to create a new account. <br />
-            Already have an account?{' '}
-            <Link color={linkColor} textDecoration="underline" textUnderlineOffset={1.5} to="/sign-in" as={RouterLink}>
-              Sign in instead
-            </Link>
-          </Text>
-        </Box>
-        {error && (
-          <AlertBox
-            status="error"
-            title={error.title}
-            description={error.description}
-            onClose={() => {
-              setError(null);
-            }}
-          />
-        )}
-        <SoftCard>
-          <RegisterForm onSubmit={onSubmit} loading={loading} />
-        </SoftCard>
+      <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
+        <Flex
+          direction="column"
+          justifyContent={{ base: 'flex-start ', md: 'center' }}
+          flexGrow={1}
+          maxW={600}
+          p={{
+            base: 0,
+            sm: 8,
+          }}
+        >
+          {' '}
+          <Box paddingY="8">
+            <Heading color={titleColor}>Lets get you signed up!</Heading>
+            <Text fontSize="sm" color={textColor}>
+              Enter your details in the form below to create a new account. <br />
+              Already have an account?{' '}
+              <Link
+                color={linkColor}
+                textDecoration="underline"
+                textUnderlineOffset={1.5}
+                to="/sign-in"
+                as={RouterLink}
+              >
+                Sign in instead
+              </Link>
+            </Text>
+          </Box>
+          {error && (
+            <AlertBox
+              status="error"
+              title={error.title}
+              description={error.description}
+              onClose={() => {
+                setError(null);
+              }}
+            />
+          )}
+          <SoftCard>
+            <RegisterForm onSubmit={onSubmit} loading={loading} />
+          </SoftCard>
+        </Flex>
       </Flex>
     </DefaultLayout>
   );
