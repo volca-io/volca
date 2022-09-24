@@ -42,10 +42,11 @@ export class StripeService {
     };
 
     const customer = await getStripeCustomerId();
+    const appDomain = this.environment.getOrFail(EnvironmentVariable.APP_DOMAIN);
 
     const session = await this.stripe.checkout.sessions.create({
-      success_url: 'http://127.0.0.1:3000', // TODO: Set dynamically
-      cancel_url: 'http://127.0.0.1:3000/subscribe?status=warning', // TODO: Set dynamically
+      success_url: appDomain,
+      cancel_url: `${appDomain}/subscribe?status=warning`,
       customer,
       mode: 'subscription',
       line_items: [
