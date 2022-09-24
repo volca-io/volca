@@ -38,7 +38,7 @@ export class DevopsStack extends Stack {
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['cloudfront:ListDistributions'],
-          resources: [`arn:aws:cloudfront::${props.env?.account}:distribution/*`],
+          resources: [`*`],
         }),
         new PolicyStatement({
           effect: Effect.ALLOW,

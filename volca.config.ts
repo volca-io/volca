@@ -3,7 +3,7 @@ import { Config, StackStrategy } from './types/volca';
 export const config: Config = {
   name: 'volca',
   github: {
-    organization: 'okarlsson',
+    organization: 'volca-io',
     repository: 'volca',
   },
   environments: {
