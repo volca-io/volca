@@ -24,6 +24,7 @@ export const SoftCard = ({
         md: 8,
       }}
       boxShadow="lg"
+      borderRadius="lg"
     >
       {children}
     </Box>

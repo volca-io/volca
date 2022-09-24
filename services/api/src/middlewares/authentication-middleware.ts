@@ -7,6 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 import { UserService } from '../services';
 import { Security } from '../lib/security/security';
 import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
+import { User } from '../entities';
 
 export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Next) => {
   const security = container.resolve(Security);
@@ -60,7 +61,9 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
     });
   }
 
-  ctx.user = user;
+  container.register<User>('AuthenticatedUser', {
+    useValue: user,
+  });
 
   await next();
 };

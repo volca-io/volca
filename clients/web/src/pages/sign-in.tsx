@@ -43,57 +43,63 @@ export const SignInPage: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <Flex
-        minH="100vh"
-        direction="column"
-        justifyContent="center"
-        maxW="600px"
-        margin="0 auto"
-        p={{
-          base: 0,
-          sm: 8,
-        }}
-      >
-        <Flex direction="column" alignItems="center">
-          <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="128px" />
-        </Flex>
-        {error && (
-          <AlertBox
-            status="error"
-            title={error.title}
-            description={error.description}
-            onClose={() => {
-              setError(null);
-            }}
-          />
-        )}
-        <SoftCard>
-          <SignInForm defaultIdentifier={identifier} defaultRemember={remember} onSubmit={onSubmit} loading={loading} />
-          <Flex justifyContent="space-between" mt={5}>
-            <Text fontSize="sm" color={textColor}>
-              <Link
-                color={linkColor}
-                textDecoration="underline"
-                textUnderlineOffset={1.5}
-                to="/register"
-                as={RouterLink}
-              >
-                Create new account
-              </Link>
-            </Text>
-            <Text fontSize="sm" color={textColor}>
-              <Link
-                color={linkColor}
-                textDecoration="underline"
-                textUnderlineOffset={1.5}
-                to="/reset-password"
-                as={RouterLink}
-              >
-                Forgot password{' '}
-              </Link>
-            </Text>
+      <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
+        <Flex
+          direction="column"
+          justifyContent="center"
+          flexGrow={1}
+          maxW={600}
+          p={{
+            base: 0,
+            sm: 8,
+          }}
+        >
+          <Flex direction="column" alignItems="center">
+            <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="128px" />
           </Flex>
-        </SoftCard>
+          {error && (
+            <AlertBox
+              status="error"
+              title={error.title}
+              description={error.description}
+              onClose={() => {
+                setError(null);
+              }}
+            />
+          )}
+          <SoftCard>
+            <SignInForm
+              defaultIdentifier={identifier}
+              defaultRemember={remember}
+              onSubmit={onSubmit}
+              loading={loading}
+            />
+            <Flex justifyContent="space-between" mt={5}>
+              <Text fontSize="sm" color={textColor}>
+                <Link
+                  color={linkColor}
+                  textDecoration="underline"
+                  textUnderlineOffset={1.5}
+                  to="/register"
+                  as={RouterLink}
+                >
+                  Create new account
+                </Link>
+              </Text>
+              <Text fontSize="sm" color={textColor}>
+                <Link
+                  color={linkColor}
+                  textDecoration="underline"
+                  textUnderlineOffset={1.5}
+                  to="/reset-password"
+                  as={RouterLink}
+                >
+                  Forgot password{' '}
+                </Link>
+              </Text>
+            </Flex>
+          </SoftCard>
+        </Flex>
       </Flex>
     </DefaultLayout>
   );

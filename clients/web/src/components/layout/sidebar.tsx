@@ -75,7 +75,7 @@ export const Sidebar = ({ children, hidden = false }: { children: ReactNode; hid
 
 const Logo = () => (
   <RouterLink to="/">
-    <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="64px" />
+    <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="48px" />
   </RouterLink>
 );
 

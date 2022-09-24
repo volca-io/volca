@@ -6,6 +6,7 @@ import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 import { ProjectInvitationService, ProjectService, UserService } from '../../services';
+import { User } from '../../entities';
 
 export const schema: Schema = joi.object({
   toUserEmail: joi.string().required(),
@@ -16,6 +17,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const projectInvitationService = container.resolve(ProjectInvitationService);
   const userService = container.resolve(UserService);
   const projectService = container.resolve(ProjectService);
+  const user = container.resolve<User>('AuthenticatedUser');
 
   const { toUserEmail, projectId } = ctx.request.body;
 
@@ -29,7 +31,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  if (project.adminId !== ctx.user.id) {
+  if (project.adminId !== user.id) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
       message: 'The user is not authorized for this project',
@@ -48,7 +50,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   }
 
   const projectInvitation = await projectInvitationService.create({
-    fromUserId: ctx.user.id,
+    fromUserId: user.id,
     toUserId: toUser.id,
     projectId: project.id,
   });

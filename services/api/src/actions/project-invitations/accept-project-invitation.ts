@@ -6,8 +6,11 @@ import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 import { ProjectInvitationService, ProjectUserService } from '../../services';
+import { User } from '../../entities';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
+  const user = container.resolve<User>('AuthenticatedUser');
+
   const projectInvitationService = container.resolve(ProjectInvitationService);
   const projectUserService = container.resolve(ProjectUserService);
 
@@ -31,7 +34,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  if (projectInvitation.toUserId !== ctx.user.id) {
+  if (projectInvitation.toUserId !== user.id) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
       message: 'Unauthorized',
@@ -39,10 +42,10 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  const projectUser = await projectUserService.get(ctx.user.id, projectInvitation.projectId);
+  const projectUser = await projectUserService.get(user.id, projectInvitation.projectId);
 
   if (!projectUser) {
-    await projectUserService.create({ userId: ctx.user.id, projectId: projectInvitation.projectId });
+    await projectUserService.create({ userId: user.id, projectId: projectInvitation.projectId });
   }
 
   return {

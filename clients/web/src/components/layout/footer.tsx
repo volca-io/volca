@@ -3,7 +3,7 @@ import { Flex, Link, Text } from '@chakra-ui/react';
 
 export const Footer: React.FC = () => (
   <Flex p="2" justifyContent="center">
-    <Text>
+    <Text fontSize={12}>
       Powered by{' '}
       <Link href="https://volca.io" isExternal>
         <u>Volca</u>
