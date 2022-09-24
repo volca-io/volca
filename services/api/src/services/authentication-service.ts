@@ -100,6 +100,16 @@ export class AuthenticationService {
     return this.generateAccessToken(user);
   }
 
+  public async expireToken(token: string): Promise<void> {
+    const res = await RefreshToken.query().findOne({ token });
+
+    if (!res) {
+      return;
+    }
+
+    await RefreshToken.query().where({ id: res.id }).update({ expiresAt: new Date() });
+  }
+
   public getRefreshTokenCookieConfiguration(): AccessTokenCookieSettings {
     return {
       secure: this.environment.getOrFail(EnvironmentVariable.STAGE) !== 'local',

@@ -1,19 +1,22 @@
+import 'reflect-metadata';
+import { container } from 'tsyringe';
+
+import { Logger } from '../utils/logger';
 import { initialize } from '../lib/db/knex';
 
-export const up = async () => {
-  console.log('Running up seeder');
-  const knex = initialize();
+export const handler = async () => {
+  const logger = container.resolve(Logger);
 
+  logger.info(`Running seeder`);
+
+  const knex = initialize();
   try {
-    const res = await knex('users').insert({
-      first_name: 'Steven',
-      last_name: 'Hawking',
-      email: 'stephen@hawking.com',
-    });
-    console.log('Successfully ran seeder', res);
-  } catch (error: unknown) {
-    console.error('Failed to run seeder', error);
-  } finally {
+    const res = await knex.seed.run();
+    logger.info(`Successfully ran seeds`, { seeds: res });
     knex.destroy();
+  } catch (error: unknown) {
+    logger.error('Failed to run seeder');
+    knex.destroy();
+    throw error;
   }
 };

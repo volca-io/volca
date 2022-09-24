@@ -16,7 +16,7 @@ export const schema: Schema = joi.object({
       const { score, feedback } = zxcvbn(val);
 
       if (score < 2) {
-        throw new Error(`assword is not strong enough. ${feedback.warning}`);
+        throw new Error(`Password is not strong enough. ${feedback.warning}`);
       }
 
       return true;

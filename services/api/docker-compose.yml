@@ -14,5 +14,20 @@ services:
       - database:/var/lib/postgresql/data:Z
     ports:
       - '5432:5432'
+    profiles:
+      - dev
+  test-database:
+    container_name: postgres-test-database
+    command: postgres -c 'max_connections=300'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    restart: always
+    image: postgres:13.6
+    ports:
+      - '5432:5432'
+    profiles:
+      - integration-test
 volumes:
   database:

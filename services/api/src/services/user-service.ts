@@ -60,6 +60,6 @@ export class UserService {
   }
 
   public async update({ id, stripeId, hasActiveSubscription }: UpdateUserProperties): Promise<User | undefined> {
-    return User.query().where({ id }).update({ stripeId, hasActiveSubscription }).returning('*').first();
+    return User.query().findOne({ id }).update({ stripeId, hasActiveSubscription }).returning('*').first();
   }
 }

@@ -18,8 +18,8 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::428245413678:role/volca-staging-github-actions-webapp-deployment-role
           aws-region: eu-central-1
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Check out code.
+        uses: actions/checkout@v3.0.2
       - name: Setup node
         uses: actions/setup-node@v3
         with:
@@ -54,8 +54,8 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::428245413678:role/volca-production-github-actions-webapp-deployment-role
           aws-region: eu-central-1
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Check out code.
+        uses: actions/checkout@v3.0.2
       - name: Setup node
         uses: actions/setup-node@v3
         with:

@@ -11,7 +11,9 @@
     "infra:destroy": "yarn ts-node ./scripts/destroy-infra",
     "start": "yarn workspaces foreach --exclude @volca/root -vpi run start:dev",
     "check:lint": "yarn workspaces foreach --exclude @volca/root -vpi run check:lint",
-    "test": "yarn workspaces foreach --exclude @volca/root -vpi run test"
+    "check:types": "yarn workspaces foreach --exclude @volca/root -vpi run check:types",
+    "test": "yarn workspaces foreach --exclude @volca/root -vpi run test",
+    "test:integration": "yarn workspaces foreach --exclude @volca/root -vpi run test:integration"
   },
   "devDependencies": {
     "@aws-sdk/client-cloudformation": "^3.160.0",

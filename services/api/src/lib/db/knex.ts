@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import { EnvironmentUtils, EnvironmentVariable } from '../../utils/environment';
 import { Logger } from '../../utils/logger';
 import { MigrationSource } from './migration-source';
+import { SeedSource } from './seed-source';
 
 export const initialize = () => {
   const logger = container.resolve(Logger);
@@ -24,6 +25,9 @@ export const initialize = () => {
     },
     migrations: {
       migrationSource: new MigrationSource(),
+    },
+    seeds: {
+      seedSource: new SeedSource(),
     },
     ...knexSnakeCaseMappers(),
   });

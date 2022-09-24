@@ -7,6 +7,7 @@
     "noUnusedParameters": true,
     "inlineSources": true,
     "typeRoots": ["node_modules/@types"],
+    "skipLibCheck": true,
     "baseUrl": "./",
     "preserveConstEnums": true,
     "strictNullChecks": true,

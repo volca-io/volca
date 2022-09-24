@@ -55,7 +55,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         skipTokenVerification: 'false',
         stripePriceId: 'STRIPE_PRICE_ID',
         stripeKey: 'STRIPE_KEY',
-        fromEmail: config.environments.demo.fromEmail,
+        fromEmail: config.environments.production.fromEmail,
       };
     default:
       throw new Error(`Unsupported environment ${stage}`);
@@ -140,6 +140,9 @@ const serverlessConfiguration: AWS = {
     },
     migrate: {
       handler: 'src/lambda-handlers/migrate.handler',
+    },
+    seed: {
+      handler: 'src/lambda-handlers/seeder.handler',
     },
   },
 };
