@@ -23,7 +23,7 @@ import { ResetPasswordPage } from './pages/reset-password';
 
 export const App = () => (
   <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
-    <ColorModeScript initialColorMode="system" />
+    <ColorModeScript initialColorMode="dark" />
     <RecoilRoot>
       <React.Suspense fallback={<LoadingPage />}>
         <Router>

@@ -46,7 +46,7 @@ export const SignInPage: React.FC = () => {
       <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
         <Flex
           direction="column"
-          justifyContent="center"
+          justifyContent={{ base: 'flex-start ', md: 'center' }}
           flexGrow={1}
           maxW={600}
           p={{
