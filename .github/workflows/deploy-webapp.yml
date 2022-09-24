@@ -13,14 +13,6 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Export AWS role
-        run: |
-          echo "DEPLOYMENT_ROLE=$(yarn dlx -q ts-node ./scripts/print-aws-role.ts --environment staging --service webapp)" >> $GITHUB_ENV
-      - name: Configure AWS credentials from staging account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ env.DEPLOYMENT_ROLE }}
-          aws-region: eu-central-1
       - name: Check out code.
         uses: actions/checkout@v3.0.2
       - name: Setup node
@@ -36,6 +28,14 @@ jobs:
         working-directory: clients/web
         run: |
           yarn build:staging
+      - name: Export AWS role
+        run: |
+          echo "DEPLOYMENT_ROLE=$(yarn dlx -q ts-node ./scripts/print-aws-role.ts --environment staging --service webapp)" >> $GITHUB_ENV
+      - name: Configure AWS credentials from staging account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.DEPLOYMENT_ROLE }}
+          aws-region: eu-central-1
       - name: Deploy to S3
         working-directory: clients/web
         run: |
@@ -52,14 +52,6 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Export AWS role
-        run: |
-          echo "DEPLOYMENT_ROLE=$(yarn dlx -q ts-node ./scripts/print-aws-role.ts --environment production --service webapp)" >> $GITHUB_ENV
-      - name: Configure AWS credentials from production account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ env.DEPLOYMENT_ROLE }}
-          aws-region: eu-central-1
       - name: Check out code.
         uses: actions/checkout@v3.0.2
       - name: Setup node
@@ -75,6 +67,14 @@ jobs:
         working-directory: clients/web
         run: |
           yarn build:production
+      - name: Export AWS role
+        run: |
+          echo "DEPLOYMENT_ROLE=$(yarn dlx -q ts-node ./scripts/print-aws-role.ts --environment production --service webapp)" >> $GITHUB_ENV
+      - name: Configure AWS credentials from production account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.DEPLOYMENT_ROLE }}
+          aws-region: eu-central-1
       - name: Deploy to S3
         working-directory: clients/web
         run: |
