@@ -1,4 +1,4 @@
-name: deployment
+name: deploy
 on:
   push:
     branches:
@@ -10,21 +10,21 @@ jobs:
 
   provision-infrastructure-staging:
     name: deploy staging infrastructure
-    uses: ./provision-infrastructure.yml@main
+    uses: ./.github/workflows/provision-infrastructure.yml@main
     with:
       environment: staging
 
   deploy-api-staging:
     needs: provision-staging-infrastructure
     name: deploy api production
-    uses: ./deploy-api.yml@main
+    uses: ./.github/workflows/deploy-api.yml@main
     with:
       environment: staging
 
   deploy-webapp-staging:
     needs: provision-staging-infrastructure
     name: deploy webapp staging
-    uses: ./deploy-webapp.yml@main
+    uses: ./.github/workflows/deploy-webapp.yml@main
     with:
       environment: staging
 
@@ -37,20 +37,20 @@ jobs:
       - deploy-api-staging
       - deploy-webapp-staging
     name: provision production infrastructure
-    uses: ./provision-infrastructure.yml@main
+    uses: ./.github/workflows/provision-infrastructure.yml@main
     with:
       environment: production
 
   deploy-api-production:
     name: deploy api production
     needs: provision-infrastructure-production
-    uses: ./deploy-api.yml@main
+    uses: ./.github/workflows/deploy-api.yml@main
     with:
       environment: production
 
   deploy-webapp-production:
     name: deploy webapp production
     needs: provision-infrastructure-production
-    uses: ./deploy-webapp.yml@main
+    uses: ./.github/workflows/deploy-webapp.yml@main
     with:
       environment: production
