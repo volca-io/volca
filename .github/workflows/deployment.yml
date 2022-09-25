@@ -9,12 +9,18 @@ jobs:
   ################################
 
   provision-infrastructure-staging:
+    permissions:
+      id-token: write
+      contents: read
     name: deploy staging infrastructure
     uses: ./.github/workflows/provision-infrastructure.yml
     with:
       environment: staging
 
   deploy-api-staging:
+    permissions:
+      id-token: write
+      contents: read
     needs: provision-infrastructure-staging
     name: deploy api production
     uses: ./.github/workflows/deploy-api.yml
@@ -22,6 +28,9 @@ jobs:
       environment: staging
 
   deploy-webapp-staging:
+    permissions:
+      id-token: write
+      contents: read
     needs: provision-infrastructure-staging
     name: deploy webapp staging
     uses: ./.github/workflows/deploy-webapp.yml
@@ -33,6 +42,9 @@ jobs:
   ################################
 
   provision-infrastructure-production:
+    permissions:
+      id-token: write
+      contents: read
     needs:
       - deploy-api-staging
       - deploy-webapp-staging
@@ -42,6 +54,9 @@ jobs:
       environment: production
 
   deploy-api-production:
+    permissions:
+      id-token: write
+      contents: read
     name: deploy api production
     needs: provision-infrastructure-production
     uses: ./.github/workflows/deploy-api.yml
@@ -49,6 +64,9 @@ jobs:
       environment: production
 
   deploy-webapp-production:
+    permissions:
+      id-token: write
+      contents: read
     name: deploy webapp production
     needs: provision-infrastructure-production
     uses: ./.github/workflows/deploy-webapp.yml
