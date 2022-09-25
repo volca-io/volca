@@ -8,7 +8,7 @@ program.parse();
 const { environment } = program.opts();
 
 const env = config.environments[environment as Environment];
-if (!env) {
+if (!env || !env.aws) {
   throw new Error(`Failed to read environment config for ${environment}`);
 }
 
