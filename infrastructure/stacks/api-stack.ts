@@ -143,7 +143,7 @@ export class ApiStack extends Stack {
           sid: 'SendEmails',
           effect: Effect.ALLOW,
           actions: ['ses:SendEmail'],
-          resources: [`arn:aws:lambda:${props.env?.region}:${props.env?.account}:function:${props.service}*`],
+          resources: [`arn:aws:ses:${props.env?.region}:${props.env?.account}:identity/*`],
         }),
         new PolicyStatement({
           sid: 'CreateLogGroups',
