@@ -1,13 +1,13 @@
 name: deploy-api-service
 on:
-  push:
-    paths:
-      - 'services/api/**'
-      - '.github/workflows/deploy-api.yml'
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
 jobs:
-  deploy-staging:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -24,46 +24,15 @@ jobs:
       - name: Yarn Install
         run: |
           yarn install --immutable
-      - name: Export AWS role
+      - name: Read workflow vars
         run: |
-          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment staging >> $GITHUB_ENV
-      - name: Configure AWS credentials from staging account
+          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment ${{ input.environment }} >> $GITHUB_ENV
+      - name: Configure AWS credentials from ${{ input.environment }}  account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-staging-github-actions-api-deployment-role
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-${{ input.environment }}-github-actions-api-deployment-role
           aws-region: ${{ env.AWS_REGION }}
       - name: Deploy api
         working-directory: services/api
         run: |
-          yarn deploy:staging
-  deploy-production:
-    needs:
-      - deploy-staging
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Check out code.
-        uses: actions/checkout@v3.0.2
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: yarn
-          cache-dependency-path: yarn.lock
-      - name: Yarn Install
-        run: |
-          yarn install --immutable
-      - name: Export AWS role
-        run: |
-          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment production >> $GITHUB_ENV
-      - name: Configure AWS credentials from staging account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-production-github-actions-api-deployment-role
-          aws-region: ${{ env.AWS_REGION }}
-      - name: Deploy api
-        working-directory: services/api
-        run: |
-          yarn deploy:production
+          yarn deploy:${{ input.environment}}

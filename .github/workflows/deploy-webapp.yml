@@ -1,54 +1,13 @@
 name: deploy-web-client
 on:
-  push:
-    paths:
-      - 'clients/web/**'
-      - '.github/workflows/deploy-webapp.yml'
-    branches:
-      - main
-jobs:
-  deploy-staging:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Check out code.
-        uses: actions/checkout@v3.0.2
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: yarn
-          cache-dependency-path: yarn.lock
-      - name: Yarn Install
-        run: |
-          yarn install --immutable
-      - name: Production Build
-        working-directory: clients/web
-        run: |
-          yarn build:staging
-      - name: Export AWS role
-        run: |
-          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment staging >> $GITHUB_ENV
-      - name: Configure AWS credentials from staging account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-staging-github-actions-webapp-deployment-role
-          aws-region: eu-central-1
-      - name: Deploy to S3
-        working-directory: clients/web
-        run: |
-          aws s3 sync ./build s3://volca-staging-webapp-hosting-bucket --delete
-      - name: Invalidate cache
-        working-directory: clients/web
-        run: |
-          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[*].{id:Id,origin:Origins.Items[0].DomainName}[?starts_with(origin, 'volca-staging')].id" --output text)
-          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
 
-  deploy-production:
-    needs:
-      - deploy-staging
+jobs:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -65,24 +24,24 @@ jobs:
       - name: Yarn Install
         run: |
           yarn install --immutable
-      - name: Production Build
+      - name: Read workflow vars
+        run: |
+          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment ${{ inputs.environment }} >> $GITHUB_ENV
+      - name: Build
         working-directory: clients/web
         run: |
-          yarn build:production
-      - name: Export AWS role
-        run: |
-          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment production >> $GITHUB_ENV
-      - name: Configure AWS credentials from production account
+          yarn build:${{ inputs.environment }}
+      - name: Configure AWS credentials from ${{ inputs.environment }} account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-production-github-actions-webapp-deployment-role
-          aws-region: eu-central-1
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-github-actions-webapp-deployment-role
+          aws-region: ${{ env.AWS_REGION }}
       - name: Deploy to S3
         working-directory: clients/web
         run: |
-          aws s3 sync ./build s3://volca-production-webapp-hosting-bucket --delete
+          aws s3 sync ./build s3://${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp-hosting-bucket --delete
       - name: Invalidate cache
         working-directory: clients/web
         run: |
-          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[*].{id:Id,origin:Origins.Items[0].DomainName}[?starts_with(origin, 'volca-production')].id" --output text)
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[*].{id:Id,origin:Origins.Items[0].DomainName}[?starts_with(origin, '${{ env.APPLICATION_NAME }}-${{ inputs.environment }}')].id" --output text)
           aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"

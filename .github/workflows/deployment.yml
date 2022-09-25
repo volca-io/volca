@@ -1,0 +1,21 @@
+name: deployment
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy-staging-services:
+    strategy:
+      matrix:
+        service: [deploy-api, deploy-webapp]
+    uses: volca-io/volca/.github/workflows/deploym-${{ matrix.service }}.yml@main
+    with:
+      environment: staging
+  deploy-production-services:
+    needs: deploy-staging-services
+    strategy:
+      matrix:
+        service: [deploy-api, deploy-webapp]
+    uses: volca-io/volca/.github/workflows/deploym-${{ matrix.service }}.yml@main
+    with:
+      environment: production
