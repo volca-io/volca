@@ -12,7 +12,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    name: deploy api production
+    name: deploy api staging
     uses: ./.github/workflows/deploy-api.yml
     with:
       environment: staging
