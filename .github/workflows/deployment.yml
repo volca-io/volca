@@ -5,23 +5,27 @@ on:
       - main
 jobs:
   deploy-webapp-staging:
-    uses: volca-io/volca/.github/workflows/deploy-webapp.yml@main
+    name: deploy webapp staging
+    uses: ./deploy-webapp.yml@main
     with:
       environment: staging
 
   deploy-webapp-production:
+    name: deploy webapp production
     needs: deploy-webapp-staging
-    uses: volca-io/volca/.github/workflows/deploy-webapp.yml@main
+    uses: ./deploy-webapp.yml@main
     with:
       environment: production
 
   deploy-api-staging:
-    uses: volca-io/volca/.github/workflows/deploy-api.yml@main
+    name: deploy api production
+    uses: ./deploy-api.yml@main
     with:
       environment: staging
 
   deploy-api-production:
+    name: deploy webapp production
     needs: deploy-api-staging
-    uses: volca-io/volca/.github/workflows/deploy-api.yml@main
+    uses: ./deploy-api.yml@main
     with:
       environment: production
