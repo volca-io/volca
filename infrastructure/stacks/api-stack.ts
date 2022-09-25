@@ -30,6 +30,7 @@ import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 
 import { StackStrategy } from '../../types/volca';
+import { Effect, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 interface ApiStackProps extends StackProps {
   service: string;
@@ -135,5 +136,39 @@ export class ApiStack extends Stack {
     } else {
       new CfnOutput(this, 'ApiDomain', { value: api.url });
     }
+
+    const lambdaExecutionPolicy = new Policy(this, 'ApiLambdaExecutionPolicy', {
+      statements: [
+        new PolicyStatement({
+          sid: 'SendEmails',
+          effect: Effect.ALLOW,
+          actions: ['ses:SendEmail'],
+          resources: [`arn:aws:lambda:${props.env?.region}:${props.env?.account}:function:${props.service}*`],
+        }),
+        new PolicyStatement({
+          sid: 'CreateLogGroups',
+          effect: Effect.ALLOW,
+          actions: ['logs:CreateLogStream', 'logs:CreateLogGroup'],
+          resources: [
+            `arn:aws:logs:${props.env?.region}:${props.env?.account}:log-group:/aws/lambda/${props.service}-api-${props.stage}*:*`,
+          ],
+        }),
+        new PolicyStatement({
+          sid: 'PutLogs',
+          effect: Effect.ALLOW,
+          actions: ['logs:PutLogEvents', 'logs:CreateLogGroup'],
+          resources: [
+            `arn:aws:logs:${props.env?.region}:${props.env?.account}:log-group:/aws/lambda/${props.service}-api-${props.stage}*:*:*`,
+          ],
+        }),
+      ],
+    });
+
+    const lambdaExecutionRole = new Role(this, 'ApiLambdaExecutionRole', {
+      roleName: `${props.service}-${props.stage}-api-lambda-execution-role`,
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+
+    lambdaExecutionRole.attachInlinePolicy(lambdaExecutionPolicy);
   }
 }

@@ -43,7 +43,7 @@ type LocalEnvironment = {
   fromEmail?: string;
 };
 
-type DeployableEnvironmentConfig = {
+export type DeployableEnvironmentConfig = {
   aws: AwsConfig;
   domain?: string;
   fromEmail: string;

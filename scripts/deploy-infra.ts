@@ -82,7 +82,7 @@ const { stage, stacks } = program.opts();
 
 const env = config.environments[stage as Environment];
 
-if (!env) {
+if (!env.aws) {
   throw new Error(`[ Error ] Could not find a configured stage in volca.config.ts for stage ${stage}`);
 }
 

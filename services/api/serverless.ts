@@ -83,6 +83,7 @@ const serverlessConfiguration: AWS = {
     name: 'aws',
     iam: {
       deploymentRole: `arn:aws:iam::${stageConfig.aws?.account}:role/${config.name}-\${self:provider.stage}-github-actions-cloudformation-deployment-role`,
+      role: `arn:aws:iam::${stageConfig.aws?.account}:role/${config.name}-\${self:provider.stage}-api-lambda-execution-role`,
     },
     stackName: `${config.name}-${stage}-api-service`,
     runtime: 'nodejs16.x',
