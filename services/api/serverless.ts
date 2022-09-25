@@ -25,7 +25,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
     case 'local':
       return {
         logLevel: 'debug',
-        appDomain: '127.0.0.1:4000',
+        appDomain: '127.0.0.1:3000',
         skipTokenVerification: 'false',
         fromEmail: 'admin@volca.io', // TODO: Pick email from config
         credentials: {
@@ -82,13 +82,13 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     iam: {
-      deploymentRole: `arn:aws:iam::${stageConfig?.aws.account}:role/${config.name}-\${self:provider.stage}-github-actions-cloudformation-deployment-role`,
+      deploymentRole: `arn:aws:iam::${stageConfig.aws?.account}:role/${config.name}-\${self:provider.stage}-github-actions-cloudformation-deployment-role`,
     },
     stackName: `${config.name}-${stage}-api-service`,
     runtime: 'nodejs16.x',
     lambdaHashingVersion: '20201221',
     stage,
-    region: config.environments[stage]?.aws.region,
+    region: config.environments[stage].aws?.region,
     apiGateway:
       stage !== Environment.LOCAL
         ? {
@@ -98,6 +98,7 @@ const serverlessConfiguration: AWS = {
         : undefined,
     environment: {
       STAGE: stage,
+      REGION: '${self:provider.region}',
       LOG_LEVEL: '${self:custom.environment.logLevel}',
       APP_DOMAIN: '${self:custom.environment.appDomain}',
       DB_HOST: '${self:custom.environment.credentials.host}',

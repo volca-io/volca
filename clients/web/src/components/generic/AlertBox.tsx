@@ -1,9 +1,9 @@
 import { Alert, AlertTitle, AlertDescription, AlertIcon, Box, CloseButton } from '@chakra-ui/react';
 
-type AlertBoxProps = {
+export type AlertBoxProps = {
   status: 'info' | 'warning' | 'success' | 'error' | 'loading';
   title: string;
-  description: string;
+  description: string | React.ReactNode;
   onClose: () => void;
 };
 

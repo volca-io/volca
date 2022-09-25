@@ -30,6 +30,9 @@ export const useUserActions = () => {
     await ApiClient.resetPassword(email);
   };
 
+  const verifyResetPassword = async (password: string, resetToken: string): Promise<void> =>
+    ApiClient.verifyResetPassword(password, resetToken);
+
   const signOut = async () => {
     await ApiClient.signOut();
     localStorage.removeItem('access-token');
@@ -44,5 +47,5 @@ export const useUserActions = () => {
     return { remember, identifier };
   };
 
-  return { register, signIn, signOut, getRememberInfo, resetPassword };
+  return { register, signIn, signOut, getRememberInfo, resetPassword, verifyResetPassword };
 };

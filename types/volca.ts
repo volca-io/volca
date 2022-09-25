@@ -38,6 +38,11 @@ type AwsConfig = {
   stackStrategy: StackStrategy;
 };
 
+type LocalEnvironment = {
+  aws?: AwsConfig;
+  fromEmail?: string;
+};
+
 type DeployableEnvironmentConfig = {
   aws: AwsConfig;
   domain?: string;
@@ -57,7 +62,7 @@ export enum Environment {
 
 export type Config = {
   environments: {
-    [Environment.LOCAL]: null;
+    [Environment.LOCAL]: LocalEnvironment;
     [Environment.STAGING]: DeployableEnvironmentConfig;
     [Environment.PRODUCTION]: DeployableEnvironmentConfig;
   };

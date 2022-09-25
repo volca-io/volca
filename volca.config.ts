@@ -7,7 +7,13 @@ export const config: Config = {
     repository: 'volca',
   },
   environments: {
-    local: null,
+    local: {
+      aws: {
+        account: '428245413678',
+        region: 'eu-central-1',
+        stackStrategy: StackStrategy.COST,
+      },
+    },
     staging: {
       domain: 'staging.volca.io',
       fromEmail: 'admin@volca.io',

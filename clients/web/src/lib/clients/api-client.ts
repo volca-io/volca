@@ -148,7 +148,11 @@ export class ApiClient {
   }
 
   static async resetPassword(email: string): Promise<void> {
-    await this.handleApiError(this.client.post('authn/reset-password', { json: { email } }).json());
+    await this.handleApiError(this.client.post('authn/reset-password', { json: { email } }));
+  }
+
+  static async verifyResetPassword(password: string, resetToken: string): Promise<void> {
+    await this.handleApiError(this.client.post('authn/reset-password/verify', { json: { password, resetToken } }));
   }
 
   static async signOut(): Promise<void> {

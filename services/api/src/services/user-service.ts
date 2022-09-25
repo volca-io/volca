@@ -13,13 +13,6 @@ type RegisterUserProperties = {
   password: string;
 };
 
-type UpdateUserProperties = {
-  id: string;
-  stripeId?: string;
-  hasActiveSubscription?: boolean;
-  freeTrialActivated?: boolean;
-};
-
 @injectable()
 export class UserService {
   public constructor(private security: Security) {}
@@ -59,7 +52,7 @@ export class UserService {
     return user;
   }
 
-  public async update({ id, stripeId, hasActiveSubscription }: UpdateUserProperties): Promise<User | undefined> {
-    return User.query().findOne({ id }).update({ stripeId, hasActiveSubscription }).returning('*').first();
+  public async update(id: string, properties: Omit<Partial<User>, 'id'>): Promise<User | undefined> {
+    return User.query().findOne({ id }).update(properties).returning('*').first();
   }
 }

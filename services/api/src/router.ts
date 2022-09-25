@@ -8,8 +8,10 @@ import { statusAction } from './actions/status';
 import {
   authnPasswordAction,
   authnPasswordSchema,
-  authnResetPasswordAction,
-  authnResetPasswordSchema,
+  resetPasswordAction,
+  resetPasswordSchema,
+  verifyResetPasswordAction,
+  verifyResetPasswordSchema,
   refreshAction,
   registerAction,
   registerSchema,
@@ -36,8 +38,12 @@ import {
 
 import { createStripeSessionAction, createStripeBillingPortalSessionAction } from './actions/stripe';
 
-import { authenticationMiddleware } from './middlewares';
-import { schemaValidationMiddleware } from './middlewares/schema-validation-middleware';
+import {
+  authenticationMiddleware,
+  schemaValidationMiddleware,
+  projectAdminMiddleware,
+  projectUserMiddleware,
+} from './middlewares';
 /* volca-exclude-end os */
 import { CustomContext } from './types';
 
@@ -54,8 +60,8 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   /* volca-exclude-start os */
   // Projects
-  router.get('/projects/:id', authenticationMiddleware, getProjectAction);
-  router.delete('/projects/:id', authenticationMiddleware, deleteProjectAction);
+  router.get('/projects/:projectId', authenticationMiddleware, projectUserMiddleware, getProjectAction);
+  router.delete('/projects/:projectId', authenticationMiddleware, projectAdminMiddleware, deleteProjectAction);
   router.get('/projects', authenticationMiddleware, listProjectsAction);
   router.post(
     '/projects',
@@ -64,20 +70,27 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
     createProjectAction
   );
   router.put(
-    '/projects/:id',
+    '/projects/:projectId',
     authenticationMiddleware,
+    projectUserMiddleware,
     schemaValidationMiddleware(updateProjectSchema),
     updateProjectAction
   );
 
   // Project users
-  router.get('/projects/:projectId/users', authenticationMiddleware, listProjectUsersAction);
-  router.delete('/projects/:projectId/users/:userId', authenticationMiddleware, deleteProjectUserAction);
+  router.get('/projects/:projectId/users', authenticationMiddleware, projectUserMiddleware, listProjectUsersAction);
+  router.delete(
+    '/projects/:projectId/users/:userId',
+    authenticationMiddleware,
+    projectAdminMiddleware,
+    deleteProjectUserAction
+  );
 
   // Project invitations
   router.post(
     '/project-invitations',
     authenticationMiddleware,
+    projectUserMiddleware,
     schemaValidationMiddleware(createProjectInvitationSchema),
     createProjectInvitationAction
   );
@@ -88,10 +101,16 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   // Authentication
   router.post('/authn/password', schemaValidationMiddleware(authnPasswordSchema), authnPasswordAction);
-  router.post('/authn/reset-password', schemaValidationMiddleware(authnResetPasswordSchema), authnResetPasswordAction);
+  router.post('/authn/reset-password', schemaValidationMiddleware(resetPasswordSchema), resetPasswordAction);
+  router.post(
+    '/authn/reset-password/verify',
+    schemaValidationMiddleware(verifyResetPasswordSchema),
+    verifyResetPasswordAction
+  );
   router.post('/authn/sign-out', signOutAction);
   router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
   router.post('/authn/refresh', refreshAction);
+  router.post('/authn/refresh/verify', refreshAction);
 
   // Stripe
   router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);

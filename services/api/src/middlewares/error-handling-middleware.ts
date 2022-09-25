@@ -21,7 +21,8 @@ export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { statusCode, status, message } = err as any;
 
-      const fallbackedMessage = message || 'An unexpected error occurred';
+      const genericMessage = 'An unexpected error occurred';
+      const fallbackedMessage = statusCode < 500 ? message : genericMessage;
       const fallbackedStatus = statusCode || status || 500;
 
       logger.error(fallbackedMessage, { status: fallbackedStatus });
@@ -29,7 +30,7 @@ export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) 
       ctx.status = fallbackedStatus;
       ctx.body = {
         name: ErrorNames.INTERNAL_SERVER_ERROR,
-        message: fallbackedMessage,
+        message: fallbackedMessage || genericMessage,
       };
     }
   }

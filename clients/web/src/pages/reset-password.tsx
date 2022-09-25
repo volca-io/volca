@@ -1,77 +1,93 @@
-import {
-  Input,
-  Button,
-  Text,
-  Image,
-  Flex,
-  useColorModeValue,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
-} from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
+import { Text, Flex, useColorModeValue, Box, Heading, Link } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
 import { SoftCard } from '../components/generic/SoftCard';
 import { useState } from 'react';
+import { AlertBox } from '../components/generic/AlertBox';
+import { ResetPasswordForm } from '../components/forms/ResetPassword';
 
-type FormValues = {
-  email: string;
+type AlertBody = {
+  title: string;
+  description: string;
+  type: 'success' | 'error';
 };
 
 export const ResetPasswordPage: React.FC = () => {
   const { resetPassword } = useUserActions();
-  const [error, setError] = useState<string | null>(null);
+  const [alert, setAlert] = useState<AlertBody | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>();
+  const titleColor = useColorModeValue('teal.400', 'teal.200');
+  const textColor = useColorModeValue('gray.600', 'white');
+  const linkColor = useColorModeValue('teal.400', 'teal.200');
 
   const onSubmit = async ({ email }: { email: string }) => {
     try {
+      setLoading(true);
       await resetPassword(email);
+      setAlert({
+        title: 'Success!',
+        description:
+          'Your request was successful. If there is an account connected to this email, you will soon get an email with instructions on how to reset your password.',
+        type: 'success',
+      });
     } catch (err: unknown) {
-      setError('Something went wrong');
+      setAlert({
+        title: 'Something went wrong',
+        description: 'Something went wrong when processing your request. Please try again later.',
+        type: 'error',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <DefaultLayout>
-      <Flex minH="100vh" direction="column" justifyContent="center" maxW="600px" margin="0 auto">
-        <Flex paddingY="8" direction="column" alignItems="center">
-          <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="128px" />
-          <Text fontSize="sm">Enter the e-mail you used to sign up.</Text>
-        </Flex>
-        {error && (
-          <Alert status="error">
-            <AlertIcon />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-            <CloseButton
-              alignSelf="flex-end"
-              position="absolute"
-              right={0}
-              top={0}
-              onClick={() => {
-                setError(null);
-              }}
+    <DefaultLayout displayLogo>
+      <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
+        <Flex
+          direction="column"
+          justifyContent={{ base: 'flex-start ', md: 'center' }}
+          flexGrow={1}
+          maxW={600}
+          p={{
+            base: 0,
+            sm: 8,
+          }}
+        >
+          <Box mb={2}>
+            <Heading color={titleColor} mb={2}>
+              Reset your password
+            </Heading>
+            <Text fontSize="sm" color={textColor}>
+              Enter the email address you signed up with and we'll send you instructions as how to reset your password.
+              Or go back to{' '}
+              <Link
+                color={linkColor}
+                textDecoration="underline"
+                textUnderlineOffset={1.5}
+                to="/sign-in"
+                as={RouterLink}
+              >
+                sign in page
+              </Link>
+              .
+            </Text>
+          </Box>
+          {alert && (
+            <AlertBox
+              title={alert.title}
+              description={alert.description}
+              onClose={() => setAlert(null)}
+              status={alert.type}
             />
-          </Alert>
-        )}
-        <SoftCard mt={4}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Input type="email" placeholder="Email" {...register('email', { required: true })} />
-            {errors?.email && <p>E-mail is required</p>}
-            <Button type="submit" mt={4}>
-              Reset password
-            </Button>
-          </form>
-        </SoftCard>
+          )}
+          <SoftCard mt={2}>
+            <ResetPasswordForm onSubmit={onSubmit} loading={loading} />
+          </SoftCard>
+        </Flex>
       </Flex>
     </DefaultLayout>
   );

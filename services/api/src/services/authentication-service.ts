@@ -153,4 +153,74 @@ export class AuthenticationService {
 
     return user;
   }
+
+  public async generatePasswordResetToken(email: string): Promise<string> {
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      throw new ServiceError({
+        name: ErrorNames.USER_DOES_NOT_EXIST,
+        message: 'The user does not exist',
+        statusCode: StatusCodes.BAD_REQUEST,
+        debug: 'Could not find a user when creating password reset token',
+      });
+    }
+    if (!user.password) {
+      throw new ServiceError({
+        name: ErrorNames.MISSING_PROPERTY_ERROR,
+        message: 'The user does not have a password',
+        statusCode: StatusCodes.BAD_REQUEST,
+        debug: 'The password property on the user was not set',
+      });
+    }
+
+    return this.security.createTokenWithSecret({ sub: email }, 20, user.password);
+  }
+
+  public async resetPassword(password: string, resetToken: string): Promise<void> {
+    const { sub } = this.security.decodeToken(resetToken);
+
+    if (!sub) {
+      throw new ServiceError({
+        name: ErrorNames.VALIDATION_ERROR,
+        message: 'Invalid reset token',
+        statusCode: StatusCodes.BAD_REQUEST,
+        debug: 'The token did not include a subject',
+      });
+    }
+
+    const user = await this.userService.findByEmail(sub);
+    if (!user) {
+      throw new ServiceError({
+        name: ErrorNames.USER_DOES_NOT_EXIST,
+        message: 'Invalid reset token',
+        statusCode: StatusCodes.BAD_REQUEST,
+        debug: 'A user with the supplied reset password token subject does not exist',
+      });
+    }
+    if (!user.password) {
+      throw new ServiceError({
+        name: ErrorNames.MISSING_PROPERTY_ERROR,
+        message: 'Invalid user',
+        statusCode: StatusCodes.BAD_REQUEST,
+        debug: 'The subject of the reset password request does not have a password to reset',
+      });
+    }
+
+    try {
+      this.security.verifyTokenWithSecret(resetToken, user.password);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        throw new ServiceError({
+          name: ErrorNames.AUTHORIZATION_FAILED,
+          message: 'Your reset password link is either invalid or expired',
+          statusCode: StatusCodes.UNAUTHORIZED,
+          debug: err.message,
+        });
+      }
+      throw err;
+    }
+
+    const hashedPassword = this.security.hashPassword(password);
+    await this.userService.update(user.id, { password: hashedPassword });
+  }
 }

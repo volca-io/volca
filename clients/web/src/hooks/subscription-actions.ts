@@ -3,7 +3,7 @@ import { ApiClient } from '../lib/clients/api-client';
 import { StripeSession } from '../types';
 import { useApiActions } from './api-actions';
 
-export const useSettingsActions = () => {
+export const useSubscriptionActions = () => {
   const { executeApiCall } = useApiActions();
 
   const manageSubscriptions = async () =>
