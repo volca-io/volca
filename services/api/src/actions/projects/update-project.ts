@@ -14,7 +14,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const projectService = container.resolve(ProjectService);
 
   const { name, adminId } = ctx.request.body;
-  const { id } = ctx.params;
+  const { projectId: id } = ctx.params;
 
   const oldProject = await projectService.get(id);
   const project = await projectService.update({ ...oldProject, id, adminId, name });

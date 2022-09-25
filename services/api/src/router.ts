@@ -36,8 +36,12 @@ import {
 
 import { createStripeSessionAction, createStripeBillingPortalSessionAction } from './actions/stripe';
 
-import { authenticationMiddleware } from './middlewares';
-import { schemaValidationMiddleware } from './middlewares/schema-validation-middleware';
+import {
+  authenticationMiddleware,
+  schemaValidationMiddleware,
+  projectAdminMiddleware,
+  projectUserMiddleware,
+} from './middlewares';
 /* volca-exclude-end os */
 import { CustomContext } from './types';
 
@@ -54,8 +58,8 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   /* volca-exclude-start os */
   // Projects
-  router.get('/projects/:id', authenticationMiddleware, getProjectAction);
-  router.delete('/projects/:id', authenticationMiddleware, deleteProjectAction);
+  router.get('/projects/:projectId', authenticationMiddleware, projectUserMiddleware, getProjectAction);
+  router.delete('/projects/:projectId', authenticationMiddleware, projectAdminMiddleware, deleteProjectAction);
   router.get('/projects', authenticationMiddleware, listProjectsAction);
   router.post(
     '/projects',
@@ -64,20 +68,27 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
     createProjectAction
   );
   router.put(
-    '/projects/:id',
+    '/projects/:projectId',
     authenticationMiddleware,
+    projectUserMiddleware,
     schemaValidationMiddleware(updateProjectSchema),
     updateProjectAction
   );
 
   // Project users
-  router.get('/projects/:projectId/users', authenticationMiddleware, listProjectUsersAction);
-  router.delete('/projects/:projectId/users/:userId', authenticationMiddleware, deleteProjectUserAction);
+  router.get('/projects/:projectId/users', authenticationMiddleware, projectUserMiddleware, listProjectUsersAction);
+  router.delete(
+    '/projects/:projectId/users/:userId',
+    authenticationMiddleware,
+    projectAdminMiddleware,
+    deleteProjectUserAction
+  );
 
   // Project invitations
   router.post(
     '/project-invitations',
     authenticationMiddleware,
+    projectUserMiddleware,
     schemaValidationMiddleware(createProjectInvitationSchema),
     createProjectInvitationAction
   );
