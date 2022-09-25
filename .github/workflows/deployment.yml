@@ -4,18 +4,24 @@ on:
     branches:
       - main
 jobs:
-  deploy-staging-services:
-    strategy:
-      matrix:
-        service: [deploy-api, deploy-webapp]
+  deploy-webapp-staging:
+    uses: volca-io/volca/.github/workflows/deploy-webapp.yml@main
+    with:
+      environment: staging
+
+  deploy-webapp-production:
+    needs: deploy-webapp-staging
+    uses: volca-io/volca/.github/workflows/deploy-webapp.yml@main
+    with:
+      environment: production
+
+  deploy-api-staging:
     uses: volca-io/volca/.github/workflows/deploy-api.yml@main
     with:
       environment: staging
-  deploy-production-services:
-    needs: deploy-staging-services
-    strategy:
-      matrix:
-        service: [deploy-api, deploy-webapp]
+
+  deploy-api-production:
+    needs: deploy-api-staging
     uses: volca-io/volca/.github/workflows/deploy-api.yml@main
     with:
       environment: production
