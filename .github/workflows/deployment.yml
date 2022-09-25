@@ -10,7 +10,7 @@ jobs:
 
   provision-infrastructure-staging:
     name: deploy staging infrastructure
-    uses: ./provision-infrastructure.yml
+    uses: ./provision-infrastructure.yml@main
     with:
       environment: staging
 
@@ -37,7 +37,7 @@ jobs:
       - deploy-api-staging
       - deploy-webapp-staging
     name: provision production infrastructure
-    uses: ./provision-infrastructure.yml
+    uses: ./provision-infrastructure.yml@main
     with:
       environment: production
 
