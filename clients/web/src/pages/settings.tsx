@@ -7,11 +7,11 @@ import { AuthenticatedLayout } from '../layouts';
 import { currentUser } from '../state';
 import { SoftCard } from '../components/generic/SoftCard';
 import { PageHeading } from '../components/generic/PageHeading';
-import { useSettingsActions } from '../hooks';
+import { useSubscriptionActions } from '../hooks';
 
 export const SettingsPage: React.FC = () => {
   const user = useRecoilValue(currentUser);
-  const { manageSubscriptions, activateSubscription } = useSettingsActions();
+  const { manageSubscriptions, activateSubscription } = useSubscriptionActions();
 
   return (
     <AuthenticatedLayout sidebar={false}>

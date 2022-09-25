@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FormLabel, Heading, Input, Button, Spacer } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,8 @@ import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
 import { DangerButton } from '../components/generic/DangerButton';
 import { useProjectActions } from '../hooks/project-actions';
+import { selectedProject as selectedProjectState } from '../state';
+import { useRecoilValue } from 'recoil';
 
 type FormValues = {
   name: string;
@@ -21,20 +23,11 @@ export const ProjectSettingsPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
-  const [project, setProject] = useState<Project>();
+  const selectedProject = useRecoilValue(selectedProjectState);
+  const [project] = useState<Project | null>(selectedProject);
 
-  const { getProject, updateProject, deleteProject } = useProjectActions();
+  const { updateProject, deleteProject } = useProjectActions();
   const { id } = useParams();
-
-  useEffect(() => {
-    const load = async () => {
-      if (id) {
-        const data = await getProject(id);
-        if (data) setProject(data);
-      }
-    };
-    load();
-  }, [id, getProject]);
 
   if (!id) return null;
 

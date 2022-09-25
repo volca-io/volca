@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthenticatedLayout } from '../layouts';
-import { useProjectUserActions } from '../hooks/project-user-actions';
+import { useProjectUserActions } from '../hooks';
 
 export const AcceptProjectInvitationPage: React.FC = () => {
   const navigate = useNavigate();

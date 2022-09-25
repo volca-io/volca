@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, Text, Box } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { ApiClient } from '../lib/clients/api-client';
-import { selectedProject, currentUser, projects as projectsState } from '../state';
+import { currentUser } from '../state';
 import { MdAdd, MdChevronRight } from 'react-icons/md';
 import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
+import { useProjectActions } from '../hooks';
 
 type FormValues = {
   name: string;
@@ -22,25 +22,20 @@ export const CreateProjectPage: React.FC = () => {
     formState: { errors },
   } = useForm<FormValues>();
   const navigate = useNavigate();
-  const [projects, setProjects] = useRecoilState(projectsState);
-  const [, setSelectedProject] = useRecoilState(selectedProject);
+
   const user = useRecoilValue(currentUser);
 
+  const { createProject } = useProjectActions();
+
   useEffect(() => {
-    if (user && !user.has_active_subscription) {
+    if (!user?.has_active_subscription) {
       navigate('/subscribe');
     }
   }, [user, navigate]);
 
   const onSubmit = async ({ name }: { name: string }) => {
-    try {
-      const res = await ApiClient.createProject({ name });
-      setProjects([...projects, res]);
-      setSelectedProject(res);
-      navigate('/');
-    } catch (error) {
-      console.error(error);
-    }
+    await createProject({ name });
+    navigate('/');
   };
 
   return (

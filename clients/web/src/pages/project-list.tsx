@@ -36,7 +36,7 @@ export const ProjectListPage: React.FC = () => {
         project.admin.has_active_subscription ? onSelectProject(project) : setInactiveProjectId(project.id)
       }
     >
-      <Box textAlign="center">
+      <Box textAlign={['center', 'left']}>
         <Heading size="md">{project.name}</Heading>
         <Badge variant={project.admin.has_active_subscription ? 'solid' : 'subtle'}>
           {project.admin.has_active_subscription ? 'Active' : 'Inactive'}

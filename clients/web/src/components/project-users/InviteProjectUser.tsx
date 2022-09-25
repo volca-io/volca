@@ -1,8 +1,6 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Button, Input, InputGroup } from '@chakra-ui/react';
+import { Button, Input, InputGroup } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { MdPersonAddAlt1 } from 'react-icons/md';
-
-import { Alert as AlertContent } from '../../types';
 
 interface FormProps {
   toUserEmail: string;
@@ -10,11 +8,10 @@ interface FormProps {
 }
 
 type InviteProjectUserProps = {
-  alert?: AlertContent;
   onSubmit: (data: FormProps) => void;
 };
 
-const InviteProjectUser: React.FC<InviteProjectUserProps> = ({ alert, onSubmit }) => {
+export const InviteProjectUser: React.FC<InviteProjectUserProps> = ({ onSubmit }) => {
   const { register, handleSubmit } = useForm<FormProps>();
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -24,15 +21,6 @@ const InviteProjectUser: React.FC<InviteProjectUserProps> = ({ alert, onSubmit }
           Invite
         </Button>
       </InputGroup>
-      {alert && (
-        <Alert status={alert.status}>
-          <AlertIcon />
-          <AlertTitle>{alert.title}</AlertTitle>
-          <AlertDescription>{alert.message}</AlertDescription>
-        </Alert>
-      )}
     </form>
   );
 };
-
-export default InviteProjectUser;

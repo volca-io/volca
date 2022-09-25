@@ -4,30 +4,30 @@ import { MdGroups } from 'react-icons/md';
 import { useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { ApiClient } from '../lib/clients/api-client';
 import { ProjectUserList } from '../components/project-users';
-import { Alert, User } from '../types';
-import InviteProjectUser from '../components/project-users/InviteProjectUser';
+import { User } from '../types';
+import { InviteProjectUser } from '../components/project-users/InviteProjectUser';
 import { SoftCard } from '../components/generic/SoftCard';
 import { PageHeading } from '../components/generic/PageHeading';
 import { selectedProject } from '../state';
 import { useProjectUserActions } from '../hooks/project-user-actions';
+import { AlertBox, AlertBoxProps } from '../components/generic/AlertBox';
 
 export const ProjectUsersPage: React.FC = () => {
   const project = useRecoilValue(selectedProject);
-  const [inviteAlert, setInviteAlert] = useState<Alert>();
+  const [inviteAlert, setInviteAlert] = useState<AlertBoxProps | null>();
   const [users, setUsers] = useState<User[]>([]);
-  const { createProjectInvitation, deleteProjectUser } = useProjectUserActions();
+  const { getProjectUsers, createProjectInvitation, deleteProjectUser } = useProjectUserActions();
 
   useEffect(() => {
     const getUsers = async () => {
       if (project) {
-        const data = await ApiClient.getProjectUsers(project.id);
-        setUsers(data);
+        const data = await getProjectUsers(project.id);
+        setUsers(data || []);
       }
     };
     getUsers();
-  }, [project]);
+  }, [project, getProjectUsers]);
 
   if (!project) return null;
 
@@ -36,8 +36,9 @@ export const ProjectUsersPage: React.FC = () => {
     if (projectInvitation) {
       setInviteAlert({
         title: 'User invited!',
-        message: `Share the link ${window.location.protocol}//${window.location.host}/invitations/${projectInvitation.key} with the user you invited. The link is valid for 1 hour.`,
+        description: `Share the link ${window.location.protocol}//${window.location.host}/invitations/${projectInvitation.key} with the user you invited. The link is valid for 1 hour.`,
         status: 'info',
+        onClose: () => setInviteAlert(null),
       });
     }
   };
@@ -45,9 +46,11 @@ export const ProjectUsersPage: React.FC = () => {
   return (
     <AuthenticatedLayout>
       <SoftCard w="100%">
+        {inviteAlert && <AlertBox {...inviteAlert} />}
         <Flex alignItems="center" justifyContent="space-between">
           <PageHeading title="Users" icon={MdGroups} />
-          <InviteProjectUser alert={inviteAlert} onSubmit={onInvite} />
+
+          <InviteProjectUser onSubmit={onInvite} />
         </Flex>
         {users && (
           <ProjectUserList

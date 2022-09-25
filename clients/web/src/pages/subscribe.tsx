@@ -19,22 +19,23 @@ import { MdVpnKey, MdPayments, MdBusinessCenter, MdLock, MdChevronRight } from '
 import { IoIosRocket } from 'react-icons/io';
 
 import { AuthenticatedLayout } from '../layouts';
-import { ApiClient } from '../lib/clients/api-client';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { currentUser } from '../state';
 import { SoftCard } from '../components/generic/SoftCard';
 import { IconType } from 'react-icons';
 import { PageHeading } from '../components/generic/PageHeading';
+import { useSubscriptionActions } from '../hooks';
 
 export const SubscribePage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const user = useRecoilValue(currentUser);
+  const { activateSubscription } = useSubscriptionActions();
 
   const onActivate = async () => {
     try {
-      const session = await ApiClient.createStripeSession();
-      window.location.replace(session.url);
+      const session = await activateSubscription();
+      if (session) window.location.replace(session.url);
     } catch (error) {
       console.error(error);
     }
