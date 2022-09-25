@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { FormControl, FormLabel, Input, Button, VStack, FormErrorMessage, Progress, HStack } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, Button, VStack, FormErrorMessage, HStack } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn';
+import { PasswordStrengthIndicator } from '../PasswordStrength';
 
 interface RegisterFormProps {
   firstName: string;
@@ -23,18 +24,6 @@ interface RegisterFormComponentProps {
   onSubmit: (data: OnSubmitProps) => void;
   loading: boolean;
 }
-
-type PasswordStrengthColorMap = {
-  [key: number]: 'gray' | 'red' | 'yellow' | 'green';
-};
-
-const passwordStrengthColorMap = {
-  0: 'red',
-  1: 'red',
-  2: 'yellow',
-  3: 'green',
-  4: 'green',
-} as PasswordStrengthColorMap;
 
 export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, loading }) => {
   const [strengthCheck, setStrengthCheck] = useState<null | ZXCVBNResult>(null);
@@ -105,23 +94,7 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
               },
             })}
           />
-          <Progress
-            size="sm"
-            value={strengthCheck?.score === undefined ? 0 : strengthCheck?.score + 1}
-            max={5}
-            min={0}
-            borderRadius={5}
-            mt={2}
-            colorScheme={passwordStrengthColorMap[strengthCheck?.score || 0]}
-            sx={{
-              '& > div:first-child': {
-                transition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)',
-                transitionDuration: '.2s, .2s, .35s',
-                transitionProperty: 'width',
-                transitionTimingFunction: 'linear, linear, ease',
-              },
-            }}
-          />
+          <PasswordStrengthIndicator strength={strengthCheck?.score} />
           {errors.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}
         </FormControl>
         <FormControl isInvalid={!!errors.confirmPassword}>

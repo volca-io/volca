@@ -20,6 +20,7 @@ import { theme } from './theme';
 import { AuthenticatedRoute } from './routing/AuthenticatedRoute';
 import { ProjectRoute } from './routing/ProjectRoute';
 import { ResetPasswordPage } from './pages/reset-password';
+import { VerifyResetPasswordPage } from './pages/verify-reset-password';
 
 export const App = () => (
   <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
@@ -102,6 +103,7 @@ export const App = () => (
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/reset-password/verify" element={<VerifyResetPasswordPage />} />
             <Route path=":any" element={<NotFoundPage />} />
           </Routes>
         </Router>

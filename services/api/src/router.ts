@@ -8,8 +8,10 @@ import { statusAction } from './actions/status';
 import {
   authnPasswordAction,
   authnPasswordSchema,
-  authnResetPasswordAction,
-  authnResetPasswordSchema,
+  resetPasswordAction,
+  resetPasswordSchema,
+  verifyResetPasswordAction,
+  verifyResetPasswordSchema,
   refreshAction,
   registerAction,
   registerSchema,
@@ -99,10 +101,16 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   // Authentication
   router.post('/authn/password', schemaValidationMiddleware(authnPasswordSchema), authnPasswordAction);
-  router.post('/authn/reset-password', schemaValidationMiddleware(authnResetPasswordSchema), authnResetPasswordAction);
+  router.post('/authn/reset-password', schemaValidationMiddleware(resetPasswordSchema), resetPasswordAction);
+  router.post(
+    '/authn/reset-password/verify',
+    schemaValidationMiddleware(verifyResetPasswordSchema),
+    verifyResetPasswordAction
+  );
   router.post('/authn/sign-out', signOutAction);
   router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
   router.post('/authn/refresh', refreshAction);
+  router.post('/authn/refresh/verify', refreshAction);
 
   // Stripe
   router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);

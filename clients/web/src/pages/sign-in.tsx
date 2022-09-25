@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, useColorModeValue, Flex, Link, Image } from '@chakra-ui/react';
+import { Text, useColorModeValue, Flex, Link, Heading, Box } from '@chakra-ui/react';
 import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { SignInForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
@@ -19,6 +19,7 @@ export const SignInPage: React.FC = () => {
   const [error, setError] = useState<ErrorDescription | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const titleColor = useColorModeValue('teal.400', 'teal.200');
   const textColor = useColorModeValue('gray.600', 'white');
   const linkColor = useColorModeValue('teal.400', 'teal.200');
 
@@ -42,7 +43,7 @@ export const SignInPage: React.FC = () => {
   const { identifier, remember } = getRememberInfo();
 
   return (
-    <DefaultLayout>
+    <DefaultLayout displayLogo>
       <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
         <Flex
           direction="column"
@@ -54,9 +55,23 @@ export const SignInPage: React.FC = () => {
             sm: 8,
           }}
         >
-          <Flex direction="column" alignItems="center">
-            <Image src={useColorModeValue('/logo-dark.svg', '/logo-light.svg')} boxSize="128px" />
-          </Flex>
+          <Box paddingY="8">
+            <Heading color={titleColor} mb={2}>
+              Sign in
+            </Heading>
+            <Text fontSize="sm" color={textColor}>
+              Don't have an account to sign in to?{' '}
+              <Link
+                color={linkColor}
+                textDecoration="underline"
+                textUnderlineOffset={1.5}
+                to="/register"
+                as={RouterLink}
+              >
+                Register an account instead
+              </Link>
+            </Text>
+          </Box>
           {error && (
             <AlertBox
               status="error"
@@ -80,21 +95,10 @@ export const SignInPage: React.FC = () => {
                   color={linkColor}
                   textDecoration="underline"
                   textUnderlineOffset={1.5}
-                  to="/register"
-                  as={RouterLink}
-                >
-                  Create new account
-                </Link>
-              </Text>
-              <Text fontSize="sm" color={textColor}>
-                <Link
-                  color={linkColor}
-                  textDecoration="underline"
-                  textUnderlineOffset={1.5}
                   to="/reset-password"
                   as={RouterLink}
                 >
-                  Forgot password{' '}
+                  Forgot your password?
                 </Link>
               </Text>
             </Flex>

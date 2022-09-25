@@ -51,7 +51,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <DefaultLayout>
+    <DefaultLayout displayLogo>
       <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
         <Flex
           direction="column"
@@ -63,9 +63,10 @@ export const RegisterPage: React.FC = () => {
             sm: 8,
           }}
         >
-          {' '}
           <Box paddingY="8">
-            <Heading color={titleColor}>Lets get you signed up!</Heading>
+            <Heading color={titleColor} mb={2}>
+              Let's get you signed up!
+            </Heading>
             <Text fontSize="sm" color={textColor}>
               Enter your details in the form below to create a new account. <br />
               Already have an account?{' '}

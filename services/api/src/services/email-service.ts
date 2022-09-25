@@ -19,17 +19,16 @@ export class EmailService {
   }
 
   public async sendEmail({ toAddress, subject, body }: SendEmailParams): Promise<void> {
-    const fromEmail = this.environment.get(EnvironmentVariable.FROM_EMAIL);
-    if (!fromEmail) return;
-    try {
-      const command = new SendEmailCommand({
-        FromEmailAddress: fromEmail,
-        Destination: { ToAddresses: [toAddress] },
-        Content: { Simple: { Subject: { Data: subject }, Body: { Text: { Data: body }, Html: { Data: body } } } },
-      });
-      await this.client.send(command);
-    } catch (error) {
-      this.logger.error('Failed to send e-mail', { error });
-    }
+    this.logger.debug('Sending email', { toAddress, subject, body });
+
+    const fromEmail = this.environment.getOrFail(EnvironmentVariable.FROM_EMAIL);
+
+    const command = new SendEmailCommand({
+      FromEmailAddress: fromEmail,
+      Destination: { ToAddresses: [toAddress] },
+
+      Content: { Simple: { Subject: { Data: subject }, Body: { Text: { Data: body }, Html: { Data: body } } } },
+    });
+    await this.client.send(command);
   }
 }

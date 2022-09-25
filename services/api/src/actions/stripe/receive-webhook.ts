@@ -36,8 +36,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
       });
     }
 
-    await userService.update({
-      id: user.id,
+    await userService.update(user.id, {
       hasActiveSubscription: event.type === 'customer.subscription.created',
       ...(event.type === 'customer.subscription.created' ? { freeTrialActivated: true } : {}),
     });

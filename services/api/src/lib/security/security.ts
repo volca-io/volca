@@ -29,6 +29,18 @@ export class Security {
     return bcrypt.hashSync(password);
   }
 
+  public createTokenWithSecret(
+    payload: Record<string, unknown>,
+    expiresIn: string | number | undefined,
+    secret: string
+  ): string {
+    return jwt.sign(payload, secret, { expiresIn });
+  }
+
+  public verifyTokenWithSecret(token: string, secret: string) {
+    jwt.verify(token, secret);
+  }
+
   public createAccessToken(payload: Record<string, unknown>, expiresIn: string | number | undefined): string {
     const { kid, secret } = this.signingKeys[0];
 
@@ -40,15 +52,15 @@ export class Security {
   }
 
   public verifyToken(token: string): JwtPayload {
-    const decoded = this.decodeToken(token);
+    const kid = this.getKeyId(token);
 
-    const key = this.signingKeys.find((key) => key.kid === decoded.header.kid);
+    const key = this.signingKeys.find((key) => key.kid === kid);
 
     if (!key) {
       throw new ServiceError({
         name: ErrorNames.AUTHORIZATION_FAILED,
         message: 'Token validation failed',
-        debug: `Unable to find a matching signing kid for kid ${decoded.header.kid}`,
+        debug: `Unable to find a matching signing kid for kid ${kid}`,
         statusCode: StatusCodes.UNAUTHORIZED,
       });
     }
@@ -80,8 +92,14 @@ export class Security {
     }
   }
 
-  public decodeToken(token: string): JwtPayload {
+  private getKeyId(token: string): string | undefined {
     const decoded = jwt.decode(token, { complete: true });
+
+    return decoded?.header.kid;
+  }
+
+  public decodeToken(token: string): JwtPayload {
+    const decoded = jwt.decode(token);
 
     if (!decoded) {
       throw new ServiceError({
@@ -92,16 +110,14 @@ export class Security {
       });
     }
 
-    const { payload } = decoded;
-
-    if (typeof decoded.payload !== 'object') {
+    if (typeof decoded !== 'object') {
       throw new ServiceError({
         name: ErrorNames.INTERNAL_SERVER_ERROR,
         message: 'Token validation failed',
-        debug: `Token verification did not return an object. Returned type was ${typeof payload}`,
+        debug: `Token verification did not return an object. Returned type was ${typeof decoded}`,
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       });
     }
-    return decoded;
+    return decoded as JwtPayload;
   }
 }
