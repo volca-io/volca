@@ -12,7 +12,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: provision-infrastructure-staging
     name: deploy api production
     uses: ./.github/workflows/deploy-api.yml
     with:
@@ -22,7 +21,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: provision-infrastructure-staging
     name: deploy webapp staging
     uses: ./.github/workflows/deploy-webapp.yml
     with:
