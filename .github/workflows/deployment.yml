@@ -15,14 +15,14 @@ jobs:
       environment: staging
 
   deploy-api-staging:
-    needs: provision-staging-infrastructure
+    needs: provision-infrastructure-staging
     name: deploy api production
     uses: ./.github/workflows/deploy-api.yml
     with:
       environment: staging
 
   deploy-webapp-staging:
-    needs: provision-staging-infrastructure
+    needs: provision-infrastructure-staging
     name: deploy webapp staging
     uses: ./.github/workflows/deploy-webapp.yml
     with:
