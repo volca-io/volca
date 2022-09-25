@@ -4,28 +4,53 @@ on:
     branches:
       - main
 jobs:
-  deploy-webapp-staging:
-    name: deploy webapp staging
-    uses: ./deploy-webapp.yml@main
+  ################################
+  ## Deploy to staging
+  ################################
+
+  provision-infrastructure-staging:
+    name: deploy staging infrastructure
+    uses: ./provision-infrastructure.yml
     with:
       environment: staging
 
-  deploy-webapp-production:
-    name: deploy webapp production
-    needs: deploy-webapp-staging
-    uses: ./deploy-webapp.yml@main
-    with:
-      environment: production
-
   deploy-api-staging:
+    needs: provision-staging-infrastructure
     name: deploy api production
     uses: ./deploy-api.yml@main
     with:
       environment: staging
 
+  deploy-webapp-staging:
+    needs: provision-staging-infrastructure
+    name: deploy webapp staging
+    uses: ./deploy-webapp.yml@main
+    with:
+      environment: staging
+
+  ################################
+  ## Deploy to production
+  ################################
+
+  provision-infrastructure-production:
+    needs:
+      - deploy-api-staging
+      - deploy-webapp-staging
+    name: provision production infrastructure
+    uses: ./provision-infrastructure.yml
+    with:
+      environment: production
+
   deploy-api-production:
-    name: deploy webapp production
-    needs: deploy-api-staging
+    name: deploy api production
+    needs: provision-infrastructure-production
     uses: ./deploy-api.yml@main
+    with:
+      environment: production
+
+  deploy-webapp-production:
+    name: deploy webapp production
+    needs: provision-infrastructure-production
+    uses: ./deploy-webapp.yml@main
     with:
       environment: production
