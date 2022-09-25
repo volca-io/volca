@@ -173,7 +173,7 @@ export class AuthenticationService {
       });
     }
 
-    return this.security.createTokenWithSecret({ sub: email }, 20, user.password);
+    return this.security.createTokenWithSecret({ sub: email }, 60 * 10, user.password);
   }
 
   public async resetPassword(password: string, resetToken: string): Promise<void> {
