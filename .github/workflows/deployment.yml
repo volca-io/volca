@@ -8,15 +8,6 @@ jobs:
   ## Deploy to staging
   ################################
 
-  provision-infrastructure-staging:
-    permissions:
-      id-token: write
-      contents: read
-    name: deploy staging infrastructure
-    uses: ./.github/workflows/provision-infrastructure.yml
-    with:
-      environment: staging
-
   deploy-api-staging:
     permissions:
       id-token: write
@@ -41,24 +32,12 @@ jobs:
   ## Deploy to production
   ################################
 
-  provision-infrastructure-production:
-    permissions:
-      id-token: write
-      contents: read
-    needs:
-      - deploy-api-staging
-      - deploy-webapp-staging
-    name: provision production infrastructure
-    uses: ./.github/workflows/provision-infrastructure.yml
-    with:
-      environment: production
-
   deploy-api-production:
     permissions:
       id-token: write
       contents: read
     name: deploy api production
-    needs: provision-infrastructure-production
+    needs: deploy-api-staging
     uses: ./.github/workflows/deploy-api.yml
     with:
       environment: production
@@ -68,7 +47,7 @@ jobs:
       id-token: write
       contents: read
     name: deploy webapp production
-    needs: provision-infrastructure-production
+    needs: deploy-webapp-staging
     uses: ./.github/workflows/deploy-webapp.yml
     with:
       environment: production
