@@ -58,16 +58,7 @@ export class ApiError extends Error implements ApiErrorInterface {
   public readonly name: string;
   public readonly status: number;
 
-  constructor({
-    name,
-    message,
-    status,
-  }: {
-    name: string;
-    message: string;
-    status: number;
-    shouldSignOutUser?: boolean;
-  }) {
+  constructor({ name, message, status }: { name: string; message: string; status: number }) {
     super(message);
     this.name = name;
     this.status = status;
