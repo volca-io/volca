@@ -1,12 +1,31 @@
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
+import { ApiError } from '../lib/clients/api-client';
 import { loading } from '../state/loading';
 import { message } from '../state/message';
+import { currentUser } from '../state/current-user';
 
 export const useApiActions = () => {
   const [, setLoading] = useRecoilState(loading);
   const [, setMessage] = useRecoilState(message);
-  const executeApiCall = async <T>({
+  const [, setUser] = useRecoilState(currentUser);
+
+  const executeApiCall = useCallback(
+    async <T>({ action }: { action: Function }): Promise<T> => {
+      try {
+        return action();
+      } catch (error: unknown) {
+        if (error instanceof ApiError && error.status === 401) {
+          setUser(null);
+          localStorage.removeItem('access-token');
+        }
+        throw error;
+      }
+    },
+    [setUser]
+  );
+
+  const executeApiAction = async <T>({
     action,
     onError,
     onSuccess,
@@ -21,7 +40,7 @@ export const useApiActions = () => {
   }): Promise<T | void> => {
     setLoading(true);
     try {
-      const result = await action();
+      const result = await executeApiCall<T>({ action });
       setLoading(false);
       if (successMessage) {
         setMessage(successMessage);
@@ -37,5 +56,8 @@ export const useApiActions = () => {
     setLoading(false);
   };
 
-  return { executeApiCall: useCallback(executeApiCall, [setLoading, setMessage]) };
+  return {
+    executeApiCall,
+    executeApiAction: useCallback(executeApiAction, [setLoading, setMessage, executeApiCall]),
+  };
 };

@@ -10,17 +10,17 @@ export const useProjectActions = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useRecoilState(projectsState);
   const [selectedProject, setSelectedProject] = useRecoilState(selectedProjectState);
-  const { executeApiCall } = useApiActions();
+  const { executeApiAction } = useApiActions();
 
   const getProject = async (id: string) =>
-    await executeApiCall<Project>({
+    await executeApiAction<Project>({
       action: () => ApiClient.getProject(id),
       onError: () => navigate('/'),
       errorMessage: 'Failed to load project, refresh to try again',
     });
 
   const createProject = async ({ name }: { name: string }) =>
-    await executeApiCall({
+    await executeApiAction({
       action: () => ApiClient.createProject({ name }),
       onSuccess: (project: Project) => {
         setProjects([...projects, project]);
@@ -31,7 +31,7 @@ export const useProjectActions = () => {
     });
 
   const updateProject = async (data: Partial<Project>) =>
-    await executeApiCall({
+    await executeApiAction({
       action: () => ApiClient.updateProject(data),
       onSuccess: (project: Project) => {
         if (project.id === selectedProject?.id) {
@@ -44,7 +44,7 @@ export const useProjectActions = () => {
     });
 
   const deleteProject = async (id: string) =>
-    await executeApiCall({
+    await executeApiAction({
       action: () => ApiClient.deleteProject(id),
       onSuccess: () => {
         setProjects(projects.filter((p) => p.id !== id));
@@ -58,20 +58,20 @@ export const useProjectActions = () => {
     });
 
   return {
-    getProject: useCallback(getProject, [executeApiCall, navigate]),
-    createProject: useCallback(createProject, [setProjects, setSelectedProject, executeApiCall, projects]),
+    getProject: useCallback(getProject, [executeApiAction, navigate]),
+    createProject: useCallback(createProject, [setProjects, setSelectedProject, executeApiAction, projects]),
     updateProject: useCallback(updateProject, [
       setProjects,
       setSelectedProject,
       selectedProject,
-      executeApiCall,
+      executeApiAction,
       projects,
     ]),
     deleteProject: useCallback(deleteProject, [
       setProjects,
       setSelectedProject,
       selectedProject,
-      executeApiCall,
+      executeApiAction,
       projects,
       navigate,
     ]),

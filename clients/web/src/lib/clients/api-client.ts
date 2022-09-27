@@ -55,10 +55,19 @@ type TokenResponse = {
 };
 
 export class ApiError extends Error implements ApiErrorInterface {
-  public name: string;
-  public status: number;
+  public readonly name: string;
+  public readonly status: number;
 
-  constructor({ name, message, status }: { name: string; message: string; status: number }) {
+  constructor({
+    name,
+    message,
+    status,
+  }: {
+    name: string;
+    message: string;
+    status: number;
+    shouldSignOutUser?: boolean;
+  }) {
     super(message);
     this.name = name;
     this.status = status;
@@ -79,7 +88,7 @@ export class ApiClient {
       beforeRequest: [
         async (request) => {
           let token = localStorage.getItem('access-token');
-          if (token && this.accessTokenIsAboutToExpire()) {
+          if (this.tokenNeedsRefresh(token)) {
             token = await this.refreshToken();
           }
           request.headers.set('authorization', `Bearer ${token}`);
@@ -90,21 +99,21 @@ export class ApiClient {
 
   private static async refreshToken(): Promise<string> {
     const { access_token } = await this.client.post('authn/refresh').json<TokenResponse>();
-    localStorage.setItem('access-token', access_token);
     return access_token;
   }
 
-  private static accessTokenIsAboutToExpire() {
-    const accessToken = localStorage.getItem('access-token');
-
+  private static tokenNeedsRefresh(accessToken: string | null) {
     if (!accessToken) {
+      console.log('No access token is set');
       return true;
     }
 
     const decoded = jwt_decode<AccessToken>(accessToken);
     const expires = new Date(decoded.exp);
 
-    return expires.getTime() * 1000 + 10000 < new Date().getTime();
+    const isAboutToExpire = expires.getTime() * 1000 + 10000 < new Date().getTime();
+    console.log('Is about to expir');
+    return isAboutToExpire;
   }
 
   private static isCustomApiError(error: Record<string, unknown>) {
@@ -131,20 +140,14 @@ export class ApiClient {
     }
   }
 
-  static async register(firstName: string, lastName: string, email: string, password: string): Promise<void> {
-    const { access_token } = await this.handleApiError(
+  static async register(firstName: string, lastName: string, email: string, password: string): Promise<TokenResponse> {
+    return this.handleApiError(
       this.client.post('authn/register', { json: { firstName, lastName, email, password } }).json<TokenResponse>()
     );
-
-    localStorage.setItem('access-token', access_token);
   }
 
-  static async authnPassword(email: string, password: string): Promise<void> {
-    const { access_token } = await this.handleApiError(
-      this.client.post('authn/password', { json: { email, password } }).json<TokenResponse>()
-    );
-
-    localStorage.setItem('access-token', access_token);
+  static async authnPassword(email: string, password: string): Promise<TokenResponse> {
+    return this.handleApiError(this.client.post('authn/password', { json: { email, password } }).json<TokenResponse>());
   }
 
   static async resetPassword(email: string): Promise<void> {
@@ -159,10 +162,8 @@ export class ApiClient {
     await this.handleApiError(this.client.post('authn/sign-out'));
   }
 
-  static async getMe(): Promise<User | null> {
-    if (!localStorage.getItem('access-token')) return null;
-    const { me } = await this.handleApiError(this.tokenClient.get('me').json<GetMeResponse>());
-    return me;
+  static async getMe(): Promise<GetMeResponse> {
+    return this.handleApiError(this.tokenClient.get('me').json<GetMeResponse>());
   }
 
   static async getProjects(): Promise<Project[]> {

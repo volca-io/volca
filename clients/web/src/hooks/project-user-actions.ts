@@ -5,37 +5,37 @@ import { ProjectInvitation, User } from '../types';
 import { useApiActions } from './api-actions';
 
 export const useProjectUserActions = () => {
-  const { executeApiCall } = useApiActions();
+  const { executeApiAction } = useApiActions();
 
   const getProjectUsers = async (projectId: string) =>
-    await executeApiCall<User[]>({
+    await executeApiAction<User[]>({
       action: () => ApiClient.getProjectUsers(projectId),
       errorMessage: 'Failed to load users',
     });
 
   const createProjectInvitation = async (data: { toUserEmail: string; projectId: string }) =>
-    await executeApiCall<ProjectInvitation>({
+    await executeApiAction<ProjectInvitation>({
       action: () => ApiClient.createProjectInvitation(data),
       successMessage: '',
       errorMessage: 'Failed to create project invitation',
     });
 
   const acceptProjectInvitation = async (key: string) =>
-    await executeApiCall<void>({
+    await executeApiAction<void>({
       action: () => ApiClient.acceptProjectInvitation({ key }),
       errorMessage: 'Something went wrong, make sure your invitation is still valid',
     });
 
   const deleteProjectUser = async (projectId: string, userId: string) =>
-    await executeApiCall<void>({
+    await executeApiAction<void>({
       action: () => ApiClient.deleteProjectUser(projectId, userId),
       errorMessage: 'Failed to delete user',
     });
 
   return {
-    getProjectUsers: useCallback(getProjectUsers, [executeApiCall]),
-    acceptProjectInvitation: useCallback(acceptProjectInvitation, [executeApiCall]),
-    createProjectInvitation: useCallback(createProjectInvitation, [executeApiCall]),
-    deleteProjectUser: useCallback(deleteProjectUser, [executeApiCall]),
+    getProjectUsers: useCallback(getProjectUsers, [executeApiAction]),
+    acceptProjectInvitation: useCallback(acceptProjectInvitation, [executeApiAction]),
+    createProjectInvitation: useCallback(createProjectInvitation, [executeApiAction]),
+    deleteProjectUser: useCallback(deleteProjectUser, [executeApiAction]),
   };
 };

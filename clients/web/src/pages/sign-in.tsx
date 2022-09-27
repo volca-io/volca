@@ -15,7 +15,7 @@ type ErrorDescription = {
 export const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn, getRememberInfo } = useUserActions();
+  const { authnPassword, getRememberInfo } = useUserActions();
   const [error, setError] = useState<ErrorDescription | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +31,7 @@ export const SignInPage: React.FC = () => {
   const onSubmit = async ({ email, password, remember }: { email: string; password: string; remember: boolean }) => {
     try {
       setLoading(true);
-      await signIn(email, password, remember);
+      await authnPassword(email, password, remember);
       redirectUser();
     } catch (err: unknown) {
       // @ts-ignore

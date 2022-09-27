@@ -5,8 +5,8 @@ export const currentUserSelector = selector({
   key: 'current-user-selector',
   get: async ({ get }) => {
     try {
-      const resp = await ApiClient.getMe();
-      return resp;
+      const { me } = await ApiClient.getMe();
+      return me;
     } catch (err: unknown) {
       return null;
     }
