@@ -3,5 +3,6 @@ exclude
 exclude-os
 cdk.context.json
 .github/workflows/bundle.yml
+.github/CODEOWNERS
 scripts/bundle.sh
 scripts/bundle-open-source.sh
