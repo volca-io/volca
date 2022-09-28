@@ -31,4 +31,4 @@ done;
 
 cp -r .yarn ./bundle/
 
-zip -r bundle.zip ./bundle
+cd ./bundle && zip -r ../bundle.zip .

@@ -1,4 +1,5 @@
 clients/*
+.github/workflows/deploy-webapp.yml
 services/api/src/actions/authn/*
 services/api/src/actions/project-invitations/*
 services/api/src/actions/projects/*
@@ -11,4 +12,7 @@ services/api/src/services/project-service.ts
 services/api/src/services/project-user-service.ts
 services/api/src/services/stripe-service.ts
 services/api/src/services/user-service.ts
+services/api/src/services/email-service.ts
+services/api/src/middlewares/authentication-middleware.ts
+services/api/src/middlewares/project-authorization-middleware.ts
 services/api/src/middlewares/authentication-middleware.ts
