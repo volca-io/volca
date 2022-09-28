@@ -15,7 +15,7 @@ export class EmailService {
 
   constructor(private environment: EnvironmentUtils, private logger: Logger) {
     this.environment = environment;
-    this.client = new SESv2Client({ region: 'eu-central-1' }); // TODO: Put region in environment
+    this.client = new SESv2Client({ region: this.environment.getOrFail(EnvironmentVariable.REGION) });
   }
 
   public async sendEmail({ toAddress, subject, body }: SendEmailParams): Promise<void> {
