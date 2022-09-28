@@ -16,6 +16,7 @@ export enum EnvironmentVariable {
   LOG_LEVEL = 'LOG_LEVEL',
   FROM_EMAIL = 'FROM_EMAIL',
   LOGGING_DISABLED = 'LOGGING_DISABLED',
+  REGION = 'REGION',
 }
 
 @singleton()
