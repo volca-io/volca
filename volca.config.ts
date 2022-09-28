@@ -8,6 +8,7 @@ export const config: Config = {
   },
   environments: {
     local: {
+      fromEmail: 'admin@volca.io',
       aws: {
         account: '428245413678',
         region: 'eu-central-1',

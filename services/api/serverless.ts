@@ -27,7 +27,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         logLevel: 'debug',
         appDomain: '127.0.0.1:3000',
         skipTokenVerification: 'false',
-        fromEmail: 'admin@volca.io', // TODO: Pick email from config
+        fromEmail: config.environments.local.fromEmail,
         credentials: {
           host: 'localhost',
           port: '5432',

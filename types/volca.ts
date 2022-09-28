@@ -40,7 +40,7 @@ type AwsConfig = {
 
 type LocalEnvironment = {
   aws?: AwsConfig;
-  fromEmail?: string;
+  fromEmail: string;
 };
 
 export type DeployableEnvironmentConfig = {
