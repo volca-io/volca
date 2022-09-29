@@ -103,7 +103,6 @@ export class ApiClient {
     const expires = new Date(decoded.exp);
 
     const isAboutToExpire = expires.getTime() * 1000 + 10000 < new Date().getTime();
-    console.log('Is about to expir');
     return isAboutToExpire;
   }
 

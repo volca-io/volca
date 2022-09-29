@@ -1,11 +1,13 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
-import { currentUser } from '../state';
+import { currentUser, projects as projectsState, selectedProject as selectedProjectState } from '../state';
 import { useApiActions } from './api-actions';
 
 export const useUserActions = () => {
   const [, setUser] = useRecoilState(currentUser);
-  const { executeApiCall } = useApiActions();
+  const resetProjects = useResetRecoilState(projectsState);
+  const resetSelectedProject = useResetRecoilState(selectedProjectState);
+  const { executeApiCall, executeApiAction } = useApiActions();
 
   const register = async (firstName: string, lastName: string, email: string, password: string): Promise<void> => {
     const { me } = await executeApiCall({
@@ -42,23 +44,30 @@ export const useUserActions = () => {
 
   const resetPassword = async (email: string): Promise<void> => {
     await executeApiCall({
-      action: async () => ApiClient.resetPassword(email),
+      action: () => ApiClient.resetPassword(email),
     });
   };
 
   const verifyResetPassword = async (password: string, resetToken: string): Promise<void> => {
     await executeApiCall({
-      action: async () => ApiClient.verifyResetPassword(password, resetToken),
+      action: () => ApiClient.verifyResetPassword(password, resetToken),
     });
   };
 
-  const signOut = async () => {
-    await executeApiCall({
-      action: async () => ApiClient.signOut(),
-    });
-
-    localStorage.removeItem('access-token');
+  const clearUserState = async () => {
+    setUser(null);
+    resetProjects();
+    resetSelectedProject();
   };
+
+  const signOut = () =>
+    executeApiAction({
+      action: () => ApiClient.signOut(),
+      onSuccess: () => {
+        clearUserState();
+        localStorage.removeItem('access-token');
+      },
+    });
 
   const getRememberInfo = (): { identifier: string | undefined; remember: boolean | undefined } => {
     const identifier = localStorage.getItem('remembered_user_identifier') || undefined;
@@ -68,5 +77,5 @@ export const useUserActions = () => {
     return { remember, identifier };
   };
 
-  return { register, authnPassword, signOut, getRememberInfo, resetPassword, verifyResetPassword };
+  return { register, authnPassword, signOut, getRememberInfo, resetPassword, verifyResetPassword, clearUserState };
 };

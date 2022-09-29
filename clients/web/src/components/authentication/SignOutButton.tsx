@@ -1,21 +1,13 @@
 import { MenuItem } from '@chakra-ui/react';
 import React from 'react';
-import { useRecoilState } from 'recoil';
-import { ApiClient } from '../../lib/clients/api-client';
-import { currentUser } from '../../state';
+import { useUserActions } from '../../hooks';
 
 interface SignOutButtonProps {
   children: React.ReactNode;
 }
 
 export const SignOutButton: React.FC<SignOutButtonProps> = ({ children }) => {
-  const [, setUser] = useRecoilState(currentUser);
+  const { signOut } = useUserActions();
 
-  const onClick = async () => {
-    await ApiClient.signOut();
-    setUser(null);
-    localStorage.removeItem('access-token');
-  };
-
-  return <MenuItem onClick={onClick}>{children}</MenuItem>;
+  return <MenuItem onClick={signOut}>{children}</MenuItem>;
 };
