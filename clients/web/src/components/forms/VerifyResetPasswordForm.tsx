@@ -13,7 +13,7 @@ interface FormProps {
 }
 
 interface ResetPasswordFormProps {
-  onSubmit: (data: FormProps) => void;
+  onSubmit: (data: Omit<FormProps, 'confirmPassword'>) => void;
 }
 
 export const VerifyResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }) => {
@@ -32,8 +32,14 @@ export const VerifyResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSu
     setStrengthCheck(result);
   }, [password]);
 
+  const _onSubmit = ({ password }: FormProps) => {
+    onSubmit({
+      password: password.toLowerCase(),
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(_onSubmit)}>
       <VStack spacing={4} alignItems="flex-start">
         <FormControl isInvalid={!!errors.password}>
           <FormLabel htmlFor="lastName" fontSize="sm">

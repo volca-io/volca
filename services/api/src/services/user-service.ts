@@ -22,7 +22,7 @@ export class UserService {
   }
 
   public async findByEmail(email: string): Promise<User | undefined> {
-    return User.query().where({ email }).first();
+    return User.query().where({ email: email.toLowerCase() }).first();
   }
 
   public async findByStripeId(stripeId: string): Promise<User | undefined> {
@@ -45,7 +45,7 @@ export class UserService {
     const user = await User.query().insert({
       firstName,
       lastName,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
     });
 

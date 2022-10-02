@@ -23,8 +23,14 @@ export const ResetPasswordForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
   } = useForm<FormProps>();
   const loading = useRecoilValue(loadingState);
 
+  const _onSubmit = ({ email }: FormProps) => {
+    onSubmit({
+      email: email.toLowerCase(),
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(_onSubmit)}>
       <VStack spacing="4">
         <FormControl isInvalid={!!errors.email}>
           <FormLabel htmlFor="lastName" fontSize="sm">

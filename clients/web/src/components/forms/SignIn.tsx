@@ -29,10 +29,18 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, defaultIdentif
     },
   });
 
+  const _onSubmit = ({ email, password, remember }: FormProps) => {
+    onSubmit({
+      email: email.toLowerCase(),
+      password,
+      remember,
+    });
+  };
+
   const loading = useRecoilValue(loadingState);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(_onSubmit)}>
       <VStack spacing="4">
         <FormControl isInvalid={!!errors.email}>
           <FormLabel htmlFor="lastName" fontSize="sm">

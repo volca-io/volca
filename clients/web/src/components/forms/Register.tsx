@@ -16,15 +16,8 @@ interface RegisterFormProps {
   confirmPassword: string;
 }
 
-interface OnSubmitProps {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
 interface RegisterFormComponentProps {
-  onSubmit: (data: OnSubmitProps) => void;
+  onSubmit: (data: Omit<RegisterFormProps, 'confirmPassword'>) => void;
 }
 
 export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit }) => {
@@ -44,8 +37,17 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit })
     setStrengthCheck(result);
   }, [password]);
 
+  const _onSubmit = ({ firstName, lastName, email, password }: RegisterFormProps) => {
+    onSubmit({
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      password,
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(_onSubmit)}>
       <VStack spacing={4} alignItems="flex-start">
         <HStack alignSelf="stretch">
           <FormControl isInvalid={!!errors.firstName} minW={100}>
