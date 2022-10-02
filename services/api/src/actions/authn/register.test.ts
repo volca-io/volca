@@ -5,8 +5,8 @@ describe('/authn/register', () => {
 
   it('can successfully register a user and get access tokens', async () => {
     const res = await request.post('/authn/register').send({
-      firstName: 'John',
-      lastName: 'Doe',
+      first_name: 'John',
+      last_name: 'Doe',
       email: 'john.doe@testuser.com',
       password: 'someComplexPassword',
     });
@@ -20,8 +20,8 @@ describe('/authn/register', () => {
 
   it('sets the refresh token cookie', async () => {
     const res = await request.post('/authn/register').send({
-      firstName: 'John',
-      lastName: 'Doe',
+      first_name: 'John',
+      last_name: 'Doe',
       email: 'john.doe.2@testuser.com',
       password: 'someComplexPassword',
     });
@@ -39,8 +39,8 @@ describe('/authn/register', () => {
 
   it('does not allow a duplicate user to be registered', async () => {
     const res = await request.post('/authn/register').send({
-      firstName: 'John',
-      lastName: 'Doe',
+      first_name: 'John',
+      last_name: 'Doe',
       email: 'john.doe@testuser.com',
       password: 'someComplexPassword',
     });
@@ -50,7 +50,7 @@ describe('/authn/register', () => {
 
   it('returns 400 if first name is not passed', async () => {
     const res = await request.post('/authn/register').send({
-      lastName: 'Doe',
+      first_name: 'Doe',
       email: 'john.doe@testuser.com',
       password: 'someComplexPassword',
     });
@@ -61,7 +61,7 @@ describe('/authn/register', () => {
 
   it('returns 400 if last name is not passed', async () => {
     const res = await request.post('/authn/register').send({
-      firstName: 'John',
+      first_name: 'John',
       email: 'john.doe@testuser.com',
       password: 'someComplexPassword',
     });
@@ -72,8 +72,8 @@ describe('/authn/register', () => {
 
   it('returns 400 if email is not passed', async () => {
     const res = await request.post('/authn/register').send({
-      firstName: 'John',
-      lastName: 'Doe',
+      first_name: 'John',
+      last_name: 'Doe',
       password: 'someComplexPassword',
     });
 
@@ -83,8 +83,8 @@ describe('/authn/register', () => {
 
   it('returns 400 if password is not passed', async () => {
     const res = await request.post('/authn/register').send({
-      firstName: 'John',
-      lastName: 'Doe',
+      first_name: 'John',
+      last_name: 'Doe',
       email: 'john.doe@testuser.com',
     });
 
@@ -94,8 +94,8 @@ describe('/authn/register', () => {
 
   it('does not allow registration with a weak password', async () => {
     const res = await request.post('/authn/register').send({
-      firstName: 'John',
-      lastName: 'Doe',
+      first_name: 'John',
+      last_name: 'Doe',
       email: 'john.doe.2@testuser.com',
       password: 'password',
     });

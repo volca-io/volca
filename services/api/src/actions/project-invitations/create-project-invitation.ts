@@ -9,8 +9,8 @@ import { ProjectInvitationService, ProjectService, UserService } from '../../ser
 import { User } from '../../entities';
 
 export const schema: Schema = joi.object({
-  toUserEmail: joi.string().required(),
-  projectId: joi.string().required(),
+  to_user_email: joi.string().required(),
+  project_id: joi.string().required(),
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {

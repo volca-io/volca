@@ -1,5 +1,5 @@
 import ky, { HTTPError } from 'ky';
-import jwtDecode from 'jwt-decode';
+import jwt_decode from 'jwt-decode';
 import { Project, ProjectInvitation, User, StripeSession } from '../../types';
 
 export type AccessToken = {
@@ -100,7 +100,7 @@ export class ApiClient {
       return true;
     }
 
-    const decoded = jwtDecode<AccessToken>(accessToken);
+    const decoded = jwt_decode<AccessToken>(accessToken);
     const expires = new Date(decoded.exp);
 
     const isAboutToExpire = expires.getTime() * 1000 + 10000 < new Date().getTime();
@@ -133,7 +133,9 @@ export class ApiClient {
 
   static async register(firstName: string, lastName: string, email: string, password: string): Promise<TokenResponse> {
     return this.handleApiError(
-      this.client.post('authn/register', { json: { firstName, lastName, email, password } }).json<TokenResponse>()
+      this.client
+        .post('authn/register', { json: { first_name: firstName, last_name: lastName, email, password } })
+        .json<TokenResponse>()
     );
   }
 
@@ -146,7 +148,9 @@ export class ApiClient {
   }
 
   static async verifyResetPassword(password: string, resetToken: string): Promise<void> {
-    await this.handleApiError(this.client.post('authn/reset-password/verify', { json: { password, resetToken } }));
+    await this.handleApiError(
+      this.client.post('authn/reset-password/verify', { json: { password, reset_token: resetToken } })
+    );
   }
 
   static async signOut(): Promise<void> {
@@ -205,7 +209,7 @@ export class ApiClient {
   }): Promise<ProjectInvitation> {
     const { project_invitation } = await this.handleApiError(
       this.tokenClient
-        .post('project-invitations', { json: { projectId, toUserEmail } })
+        .post('project-invitations', { json: { project_id: projectId, to_user_email: toUserEmail } })
         .json<CreateProjectInvitationResponse>()
     );
     return project_invitation;

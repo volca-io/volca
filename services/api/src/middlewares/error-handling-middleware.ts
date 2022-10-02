@@ -8,29 +8,26 @@ export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) 
   const logger = container.resolve(Logger);
   try {
     await next();
-  } catch (err: unknown) {
-    if (err instanceof ServiceError) {
-      logger.error(err.message, { status: err.statusCode, name: err.name, debug: err.debug });
+  } catch (error: unknown) {
+    if (error instanceof ServiceError) {
+      logger.error(error.message, { status: error.statusCode, name: error.name, debug: error.debug });
 
-      ctx.status = err.statusCode;
+      ctx.status = error.statusCode;
       ctx.body = {
-        name: err.name,
-        message: err.message,
+        name: error.name,
+        message: error.message,
       };
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { statusCode, status, message } = err as any;
+      if (error instanceof Error) {
+        logger.error(error.message, { stackTrace: error.stack });
+      } else {
+        logger.error('An error of unknown type was caught');
+      }
 
-      const genericMessage = 'An unexpected error occurred';
-      const fallbackedMessage = statusCode < 500 ? message : genericMessage;
-      const fallbackedStatus = statusCode || status || 500;
-
-      logger.error(fallbackedMessage, { status: fallbackedStatus });
-
-      ctx.status = fallbackedStatus;
+      ctx.status = 500;
       ctx.body = {
         name: ErrorNames.INTERNAL_SERVER_ERROR,
-        message: fallbackedMessage || genericMessage,
+        mesage: 'An unexpected error occurred',
       };
     }
   }

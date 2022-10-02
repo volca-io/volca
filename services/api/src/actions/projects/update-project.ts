@@ -7,7 +7,7 @@ import { ProjectService } from '../../services';
 export const schema: Schema = joi.object({
   id: joi.string().required(),
   name: joi.string().required(),
-  adminId: joi.string().optional(),
+  admin_id: joi.string().optional(),
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {

@@ -6670,6 +6670,7 @@ __metadata:
     "@types/zxcvbn": ^4.4.1
     aws-lambda: ^1.0.7
     bcryptjs: ^2.4.3
+    camelcase-keys: ^8.0.2
     chai: ^4.3.6
     compd: ^4.1.1
     copy-webpack-plugin: ^11.0.0
@@ -6695,7 +6696,7 @@ __metadata:
     serverless-http: ^3.0.1
     serverless-offline: ^8.8.0
     serverless-webpack: ^5.9.0
-    snakecase-keys: ^5.4.2
+    snakecase-keys: ^5.4.4
     stripe: ^9.12.0
     supertest: ^6.2.2
     ts-jest: ^28.0.2
@@ -8293,6 +8294,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"camelcase-keys@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "camelcase-keys@npm:8.0.2"
+  dependencies:
+    camelcase: ^7.0.0
+    map-obj: ^4.3.0
+    quick-lru: ^6.1.1
+    type-fest: ^2.13.0
+  checksum: 878fdaffa55737486101845232b2bc017fec95e06711d8a4133461cabf2432b55a59b20ff6afafce9b48a5629f25181bac3ecb10023032d3eb7cf3247c6e34f6
+  languageName: node
+  linkType: hard
+
 "camelcase@npm:^5.3.1":
   version: 5.3.1
   resolution: "camelcase@npm:5.3.1"
@@ -8304,6 +8317,13 @@ __metadata:
   version: 6.3.0
   resolution: "camelcase@npm:6.3.0"
   checksum: 8c96818a9076434998511251dcb2761a94817ea17dbdc37f47ac080bd088fc62c7369429a19e2178b993497132c8cbcf5cc1f44ba963e76782ba469c0474938d
+  languageName: node
+  linkType: hard
+
+"camelcase@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "camelcase@npm:7.0.0"
+  checksum: 162d59607b3b46e910af151348d5e40af579048a5d07f3c06370b096ca0d42ba4a88bd92cf4e3482645ba1ffdd6f744d8273c1b9594e493fc10883d54adf7cbe
   languageName: node
   linkType: hard
 
@@ -15314,7 +15334,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"map-obj@npm:^4.1.0":
+"map-obj@npm:^4.1.0, map-obj@npm:^4.3.0":
   version: 4.3.0
   resolution: "map-obj@npm:4.3.0"
   checksum: fbc554934d1a27a1910e842bc87b177b1a556609dd803747c85ece420692380827c6ae94a95cce4407c054fa0964be3bf8226f7f2cb2e9eeee432c7c1985684e
@@ -17775,6 +17795,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"quick-lru@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "quick-lru@npm:6.1.1"
+  checksum: a9c75bf1d208c1d207590e10403a75d037f9faf7857f2e0d38c294d92b40d8b400776bcb5d4dd516baa84e6f5e3baf2a16cf405e6fedc18107922f46aeae83ee
+  languageName: node
+  linkType: hard
+
 "raf@npm:^3.4.1":
   version: 3.4.1
   resolution: "raf@npm:3.4.1"
@@ -19166,14 +19193,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"snakecase-keys@npm:^5.4.2":
-  version: 5.4.2
-  resolution: "snakecase-keys@npm:5.4.2"
+"snakecase-keys@npm:^5.4.4":
+  version: 5.4.4
+  resolution: "snakecase-keys@npm:5.4.4"
   dependencies:
     map-obj: ^4.1.0
     snake-case: ^3.0.4
     type-fest: ^2.5.2
-  checksum: 338e536c1bcf0f7295e75b2b3dfb12a6983abaf02ecd6906af50c3cdc2f6be2afa459ba7f3312dc04f9519561f974787bef57e88d269cfeaef5e27dc0ab2355a
+  checksum: e8bd3f41efd1f0f4ac4a74b722efde631a1d8838cb5b0ccf24777e0d22e43f2f8821d627ce054b75a53f3ec7cecaa8d5ec0e309a11e97e4aebe621cc6900738c
   languageName: node
   linkType: hard
 
@@ -20443,6 +20470,13 @@ __metadata:
   version: 0.21.3
   resolution: "type-fest@npm:0.21.3"
   checksum: e6b32a3b3877f04339bae01c193b273c62ba7bfc9e325b8703c4ee1b32dc8fe4ef5dfa54bf78265e069f7667d058e360ae0f37be5af9f153b22382cd55a9afe0
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^2.13.0":
+  version: 2.19.0
+  resolution: "type-fest@npm:2.19.0"
+  checksum: a4ef07ece297c9fba78fc1bd6d85dff4472fe043ede98bd4710d2615d15776902b595abf62bd78339ed6278f021235fb28a96361f8be86ed754f778973a0d278
   languageName: node
   linkType: hard
 

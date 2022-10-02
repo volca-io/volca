@@ -7,7 +7,7 @@ import { useApiAction } from '../utils/api-action';
 
 export const schema: Schema = joi.object({
   password: joi.string().required(),
-  resetToken: joi.string().required(),
+  reset_token: joi.string().required(),
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
