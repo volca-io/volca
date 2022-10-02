@@ -4,10 +4,10 @@ import { useRecoilValue } from 'recoil';
 import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
 import { AuthenticatedLayout } from '../layouts';
-import { currentUser } from '../state';
+import { currentUserState } from '../state';
 
 export const DashboardPage: React.FC = () => {
-  const user = useRecoilValue(currentUser);
+  const user = useRecoilValue(currentUserState);
 
   return (
     <AuthenticatedLayout>

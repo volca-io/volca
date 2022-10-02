@@ -1,7 +1,7 @@
 import { atom, selector } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
 
-export const currentUserSelector = selector({
+const currentUserSelector = selector({
   key: 'current-user-selector',
   get: async ({ get }) => {
     try {
@@ -13,7 +13,7 @@ export const currentUserSelector = selector({
   },
 });
 
-export const currentUser = atom({
+export const currentUserState = atom({
   key: 'current-user',
   default: currentUserSelector,
 });

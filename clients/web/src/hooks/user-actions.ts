@@ -1,71 +1,81 @@
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSetRecoilState, useResetRecoilState } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
-import { currentUser, projects as projectsState, selectedProject as selectedProjectState } from '../state';
+import { currentUserState, projectsState, selectedProjectState } from '../state';
+import { User } from '../types';
 import { useApiActions } from './api-actions';
 
 export const useUserActions = () => {
-  const [, setUser] = useRecoilState(currentUser);
+  const setUser = useSetRecoilState(currentUserState);
   const resetProjects = useResetRecoilState(projectsState);
   const resetSelectedProject = useResetRecoilState(selectedProjectState);
-  const { executeApiCall, executeApiAction } = useApiActions();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { executeApiAction } = useApiActions();
 
-  const register = async (firstName: string, lastName: string, email: string, password: string): Promise<void> => {
-    const { me } = await executeApiCall({
+  const getMe = () =>
+    executeApiAction<User>({
       action: async () => {
-        const { access_token } = await ApiClient.register(firstName, lastName, email, password);
-        localStorage.setItem('access-token', access_token);
-
-        return ApiClient.getMe();
+        const { me } = await ApiClient.getMe();
+        return me;
       },
     });
 
-    setUser(me);
-  };
-
-  const authnPassword = async (email: string, password: string, remember: boolean): Promise<void> => {
-    const { me } = await executeApiCall({
-      action: async () => {
-        const { access_token } = await ApiClient.authnPassword(email, password);
-        localStorage.setItem('access-token', access_token);
-
-        return ApiClient.getMe();
+  const register = async (firstName: string, lastName: string, email: string, password: string) =>
+    executeApiAction<{ me: User }>({
+      action: async () => ApiClient.register(firstName, lastName, email, password),
+      onSuccess: async ({ access_token }: { access_token: string }) => {
+        localStorage.setItem('access_token', access_token);
+        const continueUrl = new URLSearchParams(location.search).get('continue') || '/';
+        navigate(continueUrl);
+        const user = await getMe();
+        if (user) setUser(user);
       },
     });
 
-    setUser(me);
-    localStorage.setItem('remember_toggled', remember ? 'true' : 'false');
+  const authnPassword = (email: string, password: string, remember: boolean) =>
+    executeApiAction({
+      action: () => ApiClient.authnPassword(email, password),
+      onSuccess: async (response: { access_token: string }) => {
+        const { access_token } = response;
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('remember_toggled', remember ? 'true' : 'false');
+        if (remember) {
+          localStorage.setItem('remembered_user_identifier', email);
+        } else {
+          localStorage.removeItem('remembered_user_identifier');
+        }
+        const user = await getMe();
+        if (user) setUser(user);
+      },
+      errorMessage: 'Wrong user name or password',
+    });
 
-    if (remember) {
-      localStorage.setItem('remembered_user_identifier', email);
-    } else {
-      localStorage.removeItem('remembered_user_identifier');
-    }
-  };
-
-  const resetPassword = async (email: string): Promise<void> => {
-    await executeApiCall({
+  const resetPassword = (email: string) =>
+    executeApiAction({
       action: () => ApiClient.resetPassword(email),
+      successMessage:
+        'Your request was successful. If there is an account connected to this email, you will soon get an email with instructions on how to reset your password.',
+      errorMessage: 'Something went wrong when processing your request. Please try again later.',
     });
-  };
 
-  const verifyResetPassword = async (password: string, resetToken: string): Promise<void> => {
-    await executeApiCall({
+  const verifyResetPassword = (password: string, resetToken: string) =>
+    executeApiAction({
       action: () => ApiClient.verifyResetPassword(password, resetToken),
+      successMessage: 'Your password was successfully set.',
+      errorMessage: 'Your reset link is invalid. Request a new one on the reset password page.',
     });
-  };
-
-  const clearUserState = async () => {
-    setUser(null);
-    resetProjects();
-    resetSelectedProject();
-  };
 
   const signOut = () =>
     executeApiAction({
       action: () => ApiClient.signOut(),
       onSuccess: () => {
-        clearUserState();
-        localStorage.removeItem('access-token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('selected_project_id');
+        setUser(null);
+        resetProjects();
+        resetSelectedProject();
+        navigate('/sign-in');
       },
     });
 
@@ -77,5 +87,5 @@ export const useUserActions = () => {
     return { remember, identifier };
   };
 
-  return { register, authnPassword, signOut, getRememberInfo, resetPassword, verifyResetPassword, clearUserState };
+  return { register, authnPassword, signOut, getRememberInfo, resetPassword, verifyResetPassword, getMe };
 };

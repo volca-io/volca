@@ -4,7 +4,7 @@ export type AlertBoxProps = {
   status: 'info' | 'warning' | 'success' | 'error' | 'loading';
   title: string;
   description: string | React.ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export const AlertBox: React.FC<AlertBoxProps> = ({ status, title, description, onClose }) => (
@@ -14,6 +14,6 @@ export const AlertBox: React.FC<AlertBoxProps> = ({ status, title, description, 
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription>{description} </AlertDescription>
     </Box>
-    <CloseButton alignSelf="flex-start" position="absolute" right={0} top={0} onClick={onClose} />
+    {onClose && <CloseButton alignSelf="flex-start" position="absolute" right={0} top={0} onClick={onClose} />}
   </Alert>
 );

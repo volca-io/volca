@@ -4,13 +4,13 @@ import { MdPayments, MdAddShoppingCart, MdPerson, MdPayment } from 'react-icons/
 import { useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { currentUser } from '../state';
+import { currentUserState } from '../state';
 import { SoftCard } from '../components/generic/SoftCard';
 import { PageHeading } from '../components/generic/PageHeading';
 import { useSubscriptionActions } from '../hooks';
 
 export const SettingsPage: React.FC = () => {
-  const user = useRecoilValue(currentUser);
+  const user = useRecoilValue(currentUserState);
   const { manageSubscriptions, activateSubscription } = useSubscriptionActions();
 
   return (

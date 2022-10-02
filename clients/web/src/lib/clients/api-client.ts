@@ -1,8 +1,8 @@
 import ky, { HTTPError } from 'ky';
-import jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 import { Project, ProjectInvitation, User, StripeSession } from '../../types';
 
-type AccessToken = {
+export type AccessToken = {
   exp: number;
   sub: string;
 };
@@ -78,11 +78,13 @@ export class ApiClient {
     hooks: {
       beforeRequest: [
         async (request) => {
-          let token = localStorage.getItem('access-token');
-          if (this.tokenNeedsRefresh(token)) {
-            token = await this.refreshToken();
+          const accessToken = localStorage.getItem('access_token');
+          if (accessToken) {
+            const token = this.tokenNeedsRefresh(accessToken) ? await this.refreshToken() : accessToken;
+            request.headers.set('authorization', `Bearer ${token}`);
+          } else {
+            return new Response();
           }
-          request.headers.set('authorization', `Bearer ${token}`);
         },
       ],
     },
@@ -95,11 +97,10 @@ export class ApiClient {
 
   private static tokenNeedsRefresh(accessToken: string | null) {
     if (!accessToken) {
-      console.log('No access token is set');
       return true;
     }
 
-    const decoded = jwt_decode<AccessToken>(accessToken);
+    const decoded = jwtDecode<AccessToken>(accessToken);
     const expires = new Date(decoded.exp);
 
     const isAboutToExpire = expires.getTime() * 1000 + 10000 < new Date().getTime();

@@ -9,12 +9,12 @@ import { User } from '../types';
 import { InviteProjectUser } from '../components/project-users/InviteProjectUser';
 import { SoftCard } from '../components/generic/SoftCard';
 import { PageHeading } from '../components/generic/PageHeading';
-import { selectedProject } from '../state';
+import { selectedProjectState } from '../state';
 import { useProjectUserActions } from '../hooks/project-user-actions';
 import { AlertBox, AlertBoxProps } from '../components/generic/AlertBox';
 
 export const ProjectUsersPage: React.FC = () => {
-  const project = useRecoilValue(selectedProject);
+  const project = useRecoilValue(selectedProjectState);
   const [inviteAlert, setInviteAlert] = useState<AlertBoxProps | null>();
   const [users, setUsers] = useState<User[]>([]);
   const { getProjectUsers, createProjectInvitation, deleteProjectUser } = useProjectUserActions();

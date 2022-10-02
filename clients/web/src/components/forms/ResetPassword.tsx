@@ -1,6 +1,9 @@
 import { FormControl, FormLabel, Input, Button, FormErrorMessage, VStack } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
+
+import { loadingState } from '../../state';
 
 interface FormProps {
   email: string;
@@ -8,17 +11,17 @@ interface FormProps {
 
 interface SignInFormProps {
   onSubmit: (data: FormProps) => void;
-  loading: boolean;
   defaultIdentifier?: string;
   defaultRemember?: boolean | undefined;
 }
 
-export const ResetPasswordForm: React.FC<SignInFormProps> = ({ onSubmit, loading }) => {
+export const ResetPasswordForm: React.FC<SignInFormProps> = ({ onSubmit }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormProps>();
+  const loading = useRecoilValue(loadingState);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

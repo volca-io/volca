@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import {
   IconButton,
   Avatar,
@@ -28,14 +28,13 @@ import {
 import { MdHomeFilled, MdSettings, MdMenu, MdKeyboardArrowDown, MdGroups } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { useRecoilValue } from 'recoil';
-import { selectedProject as selectedProjectState, currentUser } from '../../state';
+import { selectedProjectState, currentUserState } from '../../state';
 import { MdOutlineSync } from 'react-icons/md';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 import { SignOutButton } from '../authentication/SignOutButton';
 import { ThemeSwitcher } from './theme-switcher';
 import { LoadingBar } from '../generic/LoadingBar';
-import { MessageBar } from '../generic/MessageBar';
 import { DefaultLayout } from '../../layouts';
 
 interface LinkItemProps {
@@ -65,7 +64,6 @@ export const Sidebar = ({ children, hidden = false }: { children: ReactNode; hid
       </Drawer>
       <MobileNav onOpen={onOpen} full={hidden} />
       <LoadingBar full={hidden} />
-      <MessageBar full={hidden} />
       <Flex ml={{ base: 0, md: hidden ? 0 : 60 }} p="4" bg={bg} height="100%">
         {children}
       </Flex>
@@ -186,7 +184,7 @@ interface MobileProps extends FlexProps {
 
 const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
   const navigate = useNavigate();
-  const user = useRecoilValue(currentUser);
+  const user = useRecoilValue(currentUserState);
   return (
     <Flex
       ml={{ base: 0, md: full ? 'full' : 60 }}

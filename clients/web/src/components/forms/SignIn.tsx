@@ -1,6 +1,8 @@
 import { FormControl, FormLabel, Input, Button, Switch, FormErrorMessage, VStack } from '@chakra-ui/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
+import { loadingState } from '../../state';
 
 interface FormProps {
   email: string;
@@ -10,12 +12,11 @@ interface FormProps {
 
 interface SignInFormProps {
   onSubmit: (data: FormProps) => void;
-  loading: boolean;
   defaultIdentifier?: string;
   defaultRemember?: boolean | undefined;
 }
 
-export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading, defaultIdentifier, defaultRemember }) => {
+export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, defaultIdentifier, defaultRemember }) => {
   const {
     register,
     handleSubmit,
@@ -27,6 +28,8 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, loading, defau
       remember: defaultRemember === undefined ? true : defaultRemember,
     },
   });
+
+  const loading = useRecoilValue(loadingState);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

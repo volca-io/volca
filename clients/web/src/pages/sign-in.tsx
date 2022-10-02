@@ -1,44 +1,31 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Text, useColorModeValue, Flex, Link, Heading, Box } from '@chakra-ui/react';
-import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+
 import { SignInForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
 import { SoftCard } from '../components/generic/SoftCard';
-import { AlertBox } from '../components/generic/AlertBox';
-
-type ErrorDescription = {
-  title: string;
-  description: string;
-};
+import { currentUserState } from '../state';
 
 export const SignInPage: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const { authnPassword, getRememberInfo } = useUserActions();
-  const [error, setError] = useState<ErrorDescription | null>(null);
-  const [loading, setLoading] = useState(false);
+  const user = useRecoilValue(currentUserState);
+  const navigate = useNavigate();
 
   const titleColor = useColorModeValue('teal.400', 'teal.200');
   const textColor = useColorModeValue('gray.600', 'white');
   const linkColor = useColorModeValue('teal.400', 'teal.200');
 
-  const redirectUser = () => {
-    const continueUrl = new URLSearchParams(location.search).get('continue');
-    navigate(continueUrl || '/');
-  };
-
-  const onSubmit = async ({ email, password, remember }: { email: string; password: string; remember: boolean }) => {
-    try {
-      setLoading(true);
-      await authnPassword(email, password, remember);
-      redirectUser();
-    } catch (err: unknown) {
-      // @ts-ignore
-      setError({ title: 'Authentication failed', description: err.message });
+  useEffect(() => {
+    if (user) {
+      navigate('/');
     }
-    setLoading(false);
-  };
+  }, [user, navigate]);
+
+  const onSubmit = async ({ email, password, remember }: { email: string; password: string; remember: boolean }) =>
+    await authnPassword(email, password, remember);
 
   const { identifier, remember } = getRememberInfo();
 
@@ -72,23 +59,8 @@ export const SignInPage: React.FC = () => {
               </Link>
             </Text>
           </Box>
-          {error && (
-            <AlertBox
-              status="error"
-              title={error.title}
-              description={error.description}
-              onClose={() => {
-                setError(null);
-              }}
-            />
-          )}
           <SoftCard>
-            <SignInForm
-              defaultIdentifier={identifier}
-              defaultRemember={remember}
-              onSubmit={onSubmit}
-              loading={loading}
-            />
+            <SignInForm defaultIdentifier={identifier} defaultRemember={remember} onSubmit={onSubmit} />
             <Flex justifyContent="space-between" mt={5}>
               <Text fontSize="sm" color={textColor}>
                 <Link

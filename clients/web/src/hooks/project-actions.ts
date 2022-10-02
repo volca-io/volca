@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
-import { projects as projectsState, selectedProject as selectedProjectState } from '../state/projects';
+import { projectsState, selectedProjectState } from '../state';
 import { Project } from '../types';
 import { useApiActions } from './api-actions';
 

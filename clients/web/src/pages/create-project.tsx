@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { currentUser } from '../state';
+import { currentUserState } from '../state';
 import { MdAdd, MdChevronRight } from 'react-icons/md';
 import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
@@ -23,7 +23,7 @@ export const CreateProjectPage: React.FC = () => {
   } = useForm<FormValues>();
   const navigate = useNavigate();
 
-  const user = useRecoilValue(currentUser);
+  const user = useRecoilValue(currentUserState);
 
   const { createProject } = useProjectActions();
 

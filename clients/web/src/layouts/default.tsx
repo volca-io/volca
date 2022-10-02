@@ -19,7 +19,6 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = ({ displayLogo = fals
           </Link>
         </Box>
       )}
-
       {children}
     </Flex>
   );

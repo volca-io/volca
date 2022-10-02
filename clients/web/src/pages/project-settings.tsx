@@ -10,7 +10,7 @@ import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
 import { DangerButton } from '../components/generic/DangerButton';
 import { useProjectActions } from '../hooks/project-actions';
-import { selectedProject as selectedProjectState } from '../state';
+import { selectedProjectState } from '../state';
 import { useRecoilValue } from 'recoil';
 
 type FormValues = {

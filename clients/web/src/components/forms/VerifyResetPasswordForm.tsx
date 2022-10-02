@@ -2,6 +2,9 @@ import { FormControl, FormLabel, Input, Button, FormErrorMessage, VStack } from 
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn';
+import { useRecoilValue } from 'recoil';
+
+import { loadingState } from '../../state';
 import { PasswordStrengthIndicator } from '../PasswordStrength';
 
 interface FormProps {
@@ -11,11 +14,11 @@ interface FormProps {
 
 interface ResetPasswordFormProps {
   onSubmit: (data: FormProps) => void;
-  loading: boolean;
 }
 
-export const VerifyResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit, loading }) => {
+export const VerifyResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }) => {
   const [strengthCheck, setStrengthCheck] = useState<null | ZXCVBNResult>(null);
+  const loading = useRecoilValue(loadingState);
   const {
     register,
     handleSubmit,

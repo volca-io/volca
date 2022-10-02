@@ -3,7 +3,10 @@ import { useState } from 'react';
 import { FormControl, FormLabel, Input, Button, VStack, FormErrorMessage, HStack } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn';
+import { useRecoilValue } from 'recoil';
+
 import { PasswordStrengthIndicator } from '../PasswordStrength';
+import { loadingState } from '../../state';
 
 interface RegisterFormProps {
   firstName: string;
@@ -22,10 +25,9 @@ interface OnSubmitProps {
 
 interface RegisterFormComponentProps {
   onSubmit: (data: OnSubmitProps) => void;
-  loading: boolean;
 }
 
-export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, loading }) => {
+export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit }) => {
   const [strengthCheck, setStrengthCheck] = useState<null | ZXCVBNResult>(null);
   const {
     register,
@@ -33,6 +35,8 @@ export const RegisterForm: React.FC<RegisterFormComponentProps> = ({ onSubmit, l
     watch,
     formState: { errors },
   } = useForm<RegisterFormProps>();
+
+  const loading = useRecoilValue(loadingState);
 
   const password = watch('password');
   useEffect(() => {

@@ -1,11 +1,11 @@
 import { Text, Grid, GridItem, Heading, Icon, Badge, Box } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { MdAdd, MdGroup, MdWork } from 'react-icons/md';
 
 import { AuthenticatedLayout } from '../layouts';
-import { selectedProject, projects as projectsState, currentUser } from '../state';
+import { selectedProjectState, projectsState, currentUserState } from '../state';
 import { Project } from '../types';
 import { InactiveProjectDialog } from '../components/projects/InactiveProjectDialog';
 import { PageHeading } from '../components/generic/PageHeading';
@@ -19,9 +19,9 @@ const cardStyle = {
 export const ProjectListPage: React.FC = () => {
   const navigate = useNavigate();
   const [inactiveProjectId, setInactiveProjectId] = useState<string | null>(null);
-  const [, setSelectedProject] = useRecoilState(selectedProject);
+  const setSelectedProject = useSetRecoilState(selectedProjectState);
   const projects = useRecoilValue(projectsState);
-  const user = useRecoilValue(currentUser);
+  const user = useRecoilValue(currentUserState);
 
   const onSelectProject = (project: Project) => {
     setSelectedProject(project);

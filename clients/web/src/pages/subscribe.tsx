@@ -21,7 +21,7 @@ import { IoIosRocket } from 'react-icons/io';
 import { AuthenticatedLayout } from '../layouts';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { currentUser } from '../state';
+import { currentUserState } from '../state';
 import { SoftCard } from '../components/generic/SoftCard';
 import { IconType } from 'react-icons';
 import { PageHeading } from '../components/generic/PageHeading';
@@ -29,7 +29,7 @@ import { useSubscriptionActions } from '../hooks';
 
 export const SubscribePage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const user = useRecoilValue(currentUser);
+  const user = useRecoilValue(currentUserState);
   const { activateSubscription } = useSubscriptionActions();
 
   const onActivate = async () => {

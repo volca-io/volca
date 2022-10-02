@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { useProjectActions } from '../hooks';
-import { selectedProject as selectedProjectState } from '../state';
+import { selectedProjectState } from '../state';
 
 interface ProjectRouteProps {
   children: React.ReactElement;

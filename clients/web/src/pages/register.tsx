@@ -1,32 +1,16 @@
-import { useState } from 'react';
 import { Box, Heading, Text, useColorModeValue, Flex, Link } from '@chakra-ui/react';
-import { useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { RegisterForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';
 import { useUserActions } from '../hooks';
 import { SoftCard } from '../components/generic/SoftCard';
-import { AlertBox } from '../components/generic/AlertBox';
-
-type ErrorDescription = {
-  title: string;
-  description: string;
-};
 
 export const RegisterPage: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const { register } = useUserActions();
-  const [error, setError] = useState<ErrorDescription | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const titleColor = useColorModeValue('teal.400', 'teal.200');
   const textColor = useColorModeValue('gray.600', 'white');
   const linkColor = useColorModeValue('teal.400', 'teal.200');
-
-  const redirectUser = () => {
-    const continueUrl = new URLSearchParams(location.search).get('continue');
-    navigate(continueUrl || '/');
-  };
 
   const onSubmit = async ({
     firstName,
@@ -38,17 +22,7 @@ export const RegisterPage: React.FC = () => {
     lastName: string;
     email: string;
     password: string;
-  }) => {
-    try {
-      setLoading(true);
-      await register(firstName, lastName, email, password);
-      redirectUser();
-    } catch (err: unknown) {
-      // @ts-ignore
-      setError({ title: 'Registration failed', description: err.message });
-    }
-    setLoading(false);
-  };
+  }) => register(firstName, lastName, email, password);
 
   return (
     <DefaultLayout displayLogo>
@@ -81,18 +55,8 @@ export const RegisterPage: React.FC = () => {
               </Link>
             </Text>
           </Box>
-          {error && (
-            <AlertBox
-              status="error"
-              title={error.title}
-              description={error.description}
-              onClose={() => {
-                setError(null);
-              }}
-            />
-          )}
           <SoftCard>
-            <RegisterForm onSubmit={onSubmit} loading={loading} />
+            <RegisterForm onSubmit={onSubmit} />
           </SoftCard>
         </Flex>
       </Flex>
