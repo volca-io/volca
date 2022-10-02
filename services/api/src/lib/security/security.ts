@@ -5,21 +5,15 @@ import { StatusCodes } from 'http-status-codes';
 import crypto from 'crypto';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
-
-interface SigningKey {
-  kid: string;
-  secret: string;
-}
+import { EnvironmentUtils, EnvironmentVariable } from '../../utils/environment';
 
 @injectable()
 export class Security {
-  // TODO - This has to be moved to a config or a database
-  public signingKeys = [
-    {
-      kid: '443985e5-f659-4374-8cff-b1b62ed5cc93',
-      secret: 'b405204a081b33f6a0794765e68d91a638a72d78be47dd057fbcf286fa0b3885',
-    },
-  ] as Array<SigningKey>;
+  private signingKey: string;
+
+  public constructor(private environment: EnvironmentUtils) {
+    this.signingKey = this.environment.getOrFail(EnvironmentVariable.SIGNING_KEY);
+  }
 
   public verifyPassword(hash: string, plain: string): boolean {
     return bcrypt.compareSync(plain, hash);
@@ -42,9 +36,7 @@ export class Security {
   }
 
   public createAccessToken(payload: Record<string, unknown>, expiresIn: string | number | undefined): string {
-    const { kid, secret } = this.signingKeys[0];
-
-    return jwt.sign(payload, secret, { expiresIn, keyid: kid });
+    return jwt.sign(payload, this.signingKey, { expiresIn });
   }
 
   public createRefreshToken(): string {
@@ -52,21 +44,8 @@ export class Security {
   }
 
   public verifyToken(token: string): JwtPayload {
-    const kid = this.getKeyId(token);
-
-    const key = this.signingKeys.find((key) => key.kid === kid);
-
-    if (!key) {
-      throw new ServiceError({
-        name: ErrorNames.AUTHORIZATION_FAILED,
-        message: 'Token validation failed',
-        debug: `Unable to find a matching signing kid for kid ${kid}`,
-        statusCode: StatusCodes.UNAUTHORIZED,
-      });
-    }
-
     try {
-      const result = jwt.verify(token, key.secret);
+      const result = jwt.verify(token, this.signingKey);
 
       if (typeof result !== 'object') {
         throw new ServiceError({
@@ -90,12 +69,6 @@ export class Security {
         statusCode: StatusCodes.UNAUTHORIZED,
       });
     }
-  }
-
-  private getKeyId(token: string): string | undefined {
-    const decoded = jwt.decode(token, { complete: true });
-
-    return decoded?.header.kid;
   }
 
   public decodeToken(token: string): JwtPayload {

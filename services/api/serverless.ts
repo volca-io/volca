@@ -16,6 +16,7 @@ type EnvironmentConfig = {
         password: string;
         stripePriceId: string;
         stripeKey: string;
+        signingKey: string;
       }
     | string;
 };
@@ -27,7 +28,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         logLevel: 'debug',
         appDomain: '127.0.0.1:3000',
         skipTokenVerification: 'false',
-        fromEmail: config.environments.local.fromEmail,
+        fromEmail: config.environments.local.fromEmail || '',
         credentials: {
           host: 'localhost',
           port: '5432',
@@ -35,6 +36,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
           password: 'postgres',
           stripePriceId: process.env.STRIPE_PRICE_ID || '',
           stripeKey: process.env.STRIPE_KEY || '',
+          signingKey: process.env.SIGNING_KEY || '',
         },
       };
     case 'staging':
@@ -110,6 +112,7 @@ const serverlessConfiguration: AWS = {
       STRIPE_PRICE_ID: '${self:custom.environment.credentials.stripePriceId}',
       STRIPE_KEY: '${self:custom.environment.credentials.stripeKey}',
       FROM_EMAIL: '${self:custom.environment.fromEmail}',
+      SIGNING_KEY: '${self:custom.environment.credentials.signingKey}',
     },
   },
   custom: {

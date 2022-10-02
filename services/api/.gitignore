@@ -1,4 +1,4 @@
 # Serverless directories
 .serverless
 .build
-.env
+env/.env.local

@@ -15,7 +15,7 @@ echo "=> Seed database"
 serverless invoke local -f seed
 
 echo "=> Starting service"
-yarn start &> /dev/null & 
+yarn start:test &> /dev/null & 
 PID=$!
 echo "=> Service started with id $PID"
 

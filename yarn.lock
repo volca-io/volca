@@ -6674,6 +6674,7 @@ __metadata:
     compd: ^4.1.1
     copy-webpack-plugin: ^11.0.0
     correlation-id: ^4.0.0
+    env-cmd: ^10.1.0
     esbuild: ^0.14.51
     eslint-plugin-jest: ^26.2.2
     http-status-codes: ^2.2.0
