@@ -64,7 +64,8 @@ export class Logger {
 
     this.logger = createLogger({
       level,
-      format: this.environment.getOrFail(EnvironmentVariable.STAGE) ? LoggingFormat.SIMPLE : LoggingFormat.JSON,
+      format:
+        this.environment.getOrFail(EnvironmentVariable.STAGE) === 'local' ? LoggingFormat.SIMPLE : LoggingFormat.JSON,
       silent: disabled === 'true',
     });
   }
