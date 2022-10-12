@@ -41,7 +41,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
       };
     case 'staging':
       return {
-        logLevel: 'debug',
+        logLevel: 'info',
         appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
         credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
         skipTokenVerification: 'false',
@@ -49,7 +49,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
       };
     case 'production':
       return {
-        logLevel: 'debug',
+        logLevel: 'info',
         appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
         credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
         skipTokenVerification: 'false',
