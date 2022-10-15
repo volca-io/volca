@@ -51,6 +51,7 @@ export const useProjectActions = () => {
         if (selectedProject?.id === id) {
           setSelectedProject(null);
         }
+
         navigate('/');
       },
       errorMessage: 'Failed to delete project',

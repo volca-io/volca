@@ -27,7 +27,7 @@ export const projectAuhorizationMiddleware =
       throw new ServiceError({
         name: ErrorNames.PROJECT_DOES_NOT_EXIST,
         message: 'The project does not exist',
-        statusCode: StatusCodes.BAD_REQUEST,
+        statusCode: StatusCodes.NOT_FOUND,
       });
     }
 

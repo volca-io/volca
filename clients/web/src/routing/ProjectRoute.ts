@@ -18,7 +18,7 @@ export const ProjectRoute: React.FC<ProjectRouteProps> = ({ children }) => {
 
   useEffect(() => {
     const setProject = async () => {
-      if (id && id !== selectedProject?.id) {
+      if (selectedProject && id && id !== selectedProject.id) {
         const project = await getProject(id);
         if ((project && !project.admin?.has_active_subscription) || !project) {
           navigate('/');
