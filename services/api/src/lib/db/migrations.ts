@@ -116,4 +116,21 @@ export default [
       return knex.schema.dropTable('refresh_tokens');
     },
   },
+  {
+    name: '07_add_timestamps',
+    up: (knex: Knex) =>
+      Promise.all([
+        knex.schema.table('users', (table) => table.timestamps()),
+        knex.schema.table('projects', (table) => table.timestamps()),
+        knex.schema.table('project_users', (table) => table.timestamps()),
+        knex.schema.table('project_invitations', (table) => table.timestamps()),
+      ]),
+    down: async (knex: Knex) =>
+      Promise.all([
+        knex.schema.table('users', (table) => table.dropTimestamps()),
+        knex.schema.table('projects', (table) => table.dropTimestamps()),
+        knex.schema.table('project_users', (table) => table.dropTimestamps()),
+        knex.schema.table('project_invitations', (table) => table.dropTimestamps()),
+      ]),
+  },
 ] as Array<Migration>;
