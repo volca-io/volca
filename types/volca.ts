@@ -1,8 +1,3 @@
-export enum StackStrategy {
-  COST = 'COST',
-  SECURITY = 'SECURITY',
-}
-
 type AwsConfig = {
   account: string;
   region:
@@ -35,7 +30,6 @@ type AwsConfig = {
     | 'eu-west-3'
     | 'me-south-1'
     | 'sa-east-1';
-  stackStrategy: StackStrategy;
 };
 
 type LocalEnvironment = {

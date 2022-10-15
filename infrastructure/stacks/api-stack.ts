@@ -29,7 +29,6 @@ import { CertificateValidation, DnsValidatedCertificate } from 'aws-cdk-lib/aws-
 import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 
-import { StackStrategy } from '../../types/volca';
 import { Effect, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 interface ApiStackProps extends StackProps {
@@ -37,7 +36,6 @@ interface ApiStackProps extends StackProps {
   stage: string;
   vpc: IVpc;
   hostedZone: IHostedZone | null;
-  strategy: StackStrategy;
 }
 
 export class ApiStack extends Stack {
@@ -52,7 +50,7 @@ export class ApiStack extends Stack {
       subnetGroupName: `api-${props.stage}-database-subnet-group`,
       description: 'Subnet group for api database',
       vpcSubnets: {
-        subnetType: props.strategy === StackStrategy.COST ? SubnetType.PUBLIC : SubnetType.PRIVATE_ISOLATED,
+        subnetType: SubnetType.PUBLIC,
       },
     });
 
@@ -73,7 +71,7 @@ export class ApiStack extends Stack {
       copyTagsToSnapshot: true,
       instanceType,
       subnetGroup,
-      publiclyAccessible: props.strategy === StackStrategy.COST,
+      publiclyAccessible: true,
       securityGroups: [securityGroup],
       allocatedStorage: 20,
     });

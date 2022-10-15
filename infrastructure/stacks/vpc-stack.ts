@@ -2,12 +2,10 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Vpc, SubnetType } from 'aws-cdk-lib/aws-ec2';
 
 import { Construct } from 'constructs';
-import { StackStrategy } from '../../types/volca';
 
 interface VpcStackProps extends StackProps {
   service: string;
   stage: string;
-  strategy: StackStrategy;
 }
 
 export class VpcStack extends Stack {
@@ -29,7 +27,7 @@ export class VpcStack extends Stack {
         },
         {
           name: 'private',
-          subnetType: props.strategy === StackStrategy.COST ? SubnetType.PRIVATE_ISOLATED : SubnetType.PRIVATE_WITH_NAT,
+          subnetType: SubnetType.PRIVATE_ISOLATED,
           cidrMask: 24,
         },
       ],

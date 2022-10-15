@@ -31,7 +31,6 @@ const vpcStack = new VpcStack(app, `${name}-${stage}-vpc-stack`, {
   service: name,
   stage,
   env: aws,
-  strategy: aws.stackStrategy,
 });
 
 Tags.of(vpcStack).add('service', name);
@@ -57,7 +56,6 @@ const apiStack = new ApiStack(app, `${name}-${stage}-api-stack`, {
   service: name,
   stage,
   env: aws,
-  strategy: aws.stackStrategy,
   vpc: vpcStack.vpc,
   hostedZone,
 });

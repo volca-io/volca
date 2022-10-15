@@ -1,4 +1,4 @@
-import { Config, StackStrategy } from './types/volca';
+import { Config } from './types/volca';
 
 export const config: Config = {
   name: 'volca',
@@ -12,7 +12,6 @@ export const config: Config = {
       aws: {
         account: '428245413678',
         region: 'eu-central-1',
-        stackStrategy: StackStrategy.COST,
       },
     },
     staging: {
@@ -21,7 +20,6 @@ export const config: Config = {
       aws: {
         account: '428245413678',
         region: 'eu-central-1',
-        stackStrategy: StackStrategy.COST,
       },
     },
     production: {
@@ -30,7 +28,6 @@ export const config: Config = {
       aws: {
         account: '428245413678',
         region: 'eu-central-1',
-        stackStrategy: StackStrategy.COST,
       },
     },
   },
