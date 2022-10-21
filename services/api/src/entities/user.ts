@@ -1,5 +1,14 @@
 import { Model } from 'objection';
 
+export type UserDTO = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  hasActiveSubscription: boolean;
+  freeTrialActivated: boolean;
+};
+
 export class User extends Model {
   id!: string;
   firstName!: string;
@@ -14,7 +23,7 @@ export class User extends Model {
     return 'users';
   }
 
-  toDTO() {
+  toDTO(): UserDTO {
     return {
       id: this.id,
       firstName: this.firstName,
