@@ -13,7 +13,7 @@ export const schema: Schema = joi.object({
 export const action = useApiAction(async (ctx: CustomContext) => {
   const authenticationService = container.resolve(AuthenticationService);
 
-  const { resetToken, password } = ctx.request.body;
+  const { reset_token: resetToken, password } = ctx.request.body;
 
   await authenticationService.resetPassword(password, resetToken);
 });
