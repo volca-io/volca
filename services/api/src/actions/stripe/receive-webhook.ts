@@ -13,7 +13,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const { body, headers } = ctx;
   const signature = headers['stripe-signature'];
 
-  if (!signature || body) {
+  if (!signature || !body) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
       message: 'Unauthorized',

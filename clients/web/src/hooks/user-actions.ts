@@ -31,6 +31,7 @@ export const useUserActions = () => {
         const user = await getMe();
         if (user) setUser(user);
       },
+      errorMessage: 'Failed to register user',
     });
 
   const authnPassword = (email: string, password: string, remember: boolean) =>

@@ -19,7 +19,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const projectService = container.resolve(ProjectService);
   const user = container.resolve<User>('AuthenticatedUser');
 
-  const { to_user_email: toUserEmail, project_id: projectId } = ctx.request.body;
+  const { toUserEmail, projectId } = ctx.request.body;
 
   const project = await projectService.get(projectId);
 

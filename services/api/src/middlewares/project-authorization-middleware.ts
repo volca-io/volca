@@ -13,12 +13,13 @@ enum ProjectAccessType {
   User = 'user',
 }
 
-export const projectAuhorizationMiddleware =
+const projectAuthorizationMiddleware =
   (accessType: ProjectAccessType) => async (ctx: CustomContext, next: Koa.Next) => {
     const user = container.resolve<User>('AuthenticatedUser');
     const projectService = container.resolve(ProjectService);
     const projectUserService = container.resolve(ProjectUserService);
-    const { projectId } = ctx.params;
+
+    const projectId = ['POST', 'PUT'].includes(ctx.method) ? ctx.request.body.project_id : ctx.params.projectId;
 
     const project = await projectService.get(projectId);
     const projectUser = await projectUserService.get(user.id, projectId);
@@ -40,10 +41,9 @@ export const projectAuhorizationMiddleware =
         });
       }
     }
-
-    await next();
+    return next();
   };
 
-export const projectUserMiddleware = projectAuhorizationMiddleware(ProjectAccessType.User);
+export const projectUserMiddleware = projectAuthorizationMiddleware(ProjectAccessType.User);
 
-export const projectAdminMiddleware = projectAuhorizationMiddleware(ProjectAccessType.Admin);
+export const projectAdminMiddleware = projectAuthorizationMiddleware(ProjectAccessType.Admin);

@@ -13,7 +13,7 @@ export const schema: Schema = joi.object({
 export const action = useApiAction(async (ctx: CustomContext) => {
   const projectService = container.resolve(ProjectService);
 
-  const { name, admin_id: adminId } = ctx.request.body;
+  const { name, adminId } = ctx.request.body;
   const { projectId: id } = ctx.params;
 
   const oldProject = await projectService.get(id);
