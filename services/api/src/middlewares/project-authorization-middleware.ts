@@ -19,28 +19,37 @@ const projectAuthorizationMiddleware =
     const projectService = container.resolve(ProjectService);
     const projectUserService = container.resolve(ProjectUserService);
 
-    const projectId = ['POST', 'PUT'].includes(ctx.method) ? ctx.request.body.project_id : ctx.params.projectId;
+    // Validate all project IDs in the request body or request parameters
+    const projectIds = [
+      ctx.request.body.project_id,
+      ctx.request.body.projectId,
+      ctx.params.projectId,
+      ctx.params.project_id,
+    ].filter(Boolean);
 
-    const project = await projectService.get(projectId);
-    const projectUser = await projectUserService.get(user.id, projectId);
+    for (const projectId of projectIds) {
+      const project = await projectService.get(projectId);
+      const projectUser = await projectUserService.get(user.id, projectId);
 
-    if (!project || !projectUser || !project?.admin.hasActiveSubscription) {
-      throw new ServiceError({
-        name: ErrorNames.PROJECT_DOES_NOT_EXIST,
-        message: 'The project does not exist',
-        statusCode: StatusCodes.NOT_FOUND,
-      });
-    }
-
-    if (accessType === ProjectAccessType.Admin) {
-      if (project.adminId !== user.id) {
+      if (!project || !projectUser || !project?.admin.hasActiveSubscription) {
         throw new ServiceError({
-          name: ErrorNames.AUTHORIZATION_FAILED,
-          message: 'The user is not authorized for this project',
-          statusCode: StatusCodes.UNAUTHORIZED,
+          name: ErrorNames.PROJECT_DOES_NOT_EXIST,
+          message: 'The project does not exist',
+          statusCode: StatusCodes.NOT_FOUND,
         });
       }
+
+      if (accessType === ProjectAccessType.Admin) {
+        if (project.adminId !== user.id) {
+          throw new ServiceError({
+            name: ErrorNames.AUTHORIZATION_FAILED,
+            message: 'The user is not authorized for this project',
+            statusCode: StatusCodes.UNAUTHORIZED,
+          });
+        }
+      }
     }
+
     return next();
   };
 
