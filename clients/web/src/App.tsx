@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChakraProvider, ColorModeScript, localStorageManager } from '@chakra-ui/react';
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import {
@@ -23,8 +23,8 @@ import { ResetPasswordPage } from './pages/reset-password';
 import { VerifyResetPasswordPage } from './pages/verify-reset-password';
 
 export const App = () => (
-  <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
-    <ColorModeScript initialColorMode="dark" />
+  <ChakraProvider theme={theme}>
+    <ColorModeScript initialColorMode={theme.config.initialColorMode} type="localStorage" />
     <RecoilRoot>
       <React.Suspense fallback={<LoadingPage />}>
         <Router>
