@@ -25,7 +25,7 @@ export const ProjectListPage: React.FC = () => {
 
   const onSelectProject = (project: Project) => {
     setSelectedProject(project);
-    navigate(`/projects/${project.id}/settings`);
+    navigate(`/projects/${project.id}/dashboard`);
   };
 
   const ProjectCard = ({ project }: { project: Project }) => (
