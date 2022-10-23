@@ -26,8 +26,29 @@ jobs:
           node-version: '16'
       - name: Test
         run: cd bundle && yarn && yarn test
-      - name: Upload
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.outputs.name }}
           path: bundle.zip
+          retention-days: 1
+  upload-s3:
+    name: upload-s3
+    runs-on: ubuntu-latest
+    needs: bundle
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::428245413678:role/volca-github-actions-assets-upload-role
+          aws-region: eu-central-1
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: volca
+      - name: Upload to S3
+        run: |
+           aws s3 cp bundle.zip s3://volca-assets/volca.zip
