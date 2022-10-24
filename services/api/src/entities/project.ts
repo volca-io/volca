@@ -7,6 +7,8 @@ export class Project extends Model {
   name!: string;
   adminId!: string;
   admin!: User;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static get tableName() {
     return 'projects';

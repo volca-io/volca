@@ -6,6 +6,8 @@ export class RefreshToken extends Model {
   subject!: string;
   token!: string;
   expiresAt!: Date;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static get tableName() {
     return 'refresh_tokens';

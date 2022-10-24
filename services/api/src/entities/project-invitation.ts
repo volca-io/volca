@@ -7,6 +7,8 @@ export class ProjectInvitation extends Model {
   projectId!: string;
   expiresAt!: Date;
   key!: string;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static get tableName() {
     return 'project_invitations';

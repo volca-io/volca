@@ -7,6 +7,8 @@ export type UserDTO = {
   email: string;
   hasActiveSubscription: boolean;
   freeTrialActivated: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export class User extends Model {
@@ -18,6 +20,8 @@ export class User extends Model {
   password?: string;
   hasActiveSubscription!: boolean;
   freeTrialActivated!: boolean;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static get tableName() {
     return 'users';
@@ -31,6 +35,8 @@ export class User extends Model {
       email: this.email,
       hasActiveSubscription: this.hasActiveSubscription,
       freeTrialActivated: this.freeTrialActivated,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
     };
   }
 }

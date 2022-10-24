@@ -120,10 +120,10 @@ export default [
     name: '07_add_timestamps',
     up: (knex: Knex) =>
       Promise.all([
-        knex.schema.table('users', (table) => table.timestamps()),
-        knex.schema.table('projects', (table) => table.timestamps()),
-        knex.schema.table('project_users', (table) => table.timestamps()),
-        knex.schema.table('project_invitations', (table) => table.timestamps()),
+        knex.schema.table('users', (table) => table.timestamps(true, true)),
+        knex.schema.table('projects', (table) => table.timestamps(true, true)),
+        knex.schema.table('project_users', (table) => table.timestamps(true, true)),
+        knex.schema.table('project_invitations', (table) => table.timestamps(true, true)),
       ]),
     down: async (knex: Knex) =>
       Promise.all([

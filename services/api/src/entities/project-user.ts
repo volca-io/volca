@@ -4,6 +4,8 @@ export class ProjectUser extends Model {
   id!: string;
   userId!: string;
   projectId!: string;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static get tableName() {
     return 'project_users';
