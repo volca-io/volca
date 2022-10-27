@@ -8,6 +8,7 @@ type EnvironmentConfig = {
   appDomain: string;
   fromEmail: string;
   skipTokenVerification: string;
+  isTest?: string
   credentials:
     | {
         host: string;
@@ -29,6 +30,7 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
         appDomain: '127.0.0.1:3000',
         skipTokenVerification: 'false',
         fromEmail: config.environments.local.fromEmail || '',
+        isTest: process.env.IS_TEST || '',
         credentials: {
           host: 'localhost',
           port: '5432',
@@ -112,6 +114,7 @@ const serverlessConfiguration: AWS = {
       STRIPE_PRICE_ID: '${self:custom.environment.credentials.stripePriceId}',
       STRIPE_KEY: '${self:custom.environment.credentials.stripeKey}',
       FROM_EMAIL: '${self:custom.environment.fromEmail}',
+      IS_TEST: '${self:custom.environment.isTest, false}',
       SIGNING_KEY: '${self:custom.environment.credentials.signingKey}',
     },
   },

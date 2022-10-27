@@ -31,12 +31,14 @@ export const useApiActions = () => {
     onSuccess,
     errorMessage = null,
     successMessage = null,
+    errorMessageDuration = 9000
   }: {
     action: Function;
     onError?: Function;
     onSuccess?: Function;
     errorMessage?: string | null;
     successMessage?: string | null;
+    errorMessageDuration?: number | null
   }): Promise<T | void> => {
     setLoading(true);
     try {
@@ -60,7 +62,7 @@ export const useApiActions = () => {
           title: 'Error',
           description: errorMessage,
           status: 'error',
-          duration: 9000,
+          duration: errorMessageDuration,
           isClosable: true,
         });
       }

@@ -38,7 +38,7 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
   const { sub } =
     environment.getOrFail(EnvironmentVariable.SKIP_TOKEN_VERIFICATION) === 'true'
       ? security.decodeToken(token)
-      : security.verifyToken(token);
+      : security.verifyToken({ token });
 
   if (!sub) {
     throw new ServiceError({

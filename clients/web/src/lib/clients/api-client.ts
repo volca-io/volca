@@ -153,6 +153,18 @@ export class ApiClient {
     );
   }
 
+  static async verifyUser(verifyToken: string): Promise<void> {
+    await this.handleApiError(
+      this.client.post('authn/verify-user', { json: { verify_token: verifyToken } })
+    );
+  }
+
+  static async resendVerification(): Promise<void> {
+    await this.handleApiError(
+      this.tokenClient.post('authn/resend-verification')
+    );
+  }
+
   static async signOut(): Promise<void> {
     await this.handleApiError(this.client.post('authn/sign-out'));
   }

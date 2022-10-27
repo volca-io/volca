@@ -7,6 +7,7 @@ import { RefreshToken, User } from '../entities';
 import { UserService } from './user-service';
 import { Security } from '../lib/security/security';
 import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
+import { JwtPayload } from 'jsonwebtoken';
 
 export type AccessTokenCookieSettings = {
   secure: boolean;
@@ -47,7 +48,7 @@ export class AuthenticationService {
     const payload = { sub: user.id };
 
     const expiresIn = 60 * 15;
-    const accessToken = this.security.createAccessToken(payload, expiresIn);
+    const accessToken = this.security.createToken({ payload, expiresIn });
 
     return { accessToken, expiresIn };
   }
@@ -173,7 +174,7 @@ export class AuthenticationService {
       });
     }
 
-    return this.security.createTokenWithSecret({ sub: email }, 60 * 10, user.password);
+    return this.security.createToken({ payload: { sub: email }, expiresIn: 60 * 10, secret: user.password });
   }
 
   public async resetPassword(password: string, resetToken: string): Promise<void> {
@@ -207,7 +208,7 @@ export class AuthenticationService {
     }
 
     try {
-      this.security.verifyTokenWithSecret(resetToken, user.password);
+      this.security.verifyToken({ token: resetToken, secret: user.password });
     } catch (err: unknown) {
       if (err instanceof Error) {
         throw new ServiceError({
@@ -222,5 +223,45 @@ export class AuthenticationService {
 
     const hashedPassword = this.security.hashPassword(password);
     await this.userService.update(user.id, { password: hashedPassword });
+  }
+
+  public async markUserAsVerified(verifyToken: string): Promise<void> {
+    let payload: JwtPayload;
+    try {
+      payload = this.security.verifyToken({ token: verifyToken });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        throw new ServiceError({
+          name: ErrorNames.AUTHORIZATION_FAILED,
+          message: 'Your verify user link is either invalid or expired',
+          statusCode: StatusCodes.UNAUTHORIZED,
+          debug: err.message,
+        });
+      }
+      throw err;
+    }
+
+    if (!payload.sub) {
+      throw new ServiceError({
+        name: ErrorNames.AUTHORIZATION_FAILED,
+        message: 'Your verify user link is either invalid or expired',
+        statusCode: StatusCodes.UNAUTHORIZED,
+        debug: 'The verify token was missing a subject claim',
+      });
+    }
+
+    const user = await this.userService.findByEmail(payload.sub);
+    if (!user) {
+      throw new ServiceError({
+        name: ErrorNames.USER_DOES_NOT_EXIST,
+        message: 'Your verify user link is either invalid or expired',
+        statusCode: StatusCodes.UNAUTHORIZED,
+        debug: 'Could not find the corresponding user defined in the verify account token',
+      });
+    }
+
+    if (!user.verifiedAt) {
+      await this.userService.update(user.id, { verifiedAt: new Date() });
+    }
   }
 }

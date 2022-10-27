@@ -67,6 +67,26 @@ export const useUserActions = () => {
       errorMessage: 'Your reset link is invalid. Request a new one on the reset password page.',
     });
 
+  const verifyUser = (verifyToken: string) =>
+    executeApiAction({
+      action: () => ApiClient.verifyUser(verifyToken),
+      onSuccess: async () => {
+        const user = await getMe();
+        if (user) setUser(user);
+        navigate('/');
+      },
+      successMessage: 'Your user was successfully verified',
+      errorMessage: 'Failed to verify user',
+      errorMessageDuration: null
+    });
+
+  const resendVerification = () =>
+    executeApiAction({
+      action: () => ApiClient.resendVerification(),
+      successMessage: 'Verification re-sent',
+      errorMessage: 'Failed to re-send verification',
+    });
+
   const signOut = () =>
     executeApiAction({
       action: () => ApiClient.signOut(),
@@ -88,5 +108,5 @@ export const useUserActions = () => {
     return { remember, identifier };
   };
 
-  return { register, authnPassword, signOut, getRememberInfo, resetPassword, verifyResetPassword, getMe };
+  return { register, authnPassword, signOut, getRememberInfo, resetPassword, verifyResetPassword, verifyUser, resendVerification, getMe };
 };

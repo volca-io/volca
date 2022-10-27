@@ -6,5 +6,4 @@ export * from './project-service';
 export * from './project-invitation-service';
 export * from './project-user-service';
 export * from './stripe-service';
-export * from './email-service';
 /* volca-exclude-end os */

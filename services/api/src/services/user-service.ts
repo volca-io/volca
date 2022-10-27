@@ -5,6 +5,7 @@ import { User } from '../entities';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 import { Security } from '../lib/security/security';
+import { CommunicationsService } from './communications-service';
 
 type RegisterUserProperties = {
   firstName: string;
@@ -15,7 +16,7 @@ type RegisterUserProperties = {
 
 @injectable()
 export class UserService {
-  public constructor(private security: Security) {}
+  public constructor(private security: Security, private comsService: CommunicationsService) {}
 
   public async findById(id: string): Promise<User | undefined> {
     return User.query().findById(id);
@@ -48,6 +49,8 @@ export class UserService {
       email: email.toLowerCase(),
       password: hashedPassword,
     });
+
+    await this.comsService.sendVerificationEmail({ email, firstName });
 
     return user;
   }

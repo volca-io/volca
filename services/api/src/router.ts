@@ -12,10 +12,13 @@ import {
   resetPasswordSchema,
   verifyResetPasswordAction,
   verifyResetPasswordSchema,
+  verifyUserAction,
+  verifyUserSchema,
   refreshAction,
   registerAction,
   registerSchema,
   signOutAction,
+  resendUserVerificationAction,
 } from './actions/authn';
 
 import { getMeAction } from './actions/users';
@@ -107,6 +110,8 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
     schemaValidationMiddleware(verifyResetPasswordSchema),
     verifyResetPasswordAction
   );
+  router.post('/authn/verify-user', schemaValidationMiddleware(verifyUserSchema), verifyUserAction);
+  router.post('/authn/resend-verification', authenticationMiddleware, resendUserVerificationAction  );
   router.post('/authn/sign-out', signOutAction);
   router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
   router.post('/authn/refresh', refreshAction);

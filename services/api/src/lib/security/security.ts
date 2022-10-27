@@ -7,6 +7,17 @@ import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 import { EnvironmentUtils, EnvironmentVariable } from '../../utils/environment';
 
+type CreateTokenProperties = {
+  payload: Record<string, unknown>;
+  expiresIn: string | number;
+  secret?: string;
+};
+
+type VerifyTokenProperties = {
+  token: string;
+  secret?: string;
+};
+
 @injectable()
 export class Security {
   private signingKey: string;
@@ -23,29 +34,17 @@ export class Security {
     return bcrypt.hashSync(password);
   }
 
-  public createTokenWithSecret(
-    payload: Record<string, unknown>,
-    expiresIn: string | number | undefined,
-    secret: string
-  ): string {
-    return jwt.sign(payload, secret, { expiresIn });
-  }
-
-  public verifyTokenWithSecret(token: string, secret: string) {
-    jwt.verify(token, secret);
-  }
-
-  public createAccessToken(payload: Record<string, unknown>, expiresIn: string | number | undefined): string {
-    return jwt.sign(payload, this.signingKey, { expiresIn });
+  public createToken({ payload, expiresIn, secret }: CreateTokenProperties): string {
+    return jwt.sign(payload, secret || this.signingKey, { expiresIn });
   }
 
   public createRefreshToken(): string {
     return crypto.randomBytes(32).toString('base64');
   }
 
-  public verifyToken(token: string): JwtPayload {
+  public verifyToken({ token, secret }: VerifyTokenProperties): JwtPayload {
     try {
-      const result = jwt.verify(token, this.signingKey);
+      const result = jwt.verify(token, secret || this.signingKey);
 
       if (typeof result !== 'object') {
         throw new ServiceError({

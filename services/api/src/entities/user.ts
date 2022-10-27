@@ -7,6 +7,7 @@ export type UserDTO = {
   email: string;
   hasActiveSubscription: boolean;
   freeTrialActivated: boolean;
+  verifiedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -20,6 +21,7 @@ export class User extends Model {
   password?: string;
   hasActiveSubscription!: boolean;
   freeTrialActivated!: boolean;
+  verifiedAt!: Date;
   createdAt!: Date;
   updatedAt!: Date;
 
@@ -35,8 +37,9 @@ export class User extends Model {
       email: this.email,
       hasActiveSubscription: this.hasActiveSubscription,
       freeTrialActivated: this.freeTrialActivated,
+      verifiedAt: this.verifiedAt,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 }

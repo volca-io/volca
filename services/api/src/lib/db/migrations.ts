@@ -133,4 +133,15 @@ export default [
         knex.schema.table('project_invitations', (table) => table.dropTimestamps()),
       ]),
   },
+  {
+    name: '08_verifiable_user',
+    up: (knex: Knex) =>
+      knex.schema.table('users', (table) => {
+        table.timestamp('verified_at');
+      }),
+    down: async (knex: Knex) =>
+      knex.schema.table('users', (table) => {
+        table.dropColumn('verified_at');
+      }),
+  },
 ] as Array<Migration>;
