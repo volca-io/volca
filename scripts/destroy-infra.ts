@@ -3,7 +3,7 @@ import { program } from 'commander';
 import { config } from '../volca.config';
 
 const destroy = async (stage: string): Promise<void> => {
-  const child = spawn('cdk', ['destroy', '-c', `stage=${stage}`, '--all'], { stdio: 'inherit' });
+  const child = spawn('cdk', ['destroy', '-c', `stage=${stage}`, '--all'], { stdio: 'pipe' });
 
   return new Promise((resolve, reject) => {
     child.on('exit', (code) => {

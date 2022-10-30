@@ -21,10 +21,9 @@ const isBootstrapped = async (region: string): Promise<boolean> => {
 };
 
 const bootstrapCDK = async (stage: string): Promise<void> => {
-  const child = spawn('cdk', ['bootstrap', '-c', `stage=${stage}`], { stdio: 'inherit' });
-  child.stdout.on('data', (data: Buffer) => {
-    console.log(data.toString());
-  });
+  const child = spawn('cdk', ['bootstrap', '-c', `stage=${stage}`], { stdio: 'pipe' });
+
+  child.stdout.on('data', (data: Buffer) => console.log(data.toString()));
 
   return new Promise((resolve, reject) => {
     child.on('exit', (code) => {
@@ -38,7 +37,11 @@ const bootstrapCDK = async (stage: string): Promise<void> => {
 };
 
 const deploy = async (stage: string, stacks: string): Promise<void> => {
-  const child = spawn('cdk', ['deploy', '-c', `stage=${stage}`, stacks || '--all'], { stdio: 'inherit' });
+  const child = spawn('cdk', ['deploy', '-c', `stage=${stage}`, stacks || '--all', '--require-approval', 'never'], {
+    stdio: 'pipe',
+  });
+
+  child.stdout.on('data', (data: Buffer) => console.log(data.toString()));
 
   return new Promise((resolve, reject) => {
     child.on('exit', (code) => {
@@ -52,12 +55,12 @@ const deploy = async (stage: string, stacks: string): Promise<void> => {
 };
 
 const run = async (region: string, stage: string, stacks: string): Promise<void> => {
-  console.log(`[ INFO ] Checking if AWS CDK is bootstrapped in region ${region}..`);
+  console.log(`[ INFO ] Checking if AWS CDK is bootstrapped in region ${region}...`);
   const bootstrapped = await isBootstrapped(region);
   console.log(`[ INFO ] AWS CDK is ${bootstrapped ? '' : 'not '} bootstrapped`);
 
   if (!bootstrapped) {
-    console.log(`[ INFO ] Bootstrapping CDK..`);
+    console.log(`[ INFO ] Bootstrapping CDK...`);
     try {
       await bootstrapCDK(stage);
     } catch (error: unknown) {
@@ -66,7 +69,7 @@ const run = async (region: string, stage: string, stacks: string): Promise<void>
     }
   }
 
-  console.log(`[ INFO ] Deploying..`);
+  console.log(`[ INFO ] Deploying...`);
   try {
     await deploy(stage, stacks);
   } catch (error: unknown) {
