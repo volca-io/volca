@@ -29,11 +29,11 @@
     "zxcvbn": "^4.4.2"
   },
   "scripts": {
-    "start:dev": "env-cmd -e local react-scripts start",
+    "start:dev": "./scripts/exec-with-env.ts local react-scripts start",
     "build": "react-scripts build",
-    "build:local": "env-cmd -e local yarn build",
-    "build:staging": "env-cmd -e staging yarn build",
-    "build:production": "env-cmd -e production yarn build",
+    "build:local": "./scripts/exec-with-env.ts local yarn build",
+    "build:staging": "./scripts/exec-with-env.ts staging yarn build",
+    "build:production": "./scripts/exec-with-env.ts production yarn build",
     "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject"
   },
@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@types/zxcvbn": "^4.4.1",
-    "env-cmd": "^10.1.0"
+    "ts-node": "^10.9.1"
   },
   "jest": {
     "transformIgnorePatterns": [
