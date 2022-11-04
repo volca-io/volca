@@ -20,6 +20,6 @@ export const environments: EnvironmentConfig = {
     REACT_APP_API_URL: `https://api.${config.environments.staging.domain}/`,
   },
   production: {
-    REACT_APP_API_URL: `https://api.${config.environments.staging.domain}/`,
+    REACT_APP_API_URL: `https://api.${config.environments.production.domain}/`,
   },
 };
