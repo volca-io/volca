@@ -154,15 +154,11 @@ export class ApiClient {
   }
 
   static async verifyUser(verifyToken: string): Promise<void> {
-    await this.handleApiError(
-      this.client.post('authn/verify-user', { json: { verify_token: verifyToken } })
-    );
+    await this.handleApiError(this.client.post('authn/verify-user', { json: { verify_token: verifyToken } }));
   }
 
   static async resendVerification(): Promise<void> {
-    await this.handleApiError(
-      this.tokenClient.post('authn/resend-verification')
-    );
+    await this.handleApiError(this.tokenClient.post('authn/resend-verification'));
   }
 
   static async signOut(): Promise<void> {
@@ -245,5 +241,9 @@ export class ApiClient {
     );
 
     return stripe_billing_portal_session;
+  }
+
+  static async sendSupportMessage(message: string): Promise<void> {
+    await this.handleApiError(this.tokenClient.post('communications/support', { json: { message } }));
   }
 }

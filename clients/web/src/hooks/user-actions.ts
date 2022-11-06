@@ -77,7 +77,7 @@ export const useUserActions = () => {
       },
       successMessage: 'Your user was successfully verified',
       errorMessage: 'Failed to verify user',
-      errorMessageDuration: null
+      errorMessageDuration: null,
     });
 
   const resendVerification = () =>
@@ -108,5 +108,23 @@ export const useUserActions = () => {
     return { remember, identifier };
   };
 
-  return { register, authnPassword, signOut, getRememberInfo, resetPassword, verifyResetPassword, verifyUser, resendVerification, getMe };
+  const sendSupportMessage = (message: string) =>
+    executeApiAction({
+      action: () => ApiClient.sendSupportMessage(message),
+      successMessage: 'Thank you for your message!',
+      errorMessage: 'Failed to send message',
+    });
+
+  return {
+    register,
+    authnPassword,
+    signOut,
+    getRememberInfo,
+    resetPassword,
+    verifyResetPassword,
+    verifyUser,
+    resendVerification,
+    getMe,
+    sendSupportMessage,
+  };
 };

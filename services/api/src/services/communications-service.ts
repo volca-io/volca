@@ -20,6 +20,7 @@ type SendEmailParams = {
   email: string;
   subject: string;
   body: string;
+  replyTo?: string | null;
 };
 
 @injectable()
@@ -30,7 +31,7 @@ export class CommunicationsService {
     this.emailClient = new SESv2Client({ region: this.environment.getOrFail(EnvironmentVariable.REGION) });
   }
 
-  public async sendEmail({ email, subject, body }: SendEmailParams): Promise<void> {
+  public async sendEmail({ email, subject, body, replyTo = null }: SendEmailParams): Promise<void> {
     if (this.environment.get(EnvironmentVariable.IS_TEST) === 'true') {
       this.logger.debug('Skipping to send email', { email, subject, body });
       return;
@@ -43,8 +44,8 @@ export class CommunicationsService {
     const command = new SendEmailCommand({
       FromEmailAddress: fromEmail,
       Destination: { ToAddresses: [email] },
-
       Content: { Simple: { Subject: { Data: subject }, Body: { Text: { Data: body }, Html: { Data: body } } } },
+      ...(replyTo ? { ReplyToAddresses: [replyTo] } : {}),
     });
 
     try {

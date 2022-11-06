@@ -36,6 +36,7 @@ import { SignOutButton } from '../authentication/SignOutButton';
 import { ThemeSwitcher } from './theme-switcher';
 import { LoadingBar } from '../generic/LoadingBar';
 import { DefaultLayout } from '../../layouts';
+import { SupportButton } from '../generic/SupportButton';
 
 interface LinkItemProps {
   name: string;
@@ -214,6 +215,7 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
       <Spacer display={{ base: 'none', md: 'flex' }} />
 
       <HStack spacing={{ base: '0', md: '6' }}>
+        <SupportButton />
         <ThemeSwitcher />
         <Flex alignItems="center">
           <Menu>
