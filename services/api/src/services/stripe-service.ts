@@ -58,6 +58,7 @@ export class StripeService {
       metadata: {
         user_id: user.id,
       },
+      customer_email: user.email,
       ...(user.freeTrialActivated
         ? {}
         : {
