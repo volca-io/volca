@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { ProjectUser, User, UserDTO } from '../entities';
+import { ProjectUser, User } from '../entities';
 
 @injectable()
 export class ProjectUserService {
@@ -7,13 +7,12 @@ export class ProjectUserService {
     return ProjectUser.query().where({ userId }).andWhere({ projectId }).first();
   }
 
-  public async list(projectId: string): Promise<UserDTO[]> {
+  public async list(projectId: string): Promise<User[]> {
     const projectUsers = await ProjectUser.query().where({ projectId });
-    const users = await User.query().whereIn(
+    return User.query().whereIn(
       'id',
       projectUsers.map((pu) => pu.userId)
     );
-    return users.map((user) => user.toDTO());
   }
 
   public async delete(projectId: string, userId: string) {

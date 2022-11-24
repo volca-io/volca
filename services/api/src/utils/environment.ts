@@ -18,7 +18,6 @@ export enum EnvironmentVariable {
   LOGGING_DISABLED = 'LOGGING_DISABLED',
   REGION = 'REGION',
   SIGNING_KEY = 'SIGNING_KEY',
-  IS_TEST = 'IS_TEST',
 }
 
 @singleton()
@@ -40,5 +39,10 @@ export class EnvironmentUtils {
 
   get(key: EnvironmentVariable): string | undefined {
     return process.env[key];
+  }
+
+  getWebappDomain(): string {
+    const isLocal = this.getOrFail(EnvironmentVariable.STAGE) === 'local';
+    return isLocal ? 'http://127.0.0.1:3000' : `https://${this.getOrFail(EnvironmentVariable.APP_DOMAIN)}`;
   }
 }

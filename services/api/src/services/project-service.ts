@@ -30,7 +30,7 @@ export class ProjectService {
   }
 
   public async create({ adminId, name }: CreateProjectInput): Promise<Project> {
-    const project = await Project.query().insert({ adminId, name }).withGraphFetched('admin');
+    const project = await Project.query().insert({ adminId, name }).withGraphFetched('admin').returning('*');
     await ProjectUser.query().insert({ userId: adminId, projectId: project.id });
     return project;
   }

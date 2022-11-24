@@ -50,7 +50,8 @@ export class UserService {
       password: hashedPassword,
     });
 
-    await this.comsService.sendVerificationEmail({ email, firstName });
+    const token = this.security.createToken({ payload: { sub: email }, expiresIn: 60 * 60 * 24 });
+    await this.comsService.sendVerificationEmail({ email, firstName, token });
 
     return user;
   }

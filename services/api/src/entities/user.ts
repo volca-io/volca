@@ -1,16 +1,5 @@
-import { Model } from 'objection';
-
-export type UserDTO = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  hasActiveSubscription: boolean;
-  freeTrialActivated: boolean;
-  verifiedAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { Model, Pojo } from 'objection';
+import _ from 'lodash';
 
 export class User extends Model {
   id!: string;
@@ -25,21 +14,16 @@ export class User extends Model {
   createdAt!: Date;
   updatedAt!: Date;
 
+  private static hiddenFields = ['password'];
+
   static get tableName() {
     return 'users';
   }
 
-  toDTO(): UserDTO {
-    return {
-      id: this.id,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      email: this.email,
-      hasActiveSubscription: this.hasActiveSubscription,
-      freeTrialActivated: this.freeTrialActivated,
-      verifiedAt: this.verifiedAt,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
+  $formatJson(input: Pojo): Pojo {
+    const json = super.$formatJson(input);
+    const retval = _.omit(json, User.hiddenFields);
+    console.log(retval)
+    return retval;
   }
 }

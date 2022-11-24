@@ -16,7 +16,6 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const { name } = ctx.request.body;
 
   const project = await projectService.create({ adminId: user.id, name });
-
   return {
     body: {
       project,

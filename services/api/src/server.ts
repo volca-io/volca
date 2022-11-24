@@ -1,11 +1,18 @@
 import Koa from 'koa';
 import cors from '@koa/cors';
 import { container } from 'tsyringe';
+import { Knex } from 'knex';
 import { createRouter } from './router';
 import { requestLoggingMiddleware, correlationIdMiddleware, errorHandlingMiddleware } from './middlewares';
-import { EnvironmentUtils, EnvironmentVariable } from './utils/environment';
+import { EnvironmentUtils } from './utils/environment';
+import { initialize } from './lib/db/knex';
 
-export const createServer = (): Koa => {
+type CreateServerResponse = {
+  app: Koa
+  database: Knex
+}
+
+export const createServer = (): CreateServerResponse => {
   const app = new Koa();
   const router = createRouter();
 
@@ -13,10 +20,7 @@ export const createServer = (): Koa => {
 
   app.use(
     cors({
-      origin:
-        environment.getOrFail(EnvironmentVariable.STAGE) === 'local'
-          ? 'http://127.0.0.1:3000'
-          : `https://${environment.getOrFail(EnvironmentVariable.APP_DOMAIN)}`,
+      origin: environment.getWebappDomain(),
       credentials: true,
     })
   );
@@ -27,5 +31,7 @@ export const createServer = (): Koa => {
 
   app.use(router.routes()).use(router.allowedMethods());
 
-  return app;
+  const database = initialize()
+
+  return { app, database };
 };

@@ -9,31 +9,18 @@ echo "=> Waiting for database to start"
 wait-on tcp:5432
 
 echo "=> Migrating database"
-sls invoke local -f migrate --data "{ \"type\": \"latest\" }"
+env-cmd -f ./env/.env.test sls invoke local -f migrate --data "{ \"type\": \"latest\" }"
 
 echo "=> Seed database"
-serverless invoke local -f seed
-
-echo "=> Starting service"
-yarn start:test &> /dev/null & 
-PID=$!
-echo "=> Service started with id $PID"
+env-cmd -f ./env/.env.test serverless invoke local -f seed
 
 set +e
-
-echo "=> Waiting for service to respond"
-wait-on http://localhost:4000/status
-
 echo "=> Running tests"
-jest
-
+NODE_NO_WARNINGS=1 NODE_OPTIONS=--experimental-vm-modules env-cmd -f ./env/.env.test jest --detectOpenHandles
+set -e
 RESULT=$?
 
 echo "=> Stopping database"
 docker-compose down
-
-echo "=> Stopping serverless offline"
-kill $PID
-
 
 exit $RESULT

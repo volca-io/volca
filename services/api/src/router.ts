@@ -116,7 +116,6 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.post('/authn/sign-out', signOutAction);
   router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
   router.post('/authn/refresh', refreshAction);
-  router.post('/authn/refresh/verify', refreshAction);
 
   // Communications
   router.post(
