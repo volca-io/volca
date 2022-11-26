@@ -38,6 +38,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-cdk/asset-awscli-v1@npm:^2.2.9":
+  version: 2.2.19
+  resolution: "@aws-cdk/asset-awscli-v1@npm:2.2.19"
+  checksum: 706f34f6e6e355cadd1950c05dc26bdaa3085761c477fd20f3660742c936d3de3874e25bce8191a5b9bd627f00f8465bfefc5df76e9b6a404b86ffdb66ec5dc6
+  languageName: node
+  linkType: hard
+
+"@aws-cdk/asset-kubectl-v20@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@aws-cdk/asset-kubectl-v20@npm:2.1.1"
+  checksum: f5883fae7b6d3d17e5125560a6efa5065d8b319c11ea6639caa68e315427c4fa266433db04b1a776cf12ccc8c8f8e9a3dfc0ac8cc3c0e73545f80b07808281e2
+  languageName: node
+  linkType: hard
+
+"@aws-cdk/asset-node-proxy-agent-v5@npm:^2.0.15":
+  version: 2.0.25
+  resolution: "@aws-cdk/asset-node-proxy-agent-v5@npm:2.0.25"
+  checksum: 374a6b842391d228d8793024f0454b344e96e89468773db89ea9d7f31c79d189a2afd4b1456f8c8d6e2fd819e8e2e759f51a08ecbc1495a450747e11ad570deb
+  languageName: node
+  linkType: hard
+
 "@aws-crypto/ie11-detection@npm:^2.0.0":
   version: 2.0.0
   resolution: "@aws-crypto/ie11-detection@npm:2.0.0"
@@ -6723,8 +6744,8 @@ __metadata:
     "@types/prettier": 2.6.0
     "@typescript-eslint/eslint-plugin": ^5.30.5
     "@typescript-eslint/parser": ^5.30.5
-    aws-cdk: 2.33.0
-    aws-cdk-lib: 2.33.0
+    aws-cdk: ^2.51.1
+    aws-cdk-lib: ^2.51.1
     commander: ^9.4.0
     constructs: ^10.0.0
     esbuild: ^0.14.53
@@ -7514,10 +7535,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk-lib@npm:2.33.0":
-  version: 2.33.0
-  resolution: "aws-cdk-lib@npm:2.33.0"
+"aws-cdk-lib@npm:^2.51.1":
+  version: 2.51.1
+  resolution: "aws-cdk-lib@npm:2.51.1"
   dependencies:
+    "@aws-cdk/asset-awscli-v1": ^2.2.9
+    "@aws-cdk/asset-kubectl-v20": ^2.1.1
+    "@aws-cdk/asset-node-proxy-agent-v5": ^2.0.15
     "@balena/dockerignore": ^1.0.2
     case: 1.6.3
     fs-extra: ^9.1.0
@@ -7525,17 +7549,17 @@ __metadata:
     jsonschema: ^1.4.1
     minimatch: ^3.1.2
     punycode: ^2.1.1
-    semver: ^7.3.7
+    semver: ^7.3.8
     yaml: 1.10.2
   peerDependencies:
     constructs: ^10.0.0
-  checksum: 91d572131446f64136aff93ba3c6c8759d98fb855e528926e642e7e328bf0963c998a6b37990b6023f8496814233b774b58d7a36c420c24b73e052824d6f9dda
+  checksum: e8b60ebf2172fce21ce5e0532c23f6af154f66740815ae0f2ab152e0e8be8a2e1260edf8b83e1650e6f09feaa9cff31dc9ed65bcb77fd4cb51594325a1680292
   languageName: node
   linkType: hard
 
-"aws-cdk@npm:2.33.0":
-  version: 2.33.0
-  resolution: "aws-cdk@npm:2.33.0"
+"aws-cdk@npm:^2.51.1":
+  version: 2.51.1
+  resolution: "aws-cdk@npm:2.51.1"
   dependencies:
     fsevents: 2.3.2
   dependenciesMeta:
@@ -7543,7 +7567,7 @@ __metadata:
       optional: true
   bin:
     cdk: bin/cdk
-  checksum: 7d3c6f1385586e01c6e645f7af9582967188320f9e2ffdc99cd177fd723bed8314194f2de66c605727f79968a56fab74363cb35af3d128a61b7ce5b077b349f0
+  checksum: 85313f893377106e7e99f41be208be40bcc1f0f2963ea5a1ffef2ba0b6f543ca536eb94c6d933702cfe2cd3b85ccf72e936e71c9f0b3ae3dc7e1d6f67675f76f
   languageName: node
   linkType: hard
 
@@ -18813,6 +18837,17 @@ __metadata:
   bin:
     semver: ./bin/semver.js
   checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.8":
+  version: 7.3.8
+  resolution: "semver@npm:7.3.8"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: ba9c7cbbf2b7884696523450a61fee1a09930d888b7a8d7579025ad93d459b2d1949ee5bbfeb188b2be5f4ac163544c5e98491ad6152df34154feebc2cc337c1
   languageName: node
   linkType: hard
 

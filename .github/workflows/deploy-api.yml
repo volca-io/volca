@@ -24,7 +24,7 @@ jobs:
       - name: Read workflow vars
         run: |
           yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment ${{ inputs.environment }} >> $GITHUB_ENV
-      - name: Configure AWS credentials from ${{ inputs.environment }}  account
+      - name: Configure AWS credentials from ${{ inputs.environment }} account
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-github-actions-api-deployment-role

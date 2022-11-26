@@ -36,6 +36,7 @@ jobs:
       - name: Deploy to S3
         working-directory: clients/web
         run: |
+          BUCKET_NAME=$(aws s3api list-buckets --query "Buckets[*].{name:Name}[?starts_with(name, '${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp')].name" --output text)
           aws s3 sync ./build s3://${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp-hosting-bucket --delete
       - name: Invalidate cache
         working-directory: clients/web

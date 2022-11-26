@@ -47,7 +47,6 @@ export class ApiStack extends Stack {
     const subnetGroup = new SubnetGroup(this, 'ApiDatabaseSubnetGroup', {
       vpc: props.vpc,
       removalPolicy: RemovalPolicy.DESTROY,
-      subnetGroupName: `api-${props.stage}-database-subnet-group`,
       description: 'Subnet group for api database',
       vpcSubnets: {
         subnetType: SubnetType.PUBLIC,
@@ -163,10 +162,11 @@ export class ApiStack extends Stack {
     });
 
     const lambdaExecutionRole = new Role(this, 'ApiLambdaExecutionRole', {
-      roleName: `${props.service}-${props.stage}-api-lambda-execution-role`,
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
     });
 
     lambdaExecutionRole.attachInlinePolicy(lambdaExecutionPolicy);
+
+    new CfnOutput(this, 'LambdaExecutionRole', { value: lambdaExecutionRole.roleArn });
   }
 }

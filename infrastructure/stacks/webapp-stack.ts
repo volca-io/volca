@@ -27,7 +27,6 @@ export class WebappStack extends Stack {
     super(scope, id, props);
 
     this.bucket = new Bucket(this, 'WebappHostingBucket', {
-      bucketName: `${props.service}-${props.stage}-webapp-hosting-bucket`, // TODO - Append random characters to end to enforce uniqueness
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
       blockPublicAccess: new BlockPublicAccess({ restrictPublicBuckets: false }),
@@ -88,6 +87,7 @@ export class WebappStack extends Stack {
       });
     }
 
+    new CfnOutput(this, 'WebappHostingBucketName', { value: this.bucket.bucketName });
     new CfnOutput(this, 'CloudFrontID', { value: distribution.distributionId });
     new CfnOutput(this, 'AppDomain', {
       value: props.hostedZone ? `app.${props.hostedZone.zoneName}` : distribution.distributionDomainName,

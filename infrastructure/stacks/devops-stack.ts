@@ -1,4 +1,4 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
 import { CloudFrontWebDistribution } from 'aws-cdk-lib/aws-cloudfront';
 import {
   Effect,
@@ -306,5 +306,9 @@ export class DevopsStack extends Stack {
 
     delegateToCloudformationPolicy.attachToRole(apiDeploymentRole);
     apiDeploymentPolicy.attachToRole(apiDeploymentRole);
+
+    new CfnOutput(this, 'ApiDeploymentRoleArn', { value: apiDeploymentRole.roleArn });
+    new CfnOutput(this, 'ApiCloudformationDeploymentRoleArn', { value: cloudformationDeploymentRole.roleArn });
+    new CfnOutput(this, 'WebappDeploymentRoleArn', { value: webappDeploymentRole.roleArn });
   }
 }

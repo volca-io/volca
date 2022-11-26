@@ -8,7 +8,7 @@ type EnvironmentConfig = {
   appDomain: string;
   fromEmail: string;
   skipTokenVerification: string;
-  isTest?: string
+  isTest?: string;
   credentials:
     | {
         host: string;
@@ -73,7 +73,6 @@ const resolveStage = (): Environment => {
 };
 
 const stage = resolveStage();
-const stageConfig = config.environments[stage];
 
 const serverlessConfiguration: AWS = {
   service: `${config.name}-api`,
@@ -85,10 +84,13 @@ const serverlessConfiguration: AWS = {
   plugins: ['serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
-    iam: {
-      deploymentRole: `arn:aws:iam::${stageConfig.aws?.account}:role/${config.name}-\${self:provider.stage}-github-actions-cloudformation-deployment-role`,
-      role: `arn:aws:iam::${stageConfig.aws?.account}:role/${config.name}-\${self:provider.stage}-api-lambda-execution-role`,
-    },
+    iam:
+      stage !== Environment.LOCAL
+        ? {
+            role: `\${cf:${config.name}-\${self:provider.stage}-api-stack.LambdaExecutionRoleArn}`,
+            deploymentRole: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiDeploymentRoleArn}`,
+          }
+        : undefined,
     stackName: `${config.name}-${stage}-api-service`,
     runtime: 'nodejs16.x',
     lambdaHashingVersion: '20201221',
