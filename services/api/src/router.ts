@@ -47,6 +47,7 @@ import {
   projectAdminMiddleware,
   projectUserMiddleware,
 } from './middlewares';
+import { sendMessageAction, sendMessageSchema } from './actions/communications';
 /* volca-exclude-end os */
 import { CustomContext } from './types';
 
@@ -111,11 +112,18 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
     verifyResetPasswordAction
   );
   router.post('/authn/verify-user', schemaValidationMiddleware(verifyUserSchema), verifyUserAction);
-  router.post('/authn/resend-verification', authenticationMiddleware, resendUserVerificationAction  );
+  router.post('/authn/resend-verification', authenticationMiddleware, resendUserVerificationAction);
   router.post('/authn/sign-out', signOutAction);
   router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
   router.post('/authn/refresh', refreshAction);
-  router.post('/authn/refresh/verify', refreshAction);
+
+  // Communications
+  router.post(
+    '/communications/support',
+    authenticationMiddleware,
+    schemaValidationMiddleware(sendMessageSchema),
+    sendMessageAction
+  );
 
   // Stripe
   router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);

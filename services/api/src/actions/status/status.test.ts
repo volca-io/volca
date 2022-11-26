@@ -1,10 +1,10 @@
-import supertest from 'supertest';
+import { setupServer } from '../../test-utils/setup-server';
 
-describe('Status', () => {
-  const request = supertest('http://localhost:4000');
+describe('/status', () => {
+  const getRequest = setupServer()
 
-  it('get /status returns OK', async () => {
-    const res = await request.get('/status');
+  it('returns OK', async () => {
+    const res = await getRequest().get('/status');
     expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual({ status: 'OK' });
   });

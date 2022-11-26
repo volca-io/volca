@@ -22,23 +22,29 @@ type EnvironmentConfig = {
     | string;
 };
 
+const getEnvVar = (envVar: string, defaultValue?: string): string => {
+  const variable = process.env[envVar] || defaultValue;
+  if (!variable) throw new Error(`Failed to read environment variable ${envVar}`);
+
+  return variable;
+};
+
 const getEnvironment = (stage: string): EnvironmentConfig => {
   switch (stage) {
     case 'local':
       return {
-        logLevel: 'debug',
-        appDomain: '127.0.0.1:3000',
-        skipTokenVerification: 'false',
-        fromEmail: config.environments.local.fromEmail || '',
-        isTest: process.env.IS_TEST || '',
+        logLevel: getEnvVar('LOG_LEVEL', 'info'),
+        appDomain: getEnvVar('APP_DOMAIN', '127.0.0.1:3000'),
+        skipTokenVerification: getEnvVar('SKIP_TOKEN_VERIFICATION', 'false'),
+        fromEmail: getEnvVar('FROM_EMAIL', 'admin@volca.io'),
         credentials: {
-          host: 'localhost',
-          port: '5432',
-          username: 'postgres',
-          password: 'postgres',
-          stripePriceId: process.env.STRIPE_PRICE_ID || '',
-          stripeKey: process.env.STRIPE_KEY || '',
-          signingKey: process.env.SIGNING_KEY || '',
+          host: getEnvVar('DB_HOST', 'localhost'),
+          port: getEnvVar('DB_PORT', '5432'),
+          username: getEnvVar('DB_USER', 'postgres'),
+          password: getEnvVar('DB_PASSWORD', 'postgres'),
+          stripePriceId: getEnvVar('STRIPE_PRICE_ID', 'stripe-price-id'),
+          stripeKey: getEnvVar('STRIPE_KEY', 'stripe-key'),
+          signingKey: getEnvVar('SIGNING_KEY', 'signing-key'),
         },
       };
     case 'staging':
@@ -116,7 +122,6 @@ const serverlessConfiguration: AWS = {
       STRIPE_PRICE_ID: '${self:custom.environment.credentials.stripePriceId}',
       STRIPE_KEY: '${self:custom.environment.credentials.stripeKey}',
       FROM_EMAIL: '${self:custom.environment.fromEmail}',
-      IS_TEST: '${self:custom.environment.isTest, false}',
       SIGNING_KEY: '${self:custom.environment.credentials.signingKey}',
     },
   },
@@ -129,6 +134,9 @@ const serverlessConfiguration: AWS = {
     webpack: {
       webpackConfig: 'webpack.config.js',
       excludeFiles: 'src/**/*.test.js',
+      includeModules: {
+        forceInclude: ['pg'],
+      },
     },
   },
   functions: {

@@ -1,24 +1,11 @@
-import supertest from 'supertest';
+import { userOne } from '../../test-utils/fixtures/user';
+import { setupServer } from '../../test-utils/setup-server';
 
-type User = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-
-describe('/authn/password', () => {
-  const request = supertest('http://localhost:4000');
-
-  const user: User = {
-    firstName: 'Test',
-    lastName: 'Testsson',
-    email: 'test@test.com',
-    password: 'somesecurepassword',
-  };
+describe('POST /authn/password', () => {
+  const getRequest = setupServer()
 
   it('can sign in with a newly created user and return tokens', async () => {
-    const res = await request.post('/authn/password').send({ email: user.email, password: user.password });
+    const res = await getRequest().post('/authn/password').send({ email: userOne.email, password: userOne.password });
     expect(res.status).toBe(200);
 
     const keys = Object.keys(res.body);
@@ -35,21 +22,21 @@ describe('/authn/password', () => {
   });
 
   it("returns unauthorized if it's the wrong password", async () => {
-    const res = await request.post('/authn/password').send({ email: user.email, password: 'wrongpassword' });
+    const res = await getRequest().post('/authn/password').send({ email: userOne.email, password: 'wrongpassword' });
 
     expect(res.status).toBe(401);
   });
 
   it("returns unauthorized if it's the wrong email", async () => {
-    const res = await request
+    const res = await getRequest()
       .post('/authn/password')
-      .send({ email: 'some-random-user@user.com', password: user.password });
+      .send({ email: 'some-random-user@user.com', password: userOne.password });
 
     expect(res.status).toBe(401);
   });
 
   it('returns validation error if no email is supplied', async () => {
-    const res = await request.post('/authn/password').send({
+    const res = await getRequest().post('/authn/password').send({
       password: 'foo',
     });
 
@@ -58,7 +45,7 @@ describe('/authn/password', () => {
   });
 
   it('returns validation error if no password is supplied', async () => {
-    const res = await request.post('/authn/password').send({
+    const res = await getRequest().post('/authn/password').send({
       email: 'bla@bla.se',
     });
 

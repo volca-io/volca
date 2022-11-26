@@ -6,7 +6,7 @@ export const action = useApiAction(async () => {
   const user = container.resolve<User>('AuthenticatedUser');
   return {
     body: {
-      me: user.toDTO(),
+      me: user,
     },
   };
 });

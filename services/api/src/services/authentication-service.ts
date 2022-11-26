@@ -13,6 +13,7 @@ export type AccessTokenCookieSettings = {
   secure: boolean;
   httpOnly: boolean;
   sameSite: 'lax';
+  expires: Date;
   domain?: string;
 };
 
@@ -29,6 +30,9 @@ export type SessionResponse = {
 
 @injectable()
 export class AuthenticationService {
+  private REFRESH_TOKEN_EXPIRATION_DURATION = 60 * 60 * 24 * 365; // 1 year
+  private ACCESS_TOKEN_EXPIRATION_DURATION = 60 * 15; // 15 minutes
+
   public constructor(
     private userService: UserService,
     private security: Security,
@@ -47,16 +51,15 @@ export class AuthenticationService {
   private generateAccessToken(user: User): AccessTokenResponse {
     const payload = { sub: user.id };
 
-    const expiresIn = 60 * 15;
-    const accessToken = this.security.createToken({ payload, expiresIn });
+    const accessToken = this.security.createToken({ payload, expiresIn: this.ACCESS_TOKEN_EXPIRATION_DURATION });
 
-    return { accessToken, expiresIn };
+    return { accessToken, expiresIn: this.ACCESS_TOKEN_EXPIRATION_DURATION };
   }
 
   public async generateRefreshToken(user: User, sessionId: string): Promise<string> {
     const token = this.security.createRefreshToken();
     const expiresAt = new Date();
-    expiresAt.setSeconds(expiresAt.getSeconds() + 60 * 60 * 24 * 365); // 1 year
+    expiresAt.setSeconds(expiresAt.getSeconds() + this.REFRESH_TOKEN_EXPIRATION_DURATION); // 1 year
 
     await RefreshToken.query().insert({
       sessionId,
@@ -112,11 +115,15 @@ export class AuthenticationService {
   }
 
   public getRefreshTokenCookieConfiguration(): AccessTokenCookieSettings {
+    const expires = new Date();
+    expires.setSeconds(expires.getSeconds() + this.REFRESH_TOKEN_EXPIRATION_DURATION);
+
     return {
       secure: this.environment.getOrFail(EnvironmentVariable.STAGE) !== 'local',
       httpOnly: true,
       sameSite: 'lax',
       domain: this.environment.getOrFail(EnvironmentVariable.STAGE) ? undefined : process.env.APP_DOMAIN,
+      expires,
     };
   }
 

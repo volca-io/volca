@@ -24,7 +24,6 @@ type StripeSession = {
 @injectable()
 export class StripeService {
   private stripe: Stripe;
-  private appDomain = `https://${this.environment.getOrFail(EnvironmentVariable.APP_DOMAIN)}`;
 
   constructor(private environment: EnvironmentUtils) {
     this.stripe = new Stripe(this.environment.getOrFail(EnvironmentVariable.STRIPE_KEY), {
@@ -43,10 +42,11 @@ export class StripeService {
     };
 
     const customer = await getStripeCustomerId();
+    const appDomain = this.environment.getWebappDomain()
 
     const session = await this.stripe.checkout.sessions.create({
-      success_url: this.appDomain,
-      cancel_url: `${this.appDomain}/subscribe?status=warning`,
+      success_url: appDomain,
+      cancel_url: `${appDomain}/subscribe?status=warning`,
       customer,
       mode: 'subscription',
       line_items: [
@@ -81,9 +81,10 @@ export class StripeService {
   public async createBillingPortalSession({
     stripeCustomerId,
   }: CreateStripeBillingPortalSessionParams): Promise<StripeSession> {
+    const appDomain = this.environment.getWebappDomain()
     const session = await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: `${this.appDomain}/settings`,
+      return_url: `${appDomain}/settings`,
     });
     if (this.environment.getOrFail(EnvironmentVariable.STAGE) === 'local') {
       await User.query().where({ stripeId: stripeCustomerId }).update({ hasActiveSubscription: false });

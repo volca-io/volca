@@ -1,17 +1,16 @@
-import supertest from 'supertest';
+import { setupServer } from '../../test-utils/setup-server';
 
-describe('/authn/sign-out', () => {
-  let agent: supertest.SuperAgentTest;
+describe('POST /authn/sign-out', () => {
+  const getAgent = setupServer({ agent: true });
 
   beforeAll(async () => {
-    agent = supertest.agent('http://localhost:4000');
-    const res = await agent.post('/authn/password').send({ email: 'test@test.com', password: 'somesecurepassword' });
+    const res = await getAgent().post('/authn/password').send({ email: 'test@test.com', password: 'somesecurepassword' });
 
     expect(res.status).toBe(200);
   });
 
   it('removes the refresh token cookie', async () => {
-    const res = await agent.post('/authn/sign-out').send();
+    const res = await getAgent().post('/authn/sign-out').send();
 
     const cookies = res.headers['set-cookie'][0] as string;
     const refreshTokenCookie = cookies

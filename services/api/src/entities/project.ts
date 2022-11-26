@@ -1,4 +1,4 @@
-import { Model, QueryBuilder } from 'objection';
+import { Model, QueryBuilder} from 'objection';
 
 import { User } from './user';
 

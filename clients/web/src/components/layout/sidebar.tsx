@@ -36,6 +36,7 @@ import { SignOutButton } from '../authentication/SignOutButton';
 import { ThemeSwitcher } from './theme-switcher';
 import { LoadingBar } from '../generic/LoadingBar';
 import { DefaultLayout } from '../../layouts';
+import { SupportButton } from '../generic/SupportButton';
 
 interface LinkItemProps {
   name: string;
@@ -107,8 +108,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     <Box
       transition="3s ease"
       bg={useColorModeValue('white', 'gray.900')}
-      borderRight="1px"
-      borderRightColor={useColorModeValue('gray.200', 'gray.700')}
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
@@ -192,8 +191,6 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
       height="20"
       alignItems="center"
       bg={useColorModeValue('white', 'gray.900')}
-      borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
       justifyContent={{ base: 'space-between' }}
       {...rest}
     >
@@ -214,6 +211,7 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
       <Spacer display={{ base: 'none', md: 'flex' }} />
 
       <HStack spacing={{ base: '0', md: '6' }}>
+        <SupportButton />
         <ThemeSwitcher />
         <Flex alignItems="center">
           <Menu>
@@ -228,10 +226,7 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
                 </Box>
               </HStack>
             </MenuButton>
-            <MenuList
-              bg={useColorModeValue('white', 'gray.900')}
-              borderColor={useColorModeValue('gray.200', 'gray.700')}
-            >
+            <MenuList bg={useColorModeValue('white', 'gray.900')}>
               <MenuItem onClick={() => navigate('/')}>Projects</MenuItem>
               <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
               <MenuDivider />
