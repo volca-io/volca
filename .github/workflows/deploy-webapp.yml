@@ -36,10 +36,10 @@ jobs:
       - name: Deploy to S3
         working-directory: clients/web
         run: |
-          BUCKET_NAME=$(aws s3api list-buckets --query "Buckets[*].{name:Name}[?starts_with(name, '${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp')].name" --output text)
+          BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name ${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp-stack --query "Stacks[*].Outputs[*].{key:OutputKey, value:OutputValue}[?key=='WebappHostingBucketName'].value" --output text)
           aws s3 sync ./build s3://${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp-hosting-bucket --delete
       - name: Invalidate cache
         working-directory: clients/web
         run: |
-          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[*].{id:Id,origin:Origins.Items[0].DomainName}[?starts_with(origin, '${{ env.APPLICATION_NAME }}-${{ inputs.environment }}')].id" --output text)
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks --stack-name ${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp-stack --query "Stacks[*].Outputs[*].{key:OutputKey, value:OutputValue}[?key=='CloudFrontID'].value" --output text)
           aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
