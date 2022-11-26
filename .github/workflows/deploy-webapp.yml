@@ -37,7 +37,7 @@ jobs:
         working-directory: clients/web
         run: |
           BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name ${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp-stack --query "Stacks[*].Outputs[*].{key:OutputKey, value:OutputValue}[?key=='WebappHostingBucketName'].value" --output text)
-          aws s3 sync ./build s3://${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-webapp-hosting-bucket --delete
+          aws s3 sync ./build s3://$BUCKET_NAME --delete
       - name: Invalidate cache
         working-directory: clients/web
         run: |

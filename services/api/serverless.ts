@@ -94,7 +94,7 @@ const serverlessConfiguration: AWS = {
       stage !== Environment.LOCAL
         ? {
             role: `\${cf:${config.name}-\${self:provider.stage}-api-stack.LambdaExecutionRole}`,
-            deploymentRole: `\${cf:${config.name}-\${self:provider.stage}-devops-stack.ApiDeploymentRoleArn}`,
+            deploymentRole: `\${cf:${config.name}-\${self:provider.stage}-devops-stack.ApiCloudformationDeploymentRoleArn}`,
           }
         : undefined,
     stackName: `${config.name}-${stage}-api-service`,
