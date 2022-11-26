@@ -47,6 +47,13 @@ export class DevopsStack extends Stack {
             `arn:aws:cloudfront::${props.env?.account}:distribution/${props.cloudfrontDistribution.distributionId}`,
           ],
         }),
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['cloudformation:DescribeStacks'],
+          resources: [
+            `arn:aws:cloudformation:${props.env?.region}:${props.env?.account}:stack/${props.service}-${props.stage}-webapp-stack*`,
+          ],
+        }),
       ],
     });
 
