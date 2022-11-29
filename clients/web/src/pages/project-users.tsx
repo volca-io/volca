@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex } from '@chakra-ui/react';
+import { Flex, SimpleGrid } from '@chakra-ui/react';
 import { MdGroups } from 'react-icons/md';
 import { useRecoilValue } from 'recoil';
 
@@ -45,24 +45,25 @@ export const ProjectUsersPage: React.FC = () => {
 
   return (
     <AuthenticatedLayout>
-      <SoftCard w="100%">
-        {inviteAlert && <AlertBox {...inviteAlert} />}
-        <Flex alignItems="center" justifyContent="space-between">
-          <PageHeading title="Users" icon={MdGroups} />
-
-          <InviteProjectUser onSubmit={onInvite} />
-        </Flex>
-        {users && (
-          <ProjectUserList
-            project={project}
-            users={users}
-            deleteUser={async (projectId: string, userId: string) => {
-              await deleteProjectUser(projectId, userId);
-              setUsers(users.filter((u) => u.id !== userId));
-            }}
-          />
-        )}
-      </SoftCard>
+      <PageHeading title="Users" icon={MdGroups} />
+      <SimpleGrid pt={2} columns={[1]} width="100%" spacingY="20px">
+        <SoftCard>
+          {inviteAlert && <AlertBox {...inviteAlert} />}
+          <Flex alignItems="center" justifyContent="space-between">
+            <InviteProjectUser onSubmit={onInvite} />
+          </Flex>
+          {users && (
+            <ProjectUserList
+              project={project}
+              users={users}
+              deleteUser={async (projectId: string, userId: string) => {
+                await deleteProjectUser(projectId, userId);
+                setUsers(users.filter((u) => u.id !== userId));
+              }}
+            />
+          )}
+        </SoftCard>
+      </SimpleGrid>
     </AuthenticatedLayout>
   );
 };

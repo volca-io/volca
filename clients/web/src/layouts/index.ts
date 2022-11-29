@@ -1,2 +1,2 @@
-export * from './authenticated';
+export * from './sidebar';
 export * from './default';

@@ -49,7 +49,7 @@ export const SupportButton: React.FC<SupportButtonProps> = (props) => {
       />
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent m={4}>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Request support
             </AlertDialogHeader>

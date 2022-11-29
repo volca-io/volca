@@ -12,8 +12,7 @@ import {
   AlertDescription,
   AlertIcon,
   Icon,
-  Grid,
-  GridItem,
+  SimpleGrid,
 } from '@chakra-ui/react';
 import { MdVpnKey, MdPayments, MdBusinessCenter, MdLock, MdChevronRight } from 'react-icons/md';
 import { IoIosRocket } from 'react-icons/io';
@@ -69,17 +68,15 @@ export const SubscribePage: React.FC = () => {
   const FeatureCard = ({ feature }: { feature: Feature }) => {
     const { title, description, icon } = feature;
     return (
-      <GridItem>
-        <SoftCard key={title} style={{ minHeight: '140px', display: 'flex', flexDirection: 'column' }}>
-          <Box>
-            <Heading size="md">
-              <Icon as={icon} /> {title}
-            </Heading>
-          </Box>
+      <SoftCard key={title} style={{ minHeight: '140px', display: 'flex', flexDirection: 'column' }}>
+        <Box>
+          <Heading size="md">
+            <Icon as={icon} /> {title}
+          </Heading>
+        </Box>
 
-          <Text>{description}</Text>
-        </SoftCard>
-      </GridItem>
+        <Text>{description}</Text>
+      </SoftCard>
     );
   };
 
@@ -94,11 +91,11 @@ export const SubscribePage: React.FC = () => {
           <AlertDescription>Something went wrong while processing your payment. Please try again.</AlertDescription>
         </Alert>
       )}
-      <Grid w="100%" templateColumns="repeat(4, 1fr)" gap={4}>
+      <SimpleGrid minChildWidth="200px" width="100%" spacingX="40px" spacingY="20px">
         {features.map((feature) => (
           <FeatureCard key={feature.title} feature={feature} />
         ))}
-      </Grid>
+      </SimpleGrid>
 
       <Box pt={4} pb={4}>
         {!user?.free_trial_activated && (

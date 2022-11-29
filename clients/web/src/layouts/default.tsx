@@ -11,9 +11,16 @@ export const DefaultLayout: React.FC<DefaultLayoutProps> = ({ displayLogo = fals
   const logoSource = useColorModeValue('/logo-dark.svg', '/logo-light.svg');
 
   return (
-    <Flex flexDirection="column" height="100vh">
+    <Flex
+      flexDirection="column"
+      height="100vh"
+      p={{
+        base: 4,
+        sm: 8,
+      }}
+    >
       {displayLogo && (
-        <Box p={5} position="absolute">
+        <Box>
           <Link to="/">
             <Image src={logoSource} boxSize="48px" />
           </Link>
