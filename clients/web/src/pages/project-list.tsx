@@ -1,4 +1,4 @@
-import { Text, Grid, GridItem, Heading, Icon, Badge, Box } from '@chakra-ui/react';
+import { Text, Heading, Icon, Badge, Box, SimpleGrid } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
@@ -61,32 +61,24 @@ export const ProjectListPage: React.FC = () => {
     <AuthenticatedLayout sidebar={false}>
       <PageHeading title="Projects" icon={MdWork} />
       <Box mt={8} />
-      <Grid w="100%" templateColumns="repeat(4, 1fr)" gap={4}>
-        <GridItem>
-          <SoftCard
-            onClick={() => navigate('/projects/create')}
-            style={{
-              ...cardStyle,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Icon boxSize="48px" as={MdAdd} />
-            <Heading as="h3" size="sm" textAlign="center">
-              Create Project
-            </Heading>
-          </SoftCard>
-        </GridItem>
-        {user &&
-          projects &&
-          projects.map((project) => (
-            <GridItem key={project.id}>
-              <ProjectCard project={project} />
-            </GridItem>
-          ))}
-      </Grid>
+      <SimpleGrid minChildWidth="200px" width="100%" spacingX="40px" spacingY="20px">
+        <SoftCard
+          onClick={() => navigate('/projects/create')}
+          style={{
+            ...cardStyle,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Icon boxSize="48px" as={MdAdd} />
+          <Heading as="h3" size="sm" textAlign="center">
+            Create Project
+          </Heading>
+        </SoftCard>
+        {user && projects && projects.map((project) => <ProjectCard project={project} />)}
+      </SimpleGrid>
     </AuthenticatedLayout>
   );
 };

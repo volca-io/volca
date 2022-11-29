@@ -27,16 +27,7 @@ export const RegisterPage: React.FC = () => {
   return (
     <DefaultLayout displayLogo>
       <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
-        <Flex
-          direction="column"
-          justifyContent={{ base: 'flex-start ', md: 'center' }}
-          flexGrow={1}
-          maxW={600}
-          p={{
-            base: 0,
-            sm: 8,
-          }}
-        >
+        <Flex direction="column" justifyContent={{ base: 'flex-start ', md: 'center' }} flexGrow={1} maxW={600}>
           <Box paddingY="8">
             <Heading color={titleColor} mb={2}>
               Let's get you signed up!

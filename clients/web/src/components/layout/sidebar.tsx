@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import {
   IconButton,
   Avatar,
@@ -34,8 +33,6 @@ import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 import { SignOutButton } from '../authentication/SignOutButton';
 import { ThemeSwitcher } from './theme-switcher';
-import { LoadingBar } from '../generic/LoadingBar';
-import { DefaultLayout } from '../../layouts';
 import { SupportButton } from '../generic/SupportButton';
 
 interface LinkItemProps {
@@ -44,11 +41,10 @@ interface LinkItemProps {
   icon: IconType;
 }
 
-export const Sidebar = ({ children, hidden = false }: { children: ReactNode; hidden: boolean }): JSX.Element => {
+export const Sidebar = ({ hidden = false }: { hidden: boolean }): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const bg = useColorModeValue('gray.100', 'gray.900');
   return (
-    <DefaultLayout>
+    <>
       {!hidden && <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />}
       <Drawer
         autoFocus={false}
@@ -64,11 +60,7 @@ export const Sidebar = ({ children, hidden = false }: { children: ReactNode; hid
         </DrawerContent>
       </Drawer>
       <MobileNav onOpen={onOpen} full={hidden} />
-      <LoadingBar full={hidden} />
-      <Flex ml={{ base: 0, md: hidden ? 0 : 60 }} p="4" bg={bg} height="100%">
-        {children}
-      </Flex>
-    </DefaultLayout>
+    </>
   );
 };
 

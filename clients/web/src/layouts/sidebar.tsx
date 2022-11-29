@@ -1,9 +1,10 @@
 import React from 'react';
-import { Alert, AlertIcon, Link, Text, VStack } from '@chakra-ui/react';
+import { Alert, AlertIcon, Flex, Link, Text, VStack } from '@chakra-ui/react';
 import { Footer, Sidebar, MainPanel, MainContent } from '../components/layout';
 import { useUserActions } from '../hooks';
 import { useRecoilValue } from 'recoil';
 import { currentUserState } from '../state';
+import { LoadingBar } from '../components/generic/LoadingBar';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -15,7 +16,7 @@ export const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ childr
   const { resendVerification } = useUserActions();
 
   return (
-    <>
+    <Flex flexDir="column" minH="100vh">
       {user && !user.verified_at && (
         <Alert status="warning">
           <AlertIcon />
@@ -29,14 +30,14 @@ export const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ childr
           </Text>
         </Alert>
       )}
-      <Sidebar hidden={!sidebar}>
-        <MainPanel>
-          <MainContent>
-            <VStack align="flex-start">{children}</VStack>
-          </MainContent>
-          <Footer />
-        </MainPanel>
-      </Sidebar>
-    </>
+      <Sidebar hidden={!sidebar} />
+      <LoadingBar full={!sidebar} />
+      <MainPanel clearSidebar={sidebar}>
+        <MainContent>
+          <VStack align="flex-start">{children}</VStack>
+        </MainContent>
+        <Footer />
+      </MainPanel>
+    </Flex>
   );
 };
