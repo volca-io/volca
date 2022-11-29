@@ -1,0 +1,24 @@
+name: test-bundling
+on: 
+  - pull_request
+env:
+  YARN_ENABLE_IMMUTABLE_INSTALLS: false
+jobs:
+  bundle:
+    strategy:
+      matrix:
+        scripts:
+          - bundle.sh
+          - bundle-open-source.sh
+    name: bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code.
+        uses: actions/checkout@v3.1.0
+      - name: Bundle
+        run: sh scripts/${{ matrix.scripts }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Test
+        run: cd bundle && yarn && yarn test

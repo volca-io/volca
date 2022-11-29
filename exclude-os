@@ -5,6 +5,7 @@ services/api/src/actions/project-invitations/*
 services/api/src/actions/projects/*
 services/api/src/actions/stripe/*
 services/api/src/actions/users/*
+services/api/src/actions/communications/*
 services/api/src/entities/*
 services/api/src/services/authentication-service.ts
 services/api/src/services/project-invitation-service.ts

@@ -35,23 +35,21 @@ describe('GET /project-invitations/:key', () => {
 
   it('returns 400 if the key is incorrect', async () => {
     const resp = await getRequest()
-      .get(`/project-invitations/foo`)
+      .get(`/project-invitations/29904edc-352c-47d5-a57b-f378d55e02f9`)
       .set({ Authorization: `Bearer ${secondUserAccessToken}` });
 
     expect(resp.status).toBe(400);
   });
 
   it('returns 401 if no access token is present', async () => {
-    const resp = await getRequest()
-      .get(`/project-invitations/foo`)
-      .set({ Authorization: `Bearer ${accessToken}` });
+    const resp = await getRequest().get(`/project-invitations/${invitation.key}`);
 
     expect(resp.status).toBe(401);
   });
 
   it('returns 401 if the wrong user tries to accept the invitation', async () => {
     const resp = await getRequest()
-      .get(`/project-invitations/foo`)
+      .get(`/project-invitations/${invitation.key}`)
       .set({ Authorization: `Bearer ${accessToken}` });
 
     expect(resp.status).toBe(401);

@@ -1,5 +1,6 @@
 name: code-quality
-on: [pull_request]
+on: 
+  - pull_request
 jobs:
   eslint:
     name: eslint
