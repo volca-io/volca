@@ -31,6 +31,7 @@ const vpcStack = new VpcStack(app, `${name}-${stage}-vpc-stack`, {
   service: name,
   stage,
   env: aws,
+  publicDatabase: aws.publicDatabase,
 });
 
 Tags.of(vpcStack).add('service', name);
@@ -58,6 +59,7 @@ const apiStack = new ApiStack(app, `${name}-${stage}-api-stack`, {
   env: aws,
   vpc: vpcStack.vpc,
   hostedZone,
+  publicDatabase: aws.publicDatabase,
 });
 
 Tags.of(apiStack).add('service', name);

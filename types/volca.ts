@@ -1,4 +1,4 @@
-type AwsConfig = {
+interface AwsConfig {
   account: string;
   region:
     | 'us-east-1'
@@ -30,18 +30,21 @@ type AwsConfig = {
     | 'eu-west-3'
     | 'me-south-1'
     | 'sa-east-1';
-};
+}
 
-type LocalEnvironment = {
+interface DeployableAwsConfig extends AwsConfig {
+  publicDatabase: boolean;
+}
+
+export interface EnvironmentConfig {
   aws?: AwsConfig;
   fromEmail: string;
-};
+}
 
-export type DeployableEnvironmentConfig = {
-  aws: AwsConfig;
+export interface DeployableEnvironmentConfig extends EnvironmentConfig {
+  aws: DeployableAwsConfig;
   domain?: string;
-  fromEmail: string;
-};
+}
 
 type GithubConfig = {
   organization: string;
@@ -56,7 +59,7 @@ export enum Environment {
 
 export type Config = {
   environments: {
-    [Environment.LOCAL]: LocalEnvironment;
+    [Environment.LOCAL]: EnvironmentConfig;
     [Environment.STAGING]: DeployableEnvironmentConfig;
     [Environment.PRODUCTION]: DeployableEnvironmentConfig;
   };

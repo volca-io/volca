@@ -20,6 +20,7 @@ export const config: Config = {
       aws: {
         account: '428245413678',
         region: 'eu-central-1',
+        publicDatabase: true,
       },
     },
     production: {
@@ -28,6 +29,7 @@ export const config: Config = {
       aws: {
         account: '428245413678',
         region: 'eu-central-1',
+        publicDatabase: true,
       },
     },
   },

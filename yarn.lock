@@ -6881,7 +6881,7 @@ __metadata:
     serverless-esbuild: ^1.32.5
     serverless-http: ^3.0.1
     serverless-offline: ^8.8.0
-    serverless-webpack: ^5.9.0
+    serverless-webpack: ^5.11.0
     snakecase-keys: ^5.4.4
     stripe: ^9.12.0
     supertest: ^6.2.2
@@ -12236,6 +12236,15 @@ __metadata:
     locate-path: ^6.0.0
     path-exists: ^4.0.0
   checksum: 07955e357348f34660bde7920783204ff5a26ac2cafcaa28bace494027158a97b9f56faaf2d89a6106211a8174db650dd9f503f9c0d526b1202d5554a00b9095
+  languageName: node
+  linkType: hard
+
+"find-yarn-workspace-root@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "find-yarn-workspace-root@npm:2.0.0"
+  dependencies:
+    micromatch: ^4.0.2
+  checksum: fa5ca8f9d08fe7a54ce7c0a5931ff9b7e36f9ee7b9475fb13752bcea80ec6b5f180fa5102d60b376d5526ce924ea3fc6b19301262efa0a5d248dd710f3644242
   languageName: node
   linkType: hard
 
@@ -19871,25 +19880,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serverless-webpack@npm:^5.9.0":
-  version: 5.9.0
-  resolution: "serverless-webpack@npm:5.9.0"
+"serverless-webpack@npm:^5.11.0":
+  version: 5.11.0
+  resolution: "serverless-webpack@npm:5.11.0"
   dependencies:
     archiver: ^5.3.1
     bluebird: ^3.7.2
+    find-yarn-workspace-root: ^2.0.0
     fs-extra: ^9.1.0
     glob: ^7.2.3
     is-builtin-module: ^3.2.0
     lodash: ^4.17.21
-    semver: ^7.3.7
+    semver: ^7.3.8
     ts-node: ">= 8.3.0"
   peerDependencies:
+    "@types/node": "*"
     serverless: 1 || 2 || 3
+    typescript: ">=2.0"
     webpack: ">= 3.0.0 < 6"
   dependenciesMeta:
     ts-node:
       optional: true
-  checksum: 3f4bb515f1693e87bec8d5b761b92df7e4e91fad910538bd90d1b5bf64f0a7cd98bc42437bae0e1d9fa7109ebc5954818df84d6e427cc193c546e69e3c16eb65
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    typescript:
+      optional: true
+  checksum: f1c68ca2d6928295d70c8d07a66fff4dd87b06bd13bc38e58662d8369a31a0204e82c677d8f03479907c929213d640973c40de22246dadf5c162683bee515f97
   languageName: node
   linkType: hard
 
