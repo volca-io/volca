@@ -104,5 +104,8 @@ sketch
 
 # Build artifacts
 .webpack
+bundle_os
 bundle
 bundle.zip
+bundle-os.zip
+bundle-customer.zip
