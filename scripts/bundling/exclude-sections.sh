@@ -1,11 +1,5 @@
-#!/bin/bash
-
-rm -rf ./bundle
-rm -rf bundle.zip
-mv example.config.ts volca.config.ts # Overwrite custom config with example config
-rsync --prune-empty-dirs -a --exclude-from .gitignore --exclude-from exclude --exclude-from exclude-os ./ bundle/
-
-for f in $(find ./bundle) ; do
+echo "Excluding sections..."
+for f in $(find ./bundle_os) ; do
     if [ -f "$f" ]; then
 
         start="start"
@@ -29,7 +23,4 @@ for f in $(find ./bundle) ; do
         done
     fi;
 done;
-
-cp -r .yarn ./bundle/
-
-cd ./bundle && zip -r ../bundle.zip .
+echo "Done!"

@@ -7,30 +7,36 @@ env:
   YARN_ENABLE_IMMUTABLE_INSTALLS: false
 jobs:
   bundle:
-    strategy:
-      matrix:
-        outputs:
-          [
-            { 'name': 'volca', 'script': 'bundle.sh' },
-            { 'name': 'volca-open-source', 'script': 'bundle-open-source.sh' },
-          ]
     name: bundle
     runs-on: ubuntu-latest
     steps:
       - name: Check out code.
         uses: actions/checkout@v3.1.0
+
       - name: Bundle
-        run: sh scripts/${{ matrix.outputs.script }}
+        run: sh scripts/bundling/bundle.sh
+
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - name: Test
+      - name: Test customer bundle
         run: cd bundle && yarn && yarn test
+
+      - name: Test open source bundle
+        run: cd bundle_os && yarn && yarn test
+
+      - name: Upload open source bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: volca-core
+          path: bundle-os.zip
+          retention-days: 1
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.outputs.name }}
-          path: bundle.zip
+          name: volca
+          path: bundle-customer.zip
           retention-days: 1
   upload-s3:
     name: upload-s3
@@ -51,4 +57,4 @@ jobs:
           name: volca
       - name: Upload to S3
         run: |
-           aws s3 cp bundle.zip s3://volca-assets/volca.zip
+          aws s3 cp bundle-customer.zip s3://volca-assets/volca.zip
