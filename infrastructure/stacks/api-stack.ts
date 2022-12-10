@@ -29,13 +29,14 @@ import { CertificateValidation, DnsValidatedCertificate } from 'aws-cdk-lib/aws-
 import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 
-import { Effect, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Effect, ManagedPolicy, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 interface ApiStackProps extends StackProps {
   service: string;
   stage: string;
   vpc: IVpc;
   hostedZone: IHostedZone | null;
+  publicDatabase: boolean;
 }
 
 export class ApiStack extends Stack {
@@ -49,17 +50,33 @@ export class ApiStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
       description: 'Subnet group for api database',
       vpcSubnets: {
-        subnetType: SubnetType.PUBLIC,
+        subnetType: props.publicDatabase ? SubnetType.PUBLIC : SubnetType.PRIVATE_WITH_EGRESS,
       },
     });
 
-    const securityGroup = new SecurityGroup(this, 'DatabaseSecurityGroup', {
+    const rdsSecurityGroup = new SecurityGroup(this, 'DatabaseSecurityGroup', {
       description: 'Allows access to the RDS cluster',
       allowAllOutbound: true,
       vpc: props.vpc,
     });
 
-    securityGroup.addIngressRule(Peer.anyIpv4(), Port.tcp(5432), 'Postgres database access');
+    const apiSecurityGroup = new SecurityGroup(this, 'ApiSecurityGroup', {
+      description: 'Security group for lambda funcitons',
+      allowAllOutbound: true,
+      vpc: props.vpc,
+    });
+
+    apiSecurityGroup.addIngressRule(
+      Peer.anyIpv4(),
+      Port.allTcp(),
+      'All inbound'
+    )
+
+    rdsSecurityGroup.addIngressRule(
+      props.publicDatabase ? Peer.anyIpv4() : apiSecurityGroup,
+      Port.tcp(5432),
+      'Postgres database access'
+    );
 
     new DatabaseInstance(this, 'ApiDatabase', {
       engine,
@@ -70,8 +87,8 @@ export class ApiStack extends Stack {
       copyTagsToSnapshot: true,
       instanceType,
       subnetGroup,
-      publiclyAccessible: true,
-      securityGroups: [securityGroup],
+      publiclyAccessible: props.publicDatabase,
+      securityGroups: [rdsSecurityGroup],
       allocatedStorage: 20,
     });
 
@@ -166,7 +183,13 @@ export class ApiStack extends Stack {
     });
 
     lambdaExecutionRole.attachInlinePolicy(lambdaExecutionPolicy);
+    if (!props.publicDatabase) {
+      lambdaExecutionRole.addManagedPolicy(
+        ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaVPCAccessExecutionRole')
+      );
+    }
 
     new CfnOutput(this, 'LambdaExecutionRole', { value: lambdaExecutionRole.roleArn });
+    new CfnOutput(this, 'ApiSecurityGroupOutput', { value: apiSecurityGroup.securityGroupId });
   }
 }

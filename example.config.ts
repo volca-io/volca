@@ -18,6 +18,7 @@ export const config: Config = {
       domain: 'staging.example.com',
       fromEmail: 'my@email.com',
       aws: {
+        publicDatabase: true,
         account: '000000000000',
         region: 'us-east-1',
       },
@@ -26,6 +27,9 @@ export const config: Config = {
       domain: 'prod.example.com',
       fromEmail: 'my@email.com',
       aws: {
+        // Note: Having the database private will create a NAT gateway that costs about $30 per month
+        // see more here: https://aws.amazon.com/vpc/pricing/
+        publicDatabase: false, 
         account: '000000000000',
         region: 'us-east-1',
       },

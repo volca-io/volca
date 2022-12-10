@@ -179,6 +179,12 @@ export class DevopsStack extends Stack {
             `arn:aws:apigateway:${props.env?.region}::/apis/*`,
           ],
         }),
+        new PolicyStatement({
+          sid: 'DescribeSecurityGroups',
+          effect: Effect.ALLOW,
+          actions: ['ec2:DescribeVpcs', 'ec2:DescribeSecurityGroups', 'ec2:DescribeSubnets'],
+          resources: ['*'],
+        }),
       ],
     });
 

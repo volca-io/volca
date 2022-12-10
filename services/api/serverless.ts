@@ -1,9 +1,9 @@
 /* eslint-disable no-template-curly-in-string */
 import type { AWS } from '@serverless/typescript';
-import { Environment } from '../../types/volca';
+import { Environment, DeployableEnvironmentConfig } from '../../types/volca';
 import { config } from '../../volca.config';
 
-type EnvironmentConfig = {
+type EnvironmentVariables = {
   logLevel: string;
   appDomain: string;
   fromEmail: string;
@@ -29,7 +29,7 @@ const getEnvVar = (envVar: string, defaultValue?: string): string => {
   return variable;
 };
 
-const getEnvironment = (stage: string): EnvironmentConfig => {
+const getEnvironment = (stage: Environment): EnvironmentVariables => {
   switch (stage) {
     case 'local':
       return {
@@ -47,24 +47,16 @@ const getEnvironment = (stage: string): EnvironmentConfig => {
           signingKey: getEnvVar('SIGNING_KEY', 'signing-key'),
         },
       };
-    case 'staging':
+    default: {
+      const environmentConfig = config.environments[stage];
       return {
         logLevel: 'info',
         appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
         credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
         skipTokenVerification: 'false',
-        fromEmail: config.environments.staging.fromEmail,
+        fromEmail: environmentConfig.fromEmail,
       };
-    case 'production':
-      return {
-        logLevel: 'info',
-        appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
-        credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
-        skipTokenVerification: 'false',
-        fromEmail: config.environments.production.fromEmail,
-      };
-    default:
-      throw new Error(`Unsupported environment ${stage}`);
+    }
   }
 };
 
@@ -79,6 +71,7 @@ const resolveStage = (): Environment => {
 };
 
 const stage = resolveStage();
+const environmentConfig = config.environments[stage];
 
 const serverlessConfiguration: AWS = {
   service: `${config.name}-api`,
@@ -97,9 +90,17 @@ const serverlessConfiguration: AWS = {
             deploymentRole: `\${cf:${config.name}-\${self:provider.stage}-devops-stack.ApiCloudformationDeploymentRoleArn}`,
           }
         : undefined,
+    vpc:
+      stage !== Environment.LOCAL && !(environmentConfig as DeployableEnvironmentConfig).aws.publicDatabase
+        ? {
+            securityGroupIds: [`\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiSecurityGroupOutput}`],
+            subnetIds: {
+              'Fn::Split': [', ', `\${cf:${config.name}-\${self:provider.stage}-vpc-stack.IsolatedSubnets}`],
+            },
+          }
+        : undefined,
     stackName: `${config.name}-${stage}-api-service`,
     runtime: 'nodejs16.x',
-    lambdaHashingVersion: '20201221',
     stage,
     region: config.environments[stage].aws?.region,
     apiGateway:
@@ -136,6 +137,18 @@ const serverlessConfiguration: AWS = {
       excludeFiles: 'src/**/*.test.js',
       includeModules: {
         forceInclude: ['pg'],
+        forceExclude: [
+          'tedious',
+          'mysql',
+          'mysql2',
+          'better-sqlite3',
+          'oracledb',
+          'pg-query-stream',
+          'sqlite3',
+          'pg-native',
+          'better-sqlite3',
+          'mysql',
+        ],
       },
     },
   },

@@ -32,7 +32,7 @@
     "serverless-domain-manager": "^6.0.4",
     "serverless-esbuild": "^1.32.5",
     "serverless-offline": "^8.8.0",
-    "serverless-webpack": "^5.9.0",
+    "serverless-webpack": "^5.11.0",
     "supertest": "^6.2.2",
     "ts-jest": "^29.0.3",
     "ts-loader": "^9.3.1",
