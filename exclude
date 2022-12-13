@@ -7,3 +7,4 @@ cdk.context.json
 .github/CODEOWNERS
 scripts/bundling/*
 node_modules/*
+.yarn/install-state.gz

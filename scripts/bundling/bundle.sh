@@ -24,8 +24,5 @@ echo "Generating open source bundle..."
 
 yarn ts-node scripts/bundling/bundle-open-source.ts
 
-
 echo "Packaging open source bundle..."
-# Copy .yarn folder into bundle folder
-rsync --prune-empty-dirs -a .yarn ./bundle_os/ --exclude .yarn/cache
 cd ./bundle_os && zip -r ../bundle-os.zip . && cd ..

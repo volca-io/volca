@@ -1,12 +1,17 @@
 .
+.yarn/plugins/@yarnpkg
+.yarn/releases
+.yarn/sdks
+.yarn/sdks/typescript/bin
+.yarn/sdks/typescript/lib
 infrastructure
 infrastructure/apps
 infrastructure/stacks
 types
 services/api
+services/api/env/.env.test
 services/api/src
 services/api/scripts
-services/api/bin
 services/api/.jest
 services/api/src/actions/status
 services/api/src/actions/utils
@@ -24,3 +29,5 @@ services/api/src/middlewares/request-logging-middleware.ts
 services/api/src/middlewares/schema-validation-middleware.ts
 services/api/src/middlewares/index.ts
 services/api/src/services/status-service.ts
+services/api/src/test-utils
+services/api/src/test-utils/fixtures
