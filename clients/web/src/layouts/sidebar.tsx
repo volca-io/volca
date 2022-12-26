@@ -30,7 +30,7 @@ export const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ childr
           </Text>
         </Alert>
       )}
-      <Sidebar hidden={!sidebar} />
+      <Sidebar mt={user && !user.verified_at ? '48px' : '0'} hidden={!sidebar} />
       <LoadingBar full={!sidebar} />
       <MainPanel clearSidebar={sidebar}>
         <MainContent>

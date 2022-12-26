@@ -41,11 +41,11 @@ interface LinkItemProps {
   icon: IconType;
 }
 
-export const Sidebar = ({ hidden = false }: { hidden: boolean }): JSX.Element => {
+export const Sidebar = ({ hidden = false, mt = '0' }: { hidden: boolean; mt: string }): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      {!hidden && <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />}
+      {!hidden && <SidebarContent onClose={() => onClose} mt={mt} display={{ base: 'none', md: 'block' }} />}
       <Drawer
         autoFocus={false}
         isOpen={isOpen}
@@ -56,7 +56,7 @@ export const Sidebar = ({ hidden = false }: { hidden: boolean }): JSX.Element =>
         size="full"
       >
         <DrawerContent>
-          <SidebarContent onClose={onClose} />
+          <SidebarContent mt={mt} onClose={onClose} />
         </DrawerContent>
       </Drawer>
       <MobileNav onOpen={onOpen} full={hidden} />
