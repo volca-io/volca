@@ -39,6 +39,7 @@ interface DeployableAwsConfig extends AwsConfig {
 export interface EnvironmentConfig {
   aws?: AwsConfig;
   fromEmail: string;
+  testCardEnabled?: string;
 }
 
 export interface DeployableEnvironmentConfig extends EnvironmentConfig {

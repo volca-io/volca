@@ -18,6 +18,7 @@ export enum EnvironmentVariable {
   LOGGING_DISABLED = 'LOGGING_DISABLED',
   REGION = 'REGION',
   SIGNING_KEY = 'SIGNING_KEY',
+  TEST_CARD_ENABLED = 'TEST_CARD_ENABLED',
 }
 
 @singleton()

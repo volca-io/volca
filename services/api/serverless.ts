@@ -8,6 +8,7 @@ type EnvironmentVariables = {
   appDomain: string;
   fromEmail: string;
   skipTokenVerification: string;
+  testCardEnabled: string;
   isTest?: string;
   credentials:
     | {
@@ -37,6 +38,7 @@ const getEnvironment = (stage: Environment): EnvironmentVariables => {
         appDomain: getEnvVar('APP_DOMAIN', '127.0.0.1:3000'),
         skipTokenVerification: getEnvVar('SKIP_TOKEN_VERIFICATION', 'false'),
         fromEmail: getEnvVar('FROM_EMAIL', 'admin@volca.io'),
+        testCardEnabled: environmentConfig.testCardEnabled || '1',
         credentials: {
           host: getEnvVar('DB_HOST', 'localhost'),
           port: getEnvVar('DB_PORT', '5432'),
@@ -55,6 +57,7 @@ const getEnvironment = (stage: Environment): EnvironmentVariables => {
         credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
         skipTokenVerification: 'false',
         fromEmail: environmentConfig.fromEmail,
+        testCardEnabled: environmentConfig.testCardEnabled || '0',
       };
     }
   }
@@ -124,6 +127,7 @@ const serverlessConfiguration: AWS = {
       STRIPE_KEY: '${self:custom.environment.credentials.stripeKey}',
       FROM_EMAIL: '${self:custom.environment.fromEmail}',
       SIGNING_KEY: '${self:custom.environment.credentials.signingKey}',
+      TEST_CARD_ENABLED: '${self:custom.environment.testCardEnabled}',
     },
   },
   custom: {

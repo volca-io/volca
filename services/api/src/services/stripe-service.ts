@@ -21,6 +21,11 @@ type StripeSession = {
   url: string;
 };
 
+type CreateCardParams = {
+  user: User;
+  customer: string;
+};
+
 @injectable()
 export class StripeService {
   private stripe: Stripe;
@@ -42,7 +47,11 @@ export class StripeService {
     };
 
     const customer = await getStripeCustomerId();
-    const appDomain = this.environment.getWebappDomain()
+    const appDomain = this.environment.getWebappDomain();
+
+    if (this.environment.get(EnvironmentVariable.TEST_CARD_ENABLED) === '1') {
+      await this.createTestCard({ user, customer });
+    }
 
     const session = await this.stripe.checkout.sessions.create({
       success_url: appDomain,
@@ -67,10 +76,6 @@ export class StripeService {
           }),
     });
 
-    if (this.environment.getOrFail(EnvironmentVariable.STAGE)) {
-      await User.query().findById(user.id).update({ hasActiveSubscription: true });
-    }
-
     const stripeSession = {
       id: session.id,
       url: session.url || '',
@@ -81,19 +86,49 @@ export class StripeService {
   public async createBillingPortalSession({
     stripeCustomerId,
   }: CreateStripeBillingPortalSessionParams): Promise<StripeSession> {
-    const appDomain = this.environment.getWebappDomain()
+    const appDomain = this.environment.getWebappDomain();
     const session = await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
       return_url: `${appDomain}/settings`,
     });
-    if (this.environment.getOrFail(EnvironmentVariable.STAGE) === 'local') {
-      await User.query().where({ stripeId: stripeCustomerId }).update({ hasActiveSubscription: false });
-    }
     const billingPortalSession = {
       id: session.id,
       url: session.url,
     };
     return billingPortalSession;
+  }
+
+  private async createTestCard({ user, customer }: CreateCardParams) {
+    // Create the card
+    const paymentMethod = await this.stripe.paymentMethods.create({
+      type: 'card',
+      billing_details: {
+        address: {
+          country: 'US',
+          postal_code: '90210',
+        },
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`,
+      },
+      card: {
+        number: '4242424242424242',
+        exp_month: 12,
+        exp_year: 34,
+        cvc: '424',
+      },
+    });
+
+    // Set the card up for future usage
+    await this.stripe.setupIntents.create({
+      confirm: true,
+      payment_method: paymentMethod.id,
+    });
+
+    // Attach the card to the customer
+    await this.stripe.paymentMethods.attach(paymentMethod.id, { customer });
+
+    // Set as default payment method
+    await this.stripe.customers.update(customer, { invoice_settings: { default_payment_method: paymentMethod.id } });
   }
 
   public async verifyWebhookSignature({ body, signature }: VerifyStripeWebhookSignatureParams) {
