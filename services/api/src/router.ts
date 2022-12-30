@@ -39,7 +39,11 @@ import {
   updateProjectSchema,
 } from './actions/projects';
 
-import { createStripeSessionAction, createStripeBillingPortalSessionAction } from './actions/stripe';
+import {
+  createStripeSessionAction,
+  createStripeBillingPortalSessionAction,
+  receiveStripeWebhook,
+} from './actions/stripe';
 
 import {
   authenticationMiddleware,
@@ -128,6 +132,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   // Stripe
   router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);
   router.post('/stripe/billing-portal-sessions', authenticationMiddleware, createStripeBillingPortalSessionAction);
+  router.post('/stripe/webhook', receiveStripeWebhook);
 
   /* volca-exclude-end os */
 
