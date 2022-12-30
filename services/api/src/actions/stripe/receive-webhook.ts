@@ -10,10 +10,13 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const stripeService = container.resolve(StripeService);
   const userService = container.resolve(UserService);
 
-  const { body, headers } = ctx;
+  const {
+    request: { rawBody },
+    headers,
+  } = ctx;
   const signature = headers['stripe-signature'];
 
-  if (!signature || !body) {
+  if (!signature || !rawBody) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
       message: 'Unauthorized',
@@ -21,7 +24,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  const event = await stripeService.verifyWebhookSignature({ body: body as string, signature: signature as string });
+  const event = await stripeService.verifyWebhookSignature({ body: rawBody as string, signature: signature as string });
 
   if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.deleted') {
     const obj = event.data.object as { customer: string };
