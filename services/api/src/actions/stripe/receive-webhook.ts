@@ -16,7 +16,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   } = ctx;
   const signature = headers['stripe-signature'];
 
-  if (!signature /* || !rawBody */) {
+  if (!signature || !rawBody) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
       message: 'Unauthorized',
@@ -24,10 +24,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  const event = await stripeService.verifyWebhookSignature({
-    body: rawBody || ctx.request.body,
-    signature: signature as string,
-  });
+  const event = await stripeService.verifyWebhookSignature({ body: rawBody as string, signature: signature as string });
 
   if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.deleted') {
     const obj = event.data.object as { customer: string };

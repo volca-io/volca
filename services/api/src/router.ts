@@ -58,8 +58,6 @@ import { CustomContext } from './types';
 export const createRouter = (): Router<Application.DefaultState, CustomContext> => {
   const router = new Router<Application.DefaultState, CustomContext>();
 
-  router.post('/stripe/webhook', receiveStripeWebhook);
-
   // Pre action middlewares
   router.use(body());
 
@@ -134,6 +132,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   // Stripe
   router.post('/stripe/sessions', authenticationMiddleware, createStripeSessionAction);
   router.post('/stripe/billing-portal-sessions', authenticationMiddleware, createStripeBillingPortalSessionAction);
+  router.post('/stripe/webhook', receiveStripeWebhook);
 
   /* volca-exclude-end os */
 
