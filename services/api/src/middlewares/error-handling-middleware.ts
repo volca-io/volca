@@ -27,7 +27,7 @@ export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) 
       ctx.status = 500;
       ctx.body = {
         name: ErrorNames.INTERNAL_SERVER_ERROR,
-        mesage: 'An unexpected error occurred',
+        message: 'An unexpected error occurred',
       };
     }
   }
