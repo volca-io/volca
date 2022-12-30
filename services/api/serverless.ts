@@ -18,6 +18,7 @@ type EnvironmentVariables = {
         password: string;
         stripePriceId: string;
         stripeKey: string;
+        stripeWebhookSecret: string;
         signingKey: string;
       }
     | string;
@@ -46,6 +47,7 @@ const getEnvironment = (stage: Environment): EnvironmentVariables => {
           password: getEnvVar('DB_PASSWORD', 'postgres'),
           stripePriceId: getEnvVar('STRIPE_PRICE_ID', 'stripe-price-id'),
           stripeKey: getEnvVar('STRIPE_KEY', 'stripe-key'),
+          stripeWebhookSecret: getEnvVar('STRIPE_WEBHOOK_SECRET', 'stripe-webhook-secret'),
           signingKey: getEnvVar('SIGNING_KEY', 'signing-key'),
         },
       };
@@ -125,6 +127,7 @@ const serverlessConfiguration: AWS = {
       SKIP_TOKEN_VERIFICATION: '${self:custom.environment.skipTokenVerification}',
       STRIPE_PRICE_ID: '${self:custom.environment.credentials.stripePriceId}',
       STRIPE_KEY: '${self:custom.environment.credentials.stripeKey}',
+      STRIPE_WEBHOOK_SECRET: '${self:custom.environment.credentials.stripeWebhookSecret}',
       FROM_EMAIL: '${self:custom.environment.fromEmail}',
       SIGNING_KEY: '${self:custom.environment.credentials.signingKey}',
       TEST_CARD_ENABLED: '${self:custom.environment.testCardEnabled}',

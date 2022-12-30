@@ -135,7 +135,7 @@ export class StripeService {
     return this.stripe.webhooks.constructEventAsync(
       body,
       signature,
-      this.environment.getOrFail(EnvironmentVariable.STRIPE_KEY)
+      this.environment.getOrFail(EnvironmentVariable.STRIPE_WEBHOOK_SECRET)
     );
   }
 }
