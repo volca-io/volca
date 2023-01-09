@@ -28,6 +28,8 @@ export class Project extends Model {
     users: {
       relation: Model.ManyToManyRelation,
       modelClass: User,
+      modify: (query: QueryBuilder<User>) =>
+        query.select('users.id', 'users.hasActiveSubscription', 'users.firstName', 'users.lastName', 'users.email'),
       join: {
         from: 'users.id',
         through: {

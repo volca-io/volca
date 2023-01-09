@@ -23,7 +23,6 @@ export class User extends Model {
   $formatJson(input: Pojo): Pojo {
     const json = super.$formatJson(input);
     const retval = _.omit(json, User.hiddenFields);
-    console.log(retval)
     return retval;
   }
 }
