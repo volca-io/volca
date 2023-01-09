@@ -6,19 +6,11 @@ export const config: Config = {
     organization: 'volca-io',
     repository: 'volca',
   },
+  fromEmail: 'admin@volca.io',
   environments: {
-    local: {
-      fromEmail: 'admin@volca.io',
-      testCardEnabled: '1',
-      aws: {
-        account: '428245413678',
-        region: 'eu-central-1',
-      },
-    },
     staging: {
       domain: 'staging.volca.io',
-      fromEmail: 'admin@volca.io',
-      testCardEnabled: '1',
+      testCardEnabled: true,
       aws: {
         account: '428245413678',
         region: 'eu-central-1',
@@ -27,8 +19,7 @@ export const config: Config = {
     },
     production: {
       domain: 'demo.volca.io',
-      fromEmail: 'admin@volca.io',
-      testCardEnabled: '1',
+      testCardEnabled: true,
       aws: {
         account: '428245413678',
         region: 'eu-central-1',

@@ -49,7 +49,7 @@ export class StripeService {
     const customer = await getStripeCustomerId();
     const appDomain = this.environment.getWebappDomain();
 
-    if (this.environment.get(EnvironmentVariable.TEST_CARD_ENABLED) === '1') {
+    if (this.environment.get(EnvironmentVariable.TEST_CARD_ENABLED) === 'true') {
       await this.createTestCard({ user, customer });
     }
 

@@ -1,40 +1,24 @@
-import { spawn } from 'child_process';
+#!/usr/bin/env -S npx tsx
+import { $ } from 'zx';
 import { program } from 'commander';
 import { config } from '../volca.config';
+import { Environment } from '../types/volca';
 
-const destroy = async (stage: string): Promise<void> => {
-  const child = spawn('cdk', ['destroy', '-c', `stage=${stage}`, '--all'], { stdio: 'pipe' });
+const run = async (stage: string, stacks: string) => {
+  const env = config.environments[stage as Environment];
 
-  return new Promise((resolve, reject) => {
-    child.on('exit', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error('Deploy failed with a non 0 exit code'));
-      }
-    });
-  });
-};
-
-const run = async (region: string, stage: string): Promise<void> => {
-  console.log(`[ INFO ] Destroying..`);
-  try {
-    await destroy(stage);
-  } catch (error: unknown) {
-    console.error(`[ Error ] ${error}`);
-    process.exit(1);
+  if (!env) {
+    console.log(`[ Error ] Could not find a configured stage in volca.config.ts for stage ${stage}`);
   }
+
+  await $`cdk destroy -c stage=${stage} ${stacks}`;
 };
 
-program.option('-r, --region <region>').option('-s, --stage <stage>');
+program
+  .requiredOption('-s, --stage <stage>')
+  .option('--stacks <stacks', 'space separated names of CloudFormation stacks to deploy', '--all');
 program.parse();
 
-const { stage } = program.opts();
+const { stage, stacks } = program.opts();
 
-const env = config.environments[stage];
-
-if (!env) {
-  console.log(`[ Error ] Could not find a configured stage in volca.config.ts for stage ${stage}`);
-}
-
-run(env.aws.region, stage);
+run(stage, stacks);

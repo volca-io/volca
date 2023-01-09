@@ -23,7 +23,7 @@ jobs:
           yarn install --immutable
       - name: Read workflow vars
         run: |
-          yarn dlx -q ts-node ./scripts/get-workflow-vars.ts --environment ${{ inputs.environment }} >> $GITHUB_ENV
+          yarn dlx -q tsx ./scripts/get-workflow-vars.ts --environment ${{ inputs.environment }} >> $GITHUB_ENV
       - name: Build
         working-directory: clients/web
         run: |

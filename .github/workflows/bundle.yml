@@ -13,8 +13,12 @@ jobs:
       - name: Check out code.
         uses: actions/checkout@v3.3.0
 
+      - name: Yarn Install
+        run: |
+          yarn install --immutable
+          
       - name: Bundle
-        run: sh scripts/bundling/bundle.sh
+        run: yarn dlx tsx scripts/bundling/bundle.ts
 
       - uses: actions/setup-node@v3
         with:

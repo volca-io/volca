@@ -1,7 +1,14 @@
 /* eslint-disable no-template-curly-in-string */
 import type { AWS } from '@serverless/typescript';
-import { Environment, DeployableEnvironmentConfig } from '../../types/volca';
+import { Environment } from '../../types/volca';
 import { config } from '../../volca.config';
+
+enum OfflineEnvironment {
+  LOCAL = 'local'
+}
+
+type Environments = OfflineEnvironment | Environment
+
 
 type EnvironmentVariables = {
   logLevel: string;
@@ -31,15 +38,15 @@ const getEnvVar = (envVar: string, defaultValue?: string): string => {
   return variable;
 };
 
-const getEnvironment = (stage: Environment): EnvironmentVariables => {
+const getEnvironment = (stage: Environments): EnvironmentVariables => {
   switch (stage) {
-    case 'local':
+    case OfflineEnvironment.LOCAL:
       return {
         logLevel: getEnvVar('LOG_LEVEL', 'info'),
         appDomain: getEnvVar('APP_DOMAIN', '127.0.0.1:3000'),
         skipTokenVerification: getEnvVar('SKIP_TOKEN_VERIFICATION', 'false'),
-        fromEmail: getEnvVar('FROM_EMAIL', 'admin@volca.io'),
-        testCardEnabled: environmentConfig.testCardEnabled || '1',
+        fromEmail: config.fromEmail,
+        testCardEnabled: getEnvVar('TEST_CARD_ENABLED', 'true'),
         credentials: {
           host: getEnvVar('DB_HOST', 'localhost'),
           port: getEnvVar('DB_PORT', '5432'),
@@ -52,31 +59,30 @@ const getEnvironment = (stage: Environment): EnvironmentVariables => {
         },
       };
     default: {
-      const environmentConfig = config.environments[stage];
+      const envConfig = config.environments[stage]
       return {
         logLevel: 'info',
         appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
         credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
         skipTokenVerification: 'false',
-        fromEmail: environmentConfig.fromEmail,
-        testCardEnabled: environmentConfig.testCardEnabled || '0',
+        fromEmail: config.fromEmail,
+        testCardEnabled: envConfig.testCardEnabled ? 'true' : 'false',
       };
     }
   }
 };
 
-const resolveStage = (): Environment => {
-  const stage = (process.env.STAGE as Environment) || Environment.LOCAL;
+const resolveEnvironment = (): Environments => {
+  const stage = process.env.STAGE || OfflineEnvironment.LOCAL;
 
-  if (!Object.values(Environment).includes(stage)) {
+  if (!Object.values<string>(Environment).includes(stage) && !Object.values<string>(OfflineEnvironment).includes(stage) ) {
     throw new Error(`Unhandled stage ${stage}. Add the environment to your volca.config.ts and try again`);
   }
 
-  return stage;
+  return stage as Environments;
 };
 
-const stage = resolveStage();
-const environmentConfig = config.environments[stage];
+const environment = resolveEnvironment();
 
 const serverlessConfiguration: AWS = {
   service: `${config.name}-api`,
@@ -89,14 +95,14 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     iam:
-      stage !== Environment.LOCAL
+    environment !== OfflineEnvironment.LOCAL
         ? {
             role: `\${cf:${config.name}-\${self:provider.stage}-api-stack.LambdaExecutionRole}`,
             deploymentRole: `\${cf:${config.name}-\${self:provider.stage}-devops-stack.ApiCloudformationDeploymentRoleArn}`,
           }
         : undefined,
     vpc:
-      stage !== Environment.LOCAL && !(environmentConfig as DeployableEnvironmentConfig).aws.publicDatabase
+      environment !== OfflineEnvironment.LOCAL && !config.environments[environment].aws.publicDatabase
         ? {
             securityGroupIds: [`\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiSecurityGroupOutput}`],
             subnetIds: {
@@ -104,20 +110,20 @@ const serverlessConfiguration: AWS = {
             },
           }
         : undefined,
-    stackName: `${config.name}-${stage}-api-service`,
+    stackName: `${config.name}-${environment}-api-service`,
     runtime: 'nodejs16.x',
-    stage,
-    region: config.environments[stage].aws?.region,
+    stage: environment,
+    region: environment === OfflineEnvironment.LOCAL ? undefined : config.environments[environment].aws.region,
     apiGateway:
-      stage !== Environment.LOCAL
+    environment !== OfflineEnvironment.LOCAL
         ? {
             restApiId: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiGatewayID}`,
             restApiRootResourceId: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiGatewayRootResourceID}`,
           }
         : undefined,
     environment: {
-      STAGE: stage,
-      REGION: '${self:provider.region}',
+      STAGE: environment,
+      REGION: '${self:provider.region, "local"}',
       LOG_LEVEL: '${self:custom.environment.logLevel}',
       APP_DOMAIN: '${self:custom.environment.appDomain}',
       DB_HOST: '${self:custom.environment.credentials.host}',
@@ -134,7 +140,7 @@ const serverlessConfiguration: AWS = {
     },
   },
   custom: {
-    environment: getEnvironment(stage),
+    environment: getEnvironment(environment),
     'serverless-offline': {
       httpPort: 4000,
       noPrependStageInUrl: true,

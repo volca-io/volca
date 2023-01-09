@@ -1,15 +1,17 @@
+#!/usr/bin/env -S npx tsx
 import { program } from 'commander';
-import { config } from '../volca.config';
 import { Environment } from '../types/volca';
+import { config } from '../volca.config';
 
-program.option('-e, --environment <environment>');
+program.requiredOption('-e, --environment <environment>');
 program.parse();
 
 const { environment } = program.opts();
-
 const env = config.environments[environment as Environment];
+
 if (!env || !env.aws) {
-  throw new Error(`Failed to read environment config for ${environment}`);
+  console.error(`Failed to read environment config for ${environment}`);
+  process.exit(1);
 }
 
 console.log(`APPLICATION_NAME=${config.name}`);
