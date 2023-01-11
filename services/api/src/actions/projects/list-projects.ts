@@ -10,6 +10,6 @@ export const action = useApiAction(async () => {
   const projects = await projectService.list(user.id);
 
   return {
-    body: { projects },
+    body: { projects: projects.map(project => project.toJSON()) },
   };
 });

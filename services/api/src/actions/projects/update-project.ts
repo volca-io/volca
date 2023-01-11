@@ -21,7 +21,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   return {
     body: {
-      project,
+      project: project?.toJSON(),
     },
   };
 });

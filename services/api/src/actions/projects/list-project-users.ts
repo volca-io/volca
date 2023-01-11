@@ -11,6 +11,6 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const users = await projectUserService.list(projectId);
 
   return {
-    body: { users },
+    body: { users: users.map((user) => user.toJSON()) },
   };
 });

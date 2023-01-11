@@ -1,4 +1,4 @@
-import { Model, QueryBuilder} from 'objection';
+import { Model } from 'objection';
 
 import { User } from './user';
 
@@ -18,8 +18,6 @@ export class Project extends Model {
     admin: {
       relation: Model.BelongsToOneRelation,
       modelClass: User,
-      modify: (query: QueryBuilder<User>) =>
-        query.select('id', 'hasActiveSubscription', 'firstName', 'lastName', 'email'),
       join: {
         from: 'projects.adminId',
         to: 'users.id',
@@ -28,8 +26,6 @@ export class Project extends Model {
     users: {
       relation: Model.ManyToManyRelation,
       modelClass: User,
-      modify: (query: QueryBuilder<User>) =>
-        query.select('users.id', 'users.hasActiveSubscription', 'users.firstName', 'users.lastName', 'users.email'),
       join: {
         from: 'users.id',
         through: {

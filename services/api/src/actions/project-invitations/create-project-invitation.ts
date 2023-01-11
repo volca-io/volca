@@ -57,7 +57,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   return {
     body: {
-      projectInvitation,
+      projectInvitation: projectInvitation.toJSON(),
     },
   };
 });

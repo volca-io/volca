@@ -10,8 +10,4 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const { projectId: id } = ctx.params;
 
   await projectService.delete(id);
-
-  return {
-    body: {},
-  };
 });

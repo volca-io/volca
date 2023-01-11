@@ -14,7 +14,7 @@ export class User extends Model {
   createdAt!: Date;
   updatedAt!: Date;
 
-  private static hiddenFields = ['password'];
+  private static hiddenFields = ['password', 'stripeId'];
 
   static get tableName() {
     return 'users';

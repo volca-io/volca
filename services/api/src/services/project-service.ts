@@ -36,8 +36,7 @@ export class ProjectService {
   }
 
   public async update({ id, adminId, name }: UpdateProjectInput): Promise<Project | undefined> {
-    await Project.query().where({ id }).update({ adminId, name });
-    return this.get(id);
+    return Project.query().where({ id }).update({ adminId, name }).returning('*').first();
   }
 
   public async delete(id: string): Promise<void> {
