@@ -36,7 +36,7 @@ interface AwsConfig {
 export interface EnvironmentConfig {
   aws: AwsConfig;
   domain: string;
-  testCardEnabled: boolean;
+  testCardEnabled?: boolean;
 }
 
 type GithubConfig = {
