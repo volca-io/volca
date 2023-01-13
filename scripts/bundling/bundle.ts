@@ -9,6 +9,9 @@ const run = async () => {
   await $`rm -rf bundle-customer.zip`;
   await $`rm -rf bundle-os.zip`;
 
+  console.log('Overwriting custom config with example config...');
+  await $`mv example.config.ts volca.config.ts `;
+
   console.log('Generating customer bundle...');
   await $`rsync --prune-empty-dirs -a --exclude-from .gitignore --exclude-from exclude ./ bundle/`;
 
