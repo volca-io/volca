@@ -12,40 +12,68 @@ jobs:
     steps:
       - name: Check out code.
         uses: actions/checkout@v3.3.0
-
       - name: Yarn Install
         run: |
           yarn install --immutable
-          
       - name: Bundle
         run: yarn dlx tsx scripts/bundling/bundle.ts
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-      - name: Test customer bundle
-        run: cd bundle && yarn && yarn test
-
-      - name: Test open source bundle
-        run: cd bundle_os && yarn && yarn test
-
       - name: Upload open source bundle
         uses: actions/upload-artifact@v3
         with:
           name: volca-core
           path: bundle-os.zip
           retention-days: 1
-
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: volca
           path: bundle-customer.zip
           retention-days: 1
+
+  test-bundle:
+    name: test-bundle
+    runs-on: ubuntu-latest
+    needs: bundle
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: volca
+      - name: Unzip artifact
+        run: unzip ./bundle-customer.zip
+      - name: Install dependencies
+        run: yarn install
+      - name: Run tests
+        run: yarn test
+
+  test-os-bundle:
+    name: test-os-bundle
+    runs-on: ubuntu-latest
+    needs: bundle
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: volca-core
+      - name: Unzip artifact
+        run: unzip ./bundle-os.zip
+      - name: Install dependencies
+        run: yarn install
+      - name: Run tests
+        run: yarn test
+
   upload-s3:
     name: upload-s3
     runs-on: ubuntu-latest
-    needs: bundle
+    needs: 
+      - test-bundle
+      - test-os-bundle
     permissions:
       id-token: write
       contents: read
@@ -62,3 +90,35 @@ jobs:
       - name: Upload to S3
         run: |
           aws s3 cp bundle-customer.zip s3://volca-assets/volca.zip
+
+  push-open-source:
+    name: push-open-source
+    runs-on: ubuntu-latest
+    needs: 
+      - test-bundle
+      - test-os-bundle
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: volca-core
+
+      - name: Unzip artifact
+        run: unzip ./bundle-os.zip
+
+      - name: Push to repository
+        env:
+          GITHUB_PAT: ${{ secrets.OSKAR_VOLCA_PERSONAL_ACCESS_TOKEN }}
+        run: |
+          repo_url="https://github.com/volca-io/volca-core.git"
+          date=$(date '+%Y-%m-%d')
+          git config --global user.name "okarlsson"
+          git config --global user.email "okarlsson@users.noreply.github.com"
+          git init --initial-branch main
+          git add --all
+          git commit -m "Update $date"
+          git status
+          git remote add origin https://okarlsson:$GITHUB_PAT@github.com/volca-io/volca-core.git
+          git push --set-upstream origin main --force
