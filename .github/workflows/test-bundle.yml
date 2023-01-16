@@ -4,25 +4,36 @@ on:
 env:
   YARN_ENABLE_IMMUTABLE_INSTALLS: false
 jobs:
-  bundle:
-    name: bundle
+  test-customer-bundle:
+    name: test-customer-bundle
     runs-on: ubuntu-latest
     steps:
       - name: Check out code.
         uses: actions/checkout@v3.3.0
-
       - name: Yarn Install
         run: |
           yarn install --immutable
-
       - name: Bundle
         run: yarn dlx tsx scripts/bundling/bundle.ts
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Test open source bundle
+        run: cd bundle_os && yarn && yarn test
+  test-os-bundle:
+    name: test-os-bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code.
+        uses: actions/checkout@v3.3.0
+      - name: Yarn Install
+        run: |
+          yarn install --immutable
+      - name: Bundle
+        run: yarn dlx tsx scripts/bundling/bundle.ts
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
       - name: Test customer bundle
         run: cd bundle && yarn && yarn test
 
-      - name: Test open source bundle
-        run: cd bundle_os && yarn && yarn test
