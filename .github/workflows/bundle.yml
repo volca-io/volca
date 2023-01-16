@@ -6,9 +6,31 @@ on:
 env:
   YARN_ENABLE_IMMUTABLE_INSTALLS: false
 jobs:
+  bump-version:
+    name: bump-version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out code.
+        with:
+          fetch-depth: 0
+        uses: actions/checkout@v3.3.0
+      - name: Bump version
+        run: |
+          yarn version minor
+      - name: Commit result
+        run: |
+          git config --global user.name "${{ github.event.pusher.name }}"
+          git config --global user.email "${{ github.event.pusher.email }}"
+          VERSION=$(jq -r .version package.json)
+          git commit -a -m "Bump version to $VERSION"
+          git tag -a v$VERSION -m "Version $VERSION"
+          git push; git push --tags
   bundle:
     name: bundle
     runs-on: ubuntu-latest
+    needs: bump-version
     steps:
       - name: Check out code.
         uses: actions/checkout@v3.3.0
