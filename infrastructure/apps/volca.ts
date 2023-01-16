@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { App, Tags } from 'aws-cdk-lib';
 import { IHostedZone } from 'aws-cdk-lib/aws-route53';
-import { DeployableEnvironmentConfig, Environment } from '../../types/volca';
+import { Environment, EnvironmentConfig } from '../../types/volca';
 import { config } from '../../volca.config';
 import { AccountBootstrapStack } from '../stacks/account-bootstrap-stack';
 import { ApiStack } from '../stacks/api-stack';
@@ -20,8 +20,8 @@ if (!config.environments[stage] || !config.environments[stage].aws) {
   );
 }
 
-const { aws, domain, fromEmail } = config.environments[stage] as DeployableEnvironmentConfig;
-const { name, github } = config;
+const { aws, domain } = config.environments[stage] as EnvironmentConfig;
+const { name, github, fromEmail } = config;
 
 const accountBootstrapStack = new AccountBootstrapStack(app, `${name}-account-bootstrap-stack`, {
   env: aws,
