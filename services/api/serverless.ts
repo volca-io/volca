@@ -63,7 +63,7 @@ const getEnvironment = (stage: Environments): EnvironmentVariables => {
       return {
         logLevel: 'info',
         appDomain: `\${cf:${config.name}-${stage}-webapp-stack.AppDomain}`,
-        credentials: `\${ssm:/aws/reference/secretsmanager/volca-${stage}-api-credentials}`,
+        credentials: `\${ssm:/aws/reference/secretsmanager/${config.name}-${stage}-api-credentials}`,
         skipTokenVerification: 'false',
         fromEmail: config.fromEmail,
         testCardEnabled: envConfig.testCardEnabled ? 'true' : 'false',
