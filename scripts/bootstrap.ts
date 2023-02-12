@@ -3,17 +3,36 @@ import 'zx/globals';
 import inquirer, { Answers } from 'inquirer';
 import ejs from 'ejs';
 
+const defaultValues = {
+  githubRepo: 'my-github-repo',
+  githubOrg: 'my-github-org',
+  environments: {
+    staging: {
+      domain: 'staging.myapp.com',
+      publicDatabase: true,
+      awsAccount: '000000000000',
+      awsRegion: 'us-east-1',
+    },
+    production: {
+      domain: 'myapp.com',
+      publicDatabase: true,
+      awsAccount: '000000000000',
+      awsRegion: 'us-east-1',
+    },
+  },
+};
+
 const defaultQuestions = [
   {
     type: 'string',
     name: 'name',
-    message: 'What would you like to call the service?',
+    message: 'What would you like to call your project?',
     default: 'volca',
   },
   {
     type: 'confirm',
     name: 'setupGithub',
-    message: 'Do you have a GitHub repository ready?',
+    message: 'Have you created a GitHub repository for your project?',
   },
   {
     type: 'string',
@@ -24,7 +43,7 @@ const defaultQuestions = [
   {
     type: 'string',
     name: 'githubRepo',
-    message: 'Enter your GitHub repository name where Volca will exist',
+    message: 'Enter your GitHub repository name',
     when: (answers: Answers) => answers.setupGithub,
   },
   {
@@ -42,9 +61,9 @@ const defaultQuestions = [
 
 const run = async () => {
   const defaultAnswers = await inquirer.prompt(defaultQuestions);
-  defaultAnswers.environments = [];
 
   if (defaultAnswers.setupEnvironments) {
+    defaultAnswers.environments = {};
     for (const env of ['staging', 'production']) {
       const environmentAnswers = await inquirer.prompt([
         {
@@ -76,12 +95,12 @@ const run = async () => {
     }
   }
 
-  console.log('Generating volca config..');
+  console.log('Generating Volca config...');
 
-  const volcaConfigContent = await ejs.renderFile(
-    path.join(__dirname, '../templates/volca.config.ejs'),
-    defaultAnswers
-  );
+  const volcaConfigContent = await ejs.renderFile(path.join(__dirname, '../templates/volca.config.ejs'), {
+    ...defaultValues,
+    ...defaultAnswers,
+  });
   fs.writeFileSync(path.join(__dirname, '../volca.config.ts'), volcaConfigContent);
 
   console.log('Done!');
