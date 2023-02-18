@@ -1,14 +1,14 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSetRecoilState, useResetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
-import { currentUserState, projectsState, selectedProjectState } from '../state';
+import { currentUserState, projectsState, selectedProjectSelector } from '../state';
 import { User } from '../types';
 import { useApiActions } from './api-actions';
 
 export const useUserActions = () => {
   const setUser = useSetRecoilState(currentUserState);
-  const resetProjects = useResetRecoilState(projectsState);
-  const resetSelectedProject = useResetRecoilState(selectedProjectState);
+  const setProjects = useSetRecoilState(projectsState);
+  const setSelectedProject = useSetRecoilState(selectedProjectSelector);
   const navigate = useNavigate();
   const location = useLocation();
   const { executeApiAction } = useApiActions();
@@ -46,6 +46,7 @@ export const useUserActions = () => {
         } else {
           localStorage.removeItem('remembered_user_identifier');
         }
+
         const user = await getMe();
         if (user) setUser(user);
       },
@@ -94,8 +95,8 @@ export const useUserActions = () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('selected_project_id');
         setUser(null);
-        resetProjects();
-        resetSelectedProject();
+        setProjects([]);
+        setSelectedProject(null);
         navigate('/sign-in');
       },
     });

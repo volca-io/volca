@@ -19,11 +19,11 @@ const IconCircle = ({ icon }: { icon: any }) => {
   );
 };
 
-export const PageHeading = ({ title, icon }: { title: string; icon: IconType }) => {
+export const PageHeading = ({ title, size = 'md', icon }: { title: string; size?: string; icon?: IconType }) => {
   return (
     <Flex alignItems="center">
-      <IconCircle icon={icon} />
-      <Heading size="md">{title}</Heading>
+      {icon && <IconCircle icon={icon} />}
+      <Heading size={size}>{title}</Heading>
     </Flex>
   );
 };

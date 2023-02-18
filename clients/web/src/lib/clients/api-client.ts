@@ -11,6 +11,10 @@ type GetMeResponse = {
   me: User;
 };
 
+type ListProjectsResponse = {
+  projects: Project[];
+};
+
 type GetProjectResponse = {
   project: Project;
 };
@@ -170,7 +174,7 @@ export class ApiClient {
   }
 
   static async getProjects(): Promise<Project[]> {
-    const { projects } = await this.handleApiError(this.tokenClient.get('projects').json());
+    const { projects } = await this.handleApiError(this.tokenClient.get('projects').json<ListProjectsResponse>());
     return projects;
   }
 
@@ -188,7 +192,7 @@ export class ApiClient {
 
   static async updateProject({ id, name }: Partial<Project>): Promise<Project> {
     const { project } = await this.handleApiError(
-      this.tokenClient.put(`projects/${id}`, { json: { id, name } }).json<UpdateProjectResponse>()
+      this.tokenClient.put(`projects/${id}`, { json: { name } }).json<UpdateProjectResponse>()
     );
     return project;
   }

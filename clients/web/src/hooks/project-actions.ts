@@ -2,14 +2,14 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
-import { projectsState, selectedProjectState } from '../state';
+import { projectsState, selectedProjectSelector } from '../state';
 import { Project } from '../types';
 import { useApiActions } from './api-actions';
 
 export const useProjectActions = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useRecoilState(projectsState);
-  const [selectedProject, setSelectedProject] = useRecoilState(selectedProjectState);
+  const [selectedProject, setSelectedProject] = useRecoilState(selectedProjectSelector);
   const { executeApiAction } = useApiActions();
 
   const getProject = async (id: string) =>
@@ -25,6 +25,7 @@ export const useProjectActions = () => {
       onSuccess: (project: Project) => {
         setProjects([...projects, project]);
         setSelectedProject(project);
+        navigate(`/projects/${project.id}/dashboard`);
       },
       errorMessage: 'Failed to create project',
       successMessage: 'Project created',
@@ -60,7 +61,7 @@ export const useProjectActions = () => {
 
   return {
     getProject: useCallback(getProject, [executeApiAction, navigate]),
-    createProject: useCallback(createProject, [setProjects, setSelectedProject, executeApiAction, projects]),
+    createProject: useCallback(createProject, [setProjects, setSelectedProject, executeApiAction, navigate, projects]),
     updateProject: useCallback(updateProject, [
       setProjects,
       setSelectedProject,

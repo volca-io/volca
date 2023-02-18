@@ -31,14 +31,14 @@ export const useApiActions = () => {
     onSuccess,
     errorMessage = null,
     successMessage = null,
-    errorMessageDuration = 9000
+    errorMessageDuration = 9000,
   }: {
     action: Function;
     onError?: Function;
     onSuccess?: Function;
     errorMessage?: string | null;
     successMessage?: string | null;
-    errorMessageDuration?: number | null
+    errorMessageDuration?: number | null;
   }): Promise<T | void> => {
     setLoading(true);
     try {

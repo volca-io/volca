@@ -1,19 +1,15 @@
-import { atom, selector } from 'recoil';
+import { atom } from 'recoil';
 import { ApiClient } from '../lib/clients/api-client';
+import { User } from '../types';
 
-const currentUserSelector = selector({
-  key: 'current-user-selector',
-  get: async ({ get }) => {
+export const currentUserState = atom<User | null>({
+  key: 'current-user',
+  default: (async () => {
     try {
       const { me } = await ApiClient.getMe();
       return me;
     } catch (err: unknown) {
       return null;
     }
-  },
-});
-
-export const currentUserState = atom({
-  key: 'current-user',
-  default: currentUserSelector,
+  })(),
 });

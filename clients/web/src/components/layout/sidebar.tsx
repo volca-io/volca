@@ -27,7 +27,7 @@ import {
 import { MdHomeFilled, MdSettings, MdMenu, MdKeyboardArrowDown, MdGroups } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { useRecoilValue } from 'recoil';
-import { selectedProjectState, currentUserState } from '../../state';
+import { selectedProjectSelector, currentUserState } from '../../state';
 import { MdOutlineSync } from 'react-icons/md';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
@@ -41,11 +41,11 @@ interface LinkItemProps {
   icon: IconType;
 }
 
-export const Sidebar = ({ hidden = false, mt = '0' }: { hidden: boolean; mt: string }): JSX.Element => {
+export const Sidebar = ({ hidden = false }: { hidden: boolean }): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      {!hidden && <SidebarContent onClose={() => onClose} mt={mt} display={{ base: 'none', md: 'block' }} />}
+      {!hidden && <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'flex' }} />}
       <Drawer
         autoFocus={false}
         isOpen={isOpen}
@@ -56,7 +56,7 @@ export const Sidebar = ({ hidden = false, mt = '0' }: { hidden: boolean; mt: str
         size="full"
       >
         <DrawerContent>
-          <SidebarContent mt={mt} onClose={onClose} />
+          <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
       <MobileNav onOpen={onOpen} full={hidden} />
@@ -75,7 +75,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const selectedProject = useRecoilValue(selectedProjectState);
+  const selectedProject = useRecoilValue(selectedProjectSelector);
   const navigate = useNavigate();
 
   const LinkItems: Array<LinkItemProps> = [
@@ -97,18 +97,26 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   ];
 
   return (
-    <Box
+    <Flex
       transition="3s ease"
       bg={useColorModeValue('white', 'gray.900')}
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
+      flexDirection="column"
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Logo />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
+
+      {LinkItems.map((link) => (
+        <NavItem onClick={link.onClick} key={link.name} icon={link.icon}>
+          {link.name}
+        </NavItem>
+      ))}
+      <Flex flexGrow={1} p={10} />
       <Box px={4} w="100%">
         <Button
           onClick={() => navigate('/')}
@@ -122,12 +130,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {selectedProject?.name || 'No Project'}
         </Button>
       </Box>
-      {LinkItems.map((link) => (
-        <NavItem onClick={link.onClick} key={link.name} icon={link.icon}>
-          {link.name}
-        </NavItem>
-      ))}
-    </Box>
+    </Flex>
   );
 };
 
@@ -218,7 +221,7 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
                 </Box>
               </HStack>
             </MenuButton>
-            <MenuList bg={useColorModeValue('white', 'gray.900')}>
+            <MenuList >
               <MenuItem onClick={() => navigate('/')}>Projects</MenuItem>
               <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
               <MenuDivider />

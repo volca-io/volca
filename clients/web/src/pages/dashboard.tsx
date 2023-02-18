@@ -1,4 +1,4 @@
-import { Text, SimpleGrid } from '@chakra-ui/react';
+import { Text, SimpleGrid, VStack } from '@chakra-ui/react';
 import { MdDashboard } from 'react-icons/md';
 import { useRecoilValue } from 'recoil';
 
@@ -40,15 +40,17 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <AuthenticatedLayout>
-      <SoftCard w="100%">
-        <PageHeading title="Dashboard" icon={MdDashboard} />
-        <Text mt={6}>{`Welcome, ${user?.first_name} 👋`}</Text>
-      </SoftCard>
-      <SimpleGrid pt={2} minChildWidth="200px" width="100%" spacingX="40px" spacingY="20px">
-        {stats.map((stat) => (
-          <StatCard {...stat} />
-        ))}
-      </SimpleGrid>
+      <VStack spacing={6} align="flex-start">
+        <SoftCard w="100%">
+          <PageHeading title="Dashboard" icon={MdDashboard} />
+          <Text mt={6}>{`Welcome, ${user?.first_name} 👋`}</Text>
+        </SoftCard>
+        <SimpleGrid pt={2} minChildWidth="200px" width="100%" spacingX="40px" spacingY="20px">
+          {stats.map((stat, index) => (
+            <StatCard key={`card-${index}`} {...stat} />
+          ))}
+        </SimpleGrid>
+      </VStack>
     </AuthenticatedLayout>
   );
 };

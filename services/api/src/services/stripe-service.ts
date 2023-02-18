@@ -2,6 +2,7 @@ import { injectable } from 'tsyringe';
 import Stripe from 'stripe';
 import { User } from '../entities';
 import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
+import { UserService } from './user-service';
 
 type CreateStripeSessionParams = {
   user: User;
@@ -30,7 +31,7 @@ type CreateCardParams = {
 export class StripeService {
   private stripe: Stripe;
 
-  constructor(private environment: EnvironmentUtils) {
+  constructor(private environment: EnvironmentUtils, private userService: UserService) {
     this.stripe = new Stripe(this.environment.getOrFail(EnvironmentVariable.STRIPE_KEY), {
       apiVersion: '2020-08-27',
     });
@@ -40,10 +41,11 @@ export class StripeService {
     const getStripeCustomerId = async () => {
       if (!user.stripeId) {
         const { id: stripeId } = await this.stripe.customers.create({ email: user.email });
-        await User.query().where({ id: user.id }).update({ stripeId });
+        this.userService.update(user.id, { stripeId });
         return stripeId;
       }
-      return user?.stripeId;
+
+      return user.stripeId;
     };
 
     const customer = await getStripeCustomerId();
@@ -55,7 +57,7 @@ export class StripeService {
 
     const session = await this.stripe.checkout.sessions.create({
       success_url: appDomain,
-      cancel_url: `${appDomain}/subscribe?status=warning`,
+      cancel_url: `${appDomain}/onboarding?status=warning`,
       customer,
       mode: 'subscription',
       line_items: [
@@ -80,6 +82,12 @@ export class StripeService {
       id: session.id,
       url: session.url || '',
     };
+
+    // Set user as subscribed in local environment since we can't receive the webhook from stripe.
+    if (this.environment.getOrFail(EnvironmentVariable.STAGE) === 'local') {
+      this.userService.setSubscribed({ userId: user.id, hasActiveSubscription: true });
+    }
+
     return stripeSession;
   }
 

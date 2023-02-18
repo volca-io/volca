@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, useColorModeValue } from '@chakra-ui/react';
+import { Card, useColorModeValue } from '@chakra-ui/react';
 
 export const SoftCard = ({
   children,
@@ -14,7 +14,7 @@ export const SoftCard = ({
   const backgroundHover = useColorModeValue('gray.100', 'gray.800');
 
   return (
-    <Box
+    <Card
       {...rest}
       onClick={onClick}
       _hover={onClick ? { background: backgroundHover } : {}}
@@ -27,6 +27,6 @@ export const SoftCard = ({
       borderRadius="lg"
     >
       {children}
-    </Box>
+    </Card>
   );
 };

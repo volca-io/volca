@@ -30,7 +30,7 @@ export const InactiveProjectDialog = ({
   const navigate = useNavigate();
 
   const onSubscribe = () => {
-    navigate('/subscribe');
+    navigate('/onboarding');
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, SimpleGrid } from '@chakra-ui/react';
+import { Flex, SimpleGrid, VStack } from '@chakra-ui/react';
 import { MdGroups } from 'react-icons/md';
 import { useRecoilValue } from 'recoil';
 
@@ -9,12 +9,12 @@ import { User } from '../types';
 import { InviteProjectUser } from '../components/project-users/InviteProjectUser';
 import { SoftCard } from '../components/generic/SoftCard';
 import { PageHeading } from '../components/generic/PageHeading';
-import { selectedProjectState } from '../state';
+import { selectedProjectSelector } from '../state';
 import { useProjectUserActions } from '../hooks/project-user-actions';
 import { AlertBox, AlertBoxProps } from '../components/generic/AlertBox';
 
 export const ProjectUsersPage: React.FC = () => {
-  const project = useRecoilValue(selectedProjectState);
+  const project = useRecoilValue(selectedProjectSelector);
   const [inviteAlert, setInviteAlert] = useState<AlertBoxProps | null>();
   const [users, setUsers] = useState<User[]>([]);
   const { getProjectUsers, createProjectInvitation, deleteProjectUser } = useProjectUserActions();
@@ -45,25 +45,27 @@ export const ProjectUsersPage: React.FC = () => {
 
   return (
     <AuthenticatedLayout>
-      <PageHeading title="Users" icon={MdGroups} />
-      <SimpleGrid pt={2} columns={[1]} width="100%" spacingY="20px">
-        <SoftCard>
-          {inviteAlert && <AlertBox {...inviteAlert} />}
-          <Flex alignItems="center" justifyContent="space-between">
-            <InviteProjectUser onSubmit={onInvite} />
-          </Flex>
-          {users && (
-            <ProjectUserList
-              project={project}
-              users={users}
-              deleteUser={async (projectId: string, userId: string) => {
-                await deleteProjectUser(projectId, userId);
-                setUsers(users.filter((u) => u.id !== userId));
-              }}
-            />
-          )}
-        </SoftCard>
-      </SimpleGrid>
+      <VStack spacing={6} align="flex-start">
+        <PageHeading title="Users" icon={MdGroups} />
+        <SimpleGrid pt={2} columns={[1]} width="100%" spacingY="20px">
+          <SoftCard>
+            {inviteAlert && <AlertBox {...inviteAlert} />}
+            <Flex alignItems="center" justifyContent="space-between">
+              <InviteProjectUser onSubmit={onInvite} />
+            </Flex>
+            {users && (
+              <ProjectUserList
+                project={project}
+                users={users}
+                deleteUser={async (projectId: string, userId: string) => {
+                  await deleteProjectUser(projectId, userId);
+                  setUsers(users.filter((u) => u.id !== userId));
+                }}
+              />
+            )}
+          </SoftCard>
+        </SimpleGrid>
+      </VStack>
     </AuthenticatedLayout>
   );
 };

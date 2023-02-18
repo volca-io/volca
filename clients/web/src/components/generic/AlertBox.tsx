@@ -1,14 +1,14 @@
-import { Alert, AlertTitle, AlertDescription, AlertIcon, Box, CloseButton } from '@chakra-ui/react';
+import { Alert, AlertTitle, AlertDescription, AlertIcon, Box, CloseButton, AlertProps } from '@chakra-ui/react';
 
-export type AlertBoxProps = {
+export type AlertBoxProps = AlertProps & {
   status: 'info' | 'warning' | 'success' | 'error' | 'loading';
   title: string;
   description: string | React.ReactNode;
   onClose?: () => void;
 };
 
-export const AlertBox: React.FC<AlertBoxProps> = ({ status, title, description, onClose }) => (
-  <Alert status={status} mb={5}>
+export const AlertBox: React.FC<AlertBoxProps> = ({ status, title, description, onClose, ...rest }) => (
+  <Alert status={status} mb={5} {...rest}>
     <AlertIcon />
     <Box>
       <AlertTitle>{title}</AlertTitle>

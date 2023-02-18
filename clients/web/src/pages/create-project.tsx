@@ -1,11 +1,8 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import { Input, Button, Text, Box } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
 
 import { AuthenticatedLayout } from '../layouts';
-import { currentUserState } from '../state';
 import { MdAdd, MdChevronRight } from 'react-icons/md';
 import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
@@ -21,21 +18,10 @@ export const CreateProjectPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
-  const navigate = useNavigate();
-
-  const user = useRecoilValue(currentUserState);
-
   const { createProject } = useProjectActions();
-
-  useEffect(() => {
-    if (!user?.has_active_subscription) {
-      navigate('/subscribe');
-    }
-  }, [user, navigate]);
 
   const onSubmit = async ({ name }: { name: string }) => {
     await createProject({ name });
-    navigate('/');
   };
 
   return (

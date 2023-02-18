@@ -59,4 +59,21 @@ export class UserService {
   public async update(id: string, properties: Omit<Partial<User>, 'id'>): Promise<User | undefined> {
     return User.query().findOne({ id }).update(properties).returning('*').first();
   }
+
+  public async setSubscribed({ userId, hasActiveSubscription }: { userId: string; hasActiveSubscription: boolean }) {
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new ServiceError({
+        name: ErrorNames.USER_DOES_NOT_EXIST,
+        message: 'The user does not exist',
+        statusCode: StatusCodes.EXPECTATION_FAILED,
+      });
+    }
+
+    return this.update(user.id, {
+      hasActiveSubscription,
+      ...(hasActiveSubscription ? { freeTrialActivated: true } : {}),
+    });
+  }
 }

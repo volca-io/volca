@@ -22,6 +22,7 @@ import { ProjectRoute } from './routing/ProjectRoute';
 import { ResetPasswordPage } from './pages/reset-password';
 import { VerifyResetPasswordPage } from './pages/verify-reset-password';
 import { VerifyUserPage } from './pages/verify-user';
+import { SubscriptionRoute } from './routing/SubscriptionRoute';
 
 export const App = () => (
   <ChakraProvider theme={theme}>
@@ -33,47 +34,41 @@ export const App = () => (
             <Route
               index
               element={
-                <AuthenticatedRoute>
+                <SubscriptionRoute>
                   <ProjectListPage />
-                </AuthenticatedRoute>
+                </SubscriptionRoute>
               }
             />
             <Route
               path="/projects/create"
               element={
-                <AuthenticatedRoute>
+                <SubscriptionRoute>
                   <CreateProjectPage />
-                </AuthenticatedRoute>
+                </SubscriptionRoute>
               }
             />
             <Route
               path="/projects/:id/dashboard"
               element={
-                <AuthenticatedRoute>
-                  <ProjectRoute>
-                    <DashboardPage />
-                  </ProjectRoute>
-                </AuthenticatedRoute>
+                <ProjectRoute>
+                  <DashboardPage />
+                </ProjectRoute>
               }
             />
             <Route
               path="/projects/:id/settings"
               element={
-                <AuthenticatedRoute>
-                  <ProjectRoute>
-                    <ProjectSettingsPage />
-                  </ProjectRoute>
-                </AuthenticatedRoute>
+                <ProjectRoute>
+                  <ProjectSettingsPage />
+                </ProjectRoute>
               }
             ></Route>
             <Route
               path="/projects/:id/users"
               element={
-                <AuthenticatedRoute>
-                  <ProjectRoute>
-                    <ProjectUsersPage />
-                  </ProjectRoute>
-                </AuthenticatedRoute>
+                <ProjectRoute>
+                  <ProjectUsersPage />
+                </ProjectRoute>
               }
             ></Route>
             <Route
@@ -85,7 +80,7 @@ export const App = () => (
               }
             ></Route>
             <Route
-              path="/subscribe"
+              path="/onboarding"
               element={
                 <AuthenticatedRoute>
                   <SubscribePage />

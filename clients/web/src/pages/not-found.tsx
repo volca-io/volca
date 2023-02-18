@@ -3,7 +3,7 @@ import { DefaultLayout } from '../layouts';
 
 export const NotFoundPage = () => (
   <DefaultLayout>
-    <Flex w="100%" alignItems="center" justifyContent="center">
+    <Flex w="100%" h="100%" alignItems="center" justifyContent="center">
       <Heading>404 - Page not found</Heading>
     </Flex>
   </DefaultLayout>

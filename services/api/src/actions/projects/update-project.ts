@@ -3,9 +3,11 @@ import { CustomContext } from '../../types';
 import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
 import { ProjectService } from '../../services';
+import { ServiceError } from '../../errors/service-error';
+import { ErrorNames } from '../../constants';
+import { StatusCodes } from 'http-status-codes';
 
 export const schema: Schema = joi.object({
-  id: joi.string().required(),
   name: joi.string().required(),
   admin_id: joi.string().optional(),
 });
@@ -17,7 +19,15 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const { projectId: id } = ctx.params;
 
   const oldProject = await projectService.get(id);
-  const project = await projectService.update({ ...oldProject, id, adminId, name });
+  if (!oldProject) {
+    throw new ServiceError({
+      name: ErrorNames.PROJECT_DOES_NOT_EXIST,
+      message: 'Could not find a project to update',
+      statusCode: StatusCodes.NOT_FOUND,
+    });
+  }
+
+  const project = await projectService.update({ ...oldProject, adminId, name });
 
   return {
     body: {

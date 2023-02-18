@@ -1,11 +1,11 @@
 import { Text, Heading, Icon, Badge, Box, SimpleGrid } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { MdAdd, MdGroup, MdWork } from 'react-icons/md';
 
 import { AuthenticatedLayout } from '../layouts';
-import { selectedProjectState, projectsState, currentUserState } from '../state';
+import { selectedProjectSelector, currentUserState, projectsState } from '../state';
 import { Project } from '../types';
 import { InactiveProjectDialog } from '../components/projects/InactiveProjectDialog';
 import { PageHeading } from '../components/generic/PageHeading';
@@ -19,9 +19,15 @@ const cardStyle = {
 export const ProjectListPage: React.FC = () => {
   const navigate = useNavigate();
   const [inactiveProjectId, setInactiveProjectId] = useState<string | null>(null);
-  const setSelectedProject = useSetRecoilState(selectedProjectState);
+  const setSelectedProject = useSetRecoilState(selectedProjectSelector);
   const projects = useRecoilValue(projectsState);
   const user = useRecoilValue(currentUserState);
+
+  useEffect(() => {
+    if (projects.length === 0) {
+      navigate('/projects/create');
+    }
+  }, [projects, navigate]);
 
   const onSelectProject = (project: Project) => {
     setSelectedProject(project);
@@ -62,6 +68,7 @@ export const ProjectListPage: React.FC = () => {
       <PageHeading title="Projects" icon={MdWork} />
       <Box mt={8} />
       <SimpleGrid minChildWidth="200px" width="100%" spacingX="40px" spacingY="20px">
+        {user && projects && projects.map((project) => <ProjectCard key={project.id} project={project} />)}
         <SoftCard
           onClick={() => navigate('/projects/create')}
           style={{
@@ -77,7 +84,6 @@ export const ProjectListPage: React.FC = () => {
             Create Project
           </Heading>
         </SoftCard>
-        {user && projects && projects.map((project) => <ProjectCard project={project} />)}
       </SimpleGrid>
     </AuthenticatedLayout>
   );

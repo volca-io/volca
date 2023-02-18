@@ -10,7 +10,7 @@ import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
 import { DangerButton } from '../components/generic/DangerButton';
 import { useProjectActions } from '../hooks/project-actions';
-import { selectedProjectState } from '../state';
+import { selectedProjectSelector } from '../state';
 import { useRecoilValue } from 'recoil';
 
 type FormValues = {
@@ -23,7 +23,7 @@ export const ProjectSettingsPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
-  const selectedProject = useRecoilValue(selectedProjectState);
+  const selectedProject = useRecoilValue(selectedProjectSelector);
   const [project] = useState<Project | null>(selectedProject);
 
   const { updateProject, deleteProject } = useProjectActions();
