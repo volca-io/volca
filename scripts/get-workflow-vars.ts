@@ -1,7 +1,7 @@
 #!/usr/bin/env -S npx tsx
 import { program } from 'commander';
-import { Environment } from '../types/volca';
-import { config } from '../volca.config';
+import { Environment } from '../config/types';
+import { config } from '../app.config';
 
 program.requiredOption('-e, --environment <environment>');
 program.parse();

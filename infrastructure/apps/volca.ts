@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { App, Tags } from 'aws-cdk-lib';
+import { App, Tags, SecretValue } from 'aws-cdk-lib';
 import { IHostedZone } from 'aws-cdk-lib/aws-route53';
-import { Environment, EnvironmentConfig } from '../../types/volca';
-import { config } from '../../volca.config';
+import { Environment } from '../../config/types';
+import { config } from '../../app.config';
 import { AccountBootstrapStack } from '../stacks/account-bootstrap-stack';
 import { ApiStack } from '../stacks/api-stack';
 import { DevopsStack } from '../stacks/devops-stack';
@@ -13,15 +13,17 @@ import { WebappStack } from '../stacks/webapp-stack';
 const app = new App();
 
 const stage = app.node.tryGetContext('stage') as Environment;
+const environmentConfig = config.environments[stage];
 
-if (!config.environments[stage] || !config.environments[stage].aws) {
+if (!environmentConfig.deploymentConfig) {
   throw new Error(
-    `Failed to read environment configuration from "volca.config.ts" for stage ${stage}. The environment does not exist or is not deployable.`
+    `Failed to read environment configuration from "app.config.ts" for stage ${stage}. The environment does not exist or is not deployable.`
   );
 }
 
-const { aws, domain } = config.environments[stage] as EnvironmentConfig;
-const { name, github, fromEmail } = config;
+const { aws, domain } = environmentConfig.deploymentConfig;
+const { name, github } = config;
+const { FROM_EMAIL: fromEmail, DB_USERNAME: dbUsername } = environmentConfig.environmentVariables;
 
 const accountBootstrapStack = new AccountBootstrapStack(app, `${name}-account-bootstrap-stack`, {
   env: aws,
@@ -60,6 +62,8 @@ const apiStack = new ApiStack(app, `${name}-${stage}-api-stack`, {
   vpc: vpcStack.vpc,
   hostedZone,
   publicDatabase: aws.publicDatabase,
+  dbUsername,
+  dbPassword: SecretValue.ssmSecure(`/${stage}/DB_PASSWORD`)
 });
 
 Tags.of(apiStack).add('service', name);

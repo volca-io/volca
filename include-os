@@ -7,9 +7,8 @@
 infrastructure
 infrastructure/apps
 infrastructure/stacks
-types
+config
 services/api
-services/api/env/.env.test
 services/api/src
 services/api/scripts
 services/api/.jest

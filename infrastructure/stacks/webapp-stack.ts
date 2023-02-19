@@ -1,5 +1,6 @@
 import { Stack, StackProps, CfnOutput, RemovalPolicy } from 'aws-cdk-lib';
 import { Bucket, BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import {
   OriginAccessIdentity,
   CloudFrontWebDistribution,
@@ -89,8 +90,9 @@ export class WebappStack extends Stack {
 
     new CfnOutput(this, 'WebappHostingBucketName', { value: this.bucket.bucketName });
     new CfnOutput(this, 'CloudFrontID', { value: distribution.distributionId });
-    new CfnOutput(this, 'AppDomain', {
-      value: props.hostedZone ? `app.${props.hostedZone.zoneName}` : distribution.distributionDomainName,
+    new StringParameter(this, 'DbHost', {
+      parameterName: `/${props.stage}/APP_DOMAIN`,
+      stringValue: props.hostedZone ? `app.${props.hostedZone.zoneName}` : distribution.distributionDomainName,
     });
 
     this.distribution = distribution;

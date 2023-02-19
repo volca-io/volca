@@ -9,4 +9,6 @@ parserOptions:
   sourceType: module
 plugins:
   - '@typescript-eslint'
-rules: {}
+rules: {
+  'no-template-curly-in-string': 'off'
+}

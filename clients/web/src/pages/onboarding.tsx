@@ -80,7 +80,7 @@ export const SubscribePage: React.FC = () => {
   return (
     <AuthenticatedLayout sidebar={false}>
       <VStack spacing={2}>
-        {process.env.REACT_APP_STRIPE_TEST_MODE === 'true' && (
+        {process.env.REACT_APP_STRIPE_TEST_MODE === '1' && (
           <Alert status="info">
             <AlertIcon />
             <AlertTitle>Test payments enabled</AlertTitle>
@@ -102,7 +102,9 @@ export const SubscribePage: React.FC = () => {
       <VStack spacing={8} align="flex-start" mt={8}>
         <PageHeading
           title={
-            !user?.free_trial_activated ? `Welcome to Volca${user ? `, ${user.first_name}` : ''}!` : `Welcome back${user ? `, ${user.first_name}` : ''}!`
+            !user?.free_trial_activated
+              ? `Welcome to Volca${user ? `, ${user.first_name}` : ''}!`
+              : `Welcome back${user ? `, ${user.first_name}` : ''}!`
           }
           size="xl"
         />

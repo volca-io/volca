@@ -51,7 +51,7 @@ export class StripeService {
     const customer = await getStripeCustomerId();
     const appDomain = this.environment.getWebappDomain();
 
-    if (this.environment.get(EnvironmentVariable.TEST_CARD_ENABLED) === 'true') {
+    if (this.environment.get(EnvironmentVariable.TEST_CARD_ENABLED) === '1') {
       await this.createTestCard({ user, customer });
     }
 
@@ -84,7 +84,7 @@ export class StripeService {
     };
 
     // Set user as subscribed in local environment since we can't receive the webhook from stripe.
-    if (this.environment.getOrFail(EnvironmentVariable.STAGE) === 'local') {
+    if (this.environment.getOrFail(EnvironmentVariable.ENVIRONMENT) === 'local') {
       this.userService.setSubscribed({ userId: user.id, hasActiveSubscription: true });
     }
 

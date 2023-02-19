@@ -9,15 +9,11 @@ const run = async () => {
     await $`wait-on tcp:5432`;
   });
 
-  await spinner(
-    'Migrating databse...',
-    () => $`env-cmd -f ./env/.env.test sls invoke local -f migrate --data '{"type":"latest"}'`
-  );
+  await spinner('Migrating databse...', () => $`serverless invoke local -f migrate --data '{"type":"latest"}'`);
 
-  await spinner('Seeding database...', () => $`env-cmd -f ./env/.env.test serverless invoke local -f seed`);
+  await spinner('Seeding database...', () => $`serverless invoke local -f seed`);
 
-  const res =
-    await $`NODE_NO_WARNINGS=1 NODE_OPTIONS=--experimental-vm-modules env-cmd -f ./env/.env.test jest`;
+  const res = await $`NODE_NO_WARNINGS=1 NODE_OPTIONS=--experimental-vm-modules jest`;
 
   await spinner('Stopping database...', () => $`docker-compose down`);
 

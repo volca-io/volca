@@ -8,7 +8,7 @@ import { Logger } from '../utils/logger';
 export type SendVerificationEmailProperties = {
   email: string;
   firstName: string;
-  token: string
+  token: string;
 };
 
 export type SendPasswordResetEmailProperties = {
@@ -51,7 +51,7 @@ export class CommunicationsService {
   }
 
   public async sendVerificationEmail({ email, firstName, token }: SendVerificationEmailProperties): Promise<void> {
-    const protocol = this.environment.get(EnvironmentVariable.STAGE) === 'local' ? 'http://' : 'https://';
+    const protocol = this.environment.get(EnvironmentVariable.ENVIRONMENT) === 'local' ? 'http://' : 'https://';
     const appDomain = this.environment.getOrFail(EnvironmentVariable.APP_DOMAIN);
     const url = new URL(`/verify`, protocol + appDomain);
     url.searchParams.append('verify-token', token);
@@ -64,7 +64,7 @@ export class CommunicationsService {
   }
 
   public async sendPasswordResetEmail({ email, token }: SendPasswordResetEmailProperties): Promise<void> {
-    const protocol = this.environment.get(EnvironmentVariable.STAGE) === 'local' ? 'http://' : 'https://';
+    const protocol = this.environment.get(EnvironmentVariable.ENVIRONMENT) === 'local' ? 'http://' : 'https://';
     const appDomain = this.environment.getOrFail(EnvironmentVariable.APP_DOMAIN);
 
     const url = new URL(`reset-password/verify`, protocol + appDomain);

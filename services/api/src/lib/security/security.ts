@@ -1,4 +1,5 @@
 import { injectable } from 'tsyringe';
+
 import bcrypt from 'bcryptjs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';

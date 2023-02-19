@@ -3,8 +3,9 @@ import 'zx/globals';
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 import { program } from 'commander';
 
-import { config } from '../volca.config';
-import { Environment } from '../types/volca';
+import { config } from '../app.config';
+import { Environment } from '../config/types';
+import { createSsmParameters } from './create-ssm-parameters';
 
 const isBootstrapped = async (region: string): Promise<boolean> => {
   const client = new CloudFormationClient({ region });
@@ -24,12 +25,12 @@ const isBootstrapped = async (region: string): Promise<boolean> => {
 const run = async (stage: string, stacks: string) => {
   const env = config.environments[stage as Environment];
 
-  if (!env.aws) {
-    throw new Error(`[ Error ] Could not find a configured stage in volca.config.ts for stage ${stage}`);
+  if (!env.deploymentConfig) {
+    throw new Error(`[ Error ] Could not find a configured environment in app.config.ts for environment ${stage}`);
   }
 
-  console.log(`[ INFO ] Checking if AWS CDK is bootstrapped in region ${env.aws.region}...`);
-  const bootstrapped = await isBootstrapped(env.aws.region);
+  console.log(`[ INFO ] Checking if AWS CDK is bootstrapped in region ${env.deploymentConfig.aws.region}...`);
+  const bootstrapped = await isBootstrapped(env.deploymentConfig.aws.region);
   console.log(`[ INFO ] AWS CDK is ${bootstrapped ? '' : 'not '} bootstrapped`);
 
   if (!bootstrapped) {
@@ -40,6 +41,8 @@ const run = async (stage: string, stacks: string) => {
       console.error(`[ Error ] ${error}`);
       process.exit(1);
     }
+    console.log(`[ INFO ] Creating SSM parameters...`);
+    await createSsmParameters();
   }
 
   console.log(`[ INFO ] Deploying...`);

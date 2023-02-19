@@ -2,10 +2,10 @@ import { Config } from './config/types';
 import { DEFAULT_ENVIRONMENT_VARIABLES, getEnvVar } from './config/utils';
 
 export const config: Config = {
-  name: 'my-app',
+  name: '<%= name %>',
   github: {
-    organization: 'my-github-organization',
-    repository: 'my-github-repository',
+    organization: '<%= githubOrg %>',
+    repository: '<%= githubRepo %>',
   },
   environments: {
     local: {
@@ -21,26 +21,28 @@ export const config: Config = {
         STRIPE_KEY: getEnvVar('STRIPE_KEY', 'stripe-key'),
         STRIPE_PRICE_ID: getEnvVar('STRIPE_PRICE_ID', 'stripe-price-id'),
         STRIPE_WEBHOOK_SECRET: getEnvVar('STRIPE_WEBHOOK_SECRET', 'stripe-webhook-secret'),
+        TEST_CARD_ENABLED: getEnvVar('TEST_CARD_ENABLED', '1'),
       },
     },
     staging: {
       deploymentConfig: {
-        domain: 'staging.example.com',
+        domain: '<%= environments.staging.domain %>',
         aws: {
-          account: '000000000000',
-          region: 'us-east-1',
-          publicDatabase: true,
+          account: '<%= environments.staging.awsAccount %>',
+          region: '<%= environments.staging.awsRegion %>',
+          publicDatabase: <%= environments.staging.publicDatabase %>,
         },
       },
       environmentVariables: {
         ...DEFAULT_ENVIRONMENT_VARIABLES,
         APP_DOMAIN: '${ssm:/staging/APP_DOMAIN}',
         DB_PASSWORD: '${ssm:/staging/DB_PASSWORD}',
-        DB_USERNAME: 'app',
+        DB_USERNAME: 'postgres',
+        DB_HOST: '{ssm:/staging/DB_HOST}',
         ENVIRONMENT: 'staging',
-        FROM_EMAIL: 'noreply@example.com',
+        FROM_EMAIL: '<%= fromEmail %>',
         LOG_LEVEL: 'info',
-        REGION: 'us-east-1',
+        REGION: '<%= environments.staging.awsRegion %>',
         SIGNING_KEY: '${ssm:/staging/SIGNING_KEY}',
         STRIPE_KEY: '${ssm:/staging/STRIPE_KEY}',
         STRIPE_PRICE_ID: '',
@@ -49,26 +51,27 @@ export const config: Config = {
     },
     production: {
       deploymentConfig: {
-        domain: 'production.example.com',
+        domain: '<%= environments.production.domain %>',
         aws: {
-          account: '000000000000',
-          region: 'us-east-1',
-          publicDatabase: true,
+          account: '<%= environments.production.awsAccount %>',
+          region: '<%= environments.production.awsRegion %>',
+          publicDatabase: <%= environments.production.publicDatabase %>,
         },
       },
       environmentVariables: {
         ...DEFAULT_ENVIRONMENT_VARIABLES,
         APP_DOMAIN: '${ssm:/production/APP_DOMAIN}',
         DB_PASSWORD: '${ssm:/production/DB_PASSWORD}',
-        DB_USERNAME: 'app',
+        DB_USERNAME: 'postgres',
+        DB_HOST: '{ssm:/production/DB_HOST}',
         ENVIRONMENT: 'production',
-        FROM_EMAIL: 'noreply@example.com',
+        FROM_EMAIL: '<%= fromEmail %>',
         LOG_LEVEL: 'info',
-        REGION: 'us-east-1',
+        REGION: '<%= environments.production.awsRegion %>',
         SIGNING_KEY: '${ssm:/production/SIGNING_KEY}',
         STRIPE_KEY: '${ssm:/production/STRIPE_KEY}',
         STRIPE_PRICE_ID: '',
-        STRIPE_WEBHOOK_SECRET: '${ssm:/production/STRIPE_WEBHOOK_SECRET}',
+        STRIPE_WEBHOOK_SECRET: '${ssm:/staging/STRIPE_WEBHOOK_SECRET}',
       },
     },
   },

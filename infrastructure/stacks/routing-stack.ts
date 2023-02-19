@@ -18,7 +18,7 @@ export class RoutingStack extends Stack {
     super(scope, id, props);
 
     if (!props.domain) {
-      throw new Error('Can not deploy routing stack without a domain. Please add a domain to volca.config.ts');
+      throw new Error('Can not deploy routing stack without a domain. Please add a domain to config.ts');
     }
 
     this.hostedZone = new HostedZone(this, 'HostedZone', { zoneName: props.domain });

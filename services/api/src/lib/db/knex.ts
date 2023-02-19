@@ -18,7 +18,7 @@ export const initialize = () => {
     connection: {
       host: environment.getOrFail(EnvironmentVariable.DB_HOST),
       port: 5432,
-      user: environment.getOrFail(EnvironmentVariable.DB_USER),
+      user: environment.getOrFail(EnvironmentVariable.DB_USERNAME),
       password: environment.getOrFail(EnvironmentVariable.DB_PASSWORD),
       database: 'postgres',
       pool: { min: 1, max: 1, idleTimeoutMillis: 1000 },

@@ -95,13 +95,13 @@ const run = async () => {
     }
   }
 
-  console.log('Generating Volca config...');
+  console.log('Generating config...');
 
-  const volcaConfigContent = await ejs.renderFile(path.join(__dirname, '../templates/volca.config.ejs'), {
+  const volcaConfigContent = await ejs.renderFile(path.join(__dirname, '../templates/config.ejs'), {
     ...defaultValues,
     ...defaultAnswers,
   });
-  fs.writeFileSync(path.join(__dirname, '../volca.config.ts'), volcaConfigContent);
+  fs.writeFileSync(path.join(__dirname, '../app.config.ts'), volcaConfigContent);
 
   console.log('Done!');
 
@@ -125,11 +125,11 @@ const run = async () => {
 
   console.log('Writing local config..');
 
-  const dotenvFileContent = await ejs.renderFile(path.join(__dirname, '../templates/.env.local.ejs'), {
+  const dotenvFileContent = await ejs.renderFile(path.join(__dirname, '../templates/.env.ejs'), {
     ...localEnvAnswers,
     fromEmail: defaultAnswers.fromEmail,
   });
-  fs.writeFileSync(path.join(__dirname, '../services/api/env/.env.local'), dotenvFileContent);
+  fs.writeFileSync(path.join(__dirname, '../.env'), dotenvFileContent);
 
   console.log('Done!');
 };

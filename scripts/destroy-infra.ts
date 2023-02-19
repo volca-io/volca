@@ -1,14 +1,14 @@
 #!/usr/bin/env -S npx tsx
 import { $ } from 'zx';
 import { program } from 'commander';
-import { config } from '../volca.config';
-import { Environment } from '../types/volca';
+import { config } from '../app.config';
+import { Environment } from '../config/types';
 
 const run = async (stage: string, stacks: string) => {
   const env = config.environments[stage as Environment];
 
   if (!env) {
-    console.log(`[ Error ] Could not find a configured stage in volca.config.ts for stage ${stage}`);
+    console.log(`[ Error ] Could not find a configured stage in app.config.ts for stage ${stage}`);
   }
 
   await $`cdk destroy -c stage=${stage} ${stacks}`;

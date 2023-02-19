@@ -119,10 +119,10 @@ export class AuthenticationService {
     expires.setSeconds(expires.getSeconds() + this.REFRESH_TOKEN_EXPIRATION_DURATION);
 
     return {
-      secure: this.environment.getOrFail(EnvironmentVariable.STAGE) !== 'local',
+      secure: this.environment.getOrFail(EnvironmentVariable.ENVIRONMENT) !== 'local',
       httpOnly: true,
       sameSite: 'lax',
-      domain: this.environment.getOrFail(EnvironmentVariable.STAGE) ? undefined : process.env.APP_DOMAIN,
+      domain: this.environment.getOrFail(EnvironmentVariable.ENVIRONMENT) ? undefined : process.env.APP_DOMAIN,
       expires,
     };
   }

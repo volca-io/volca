@@ -42,7 +42,7 @@ describe('POST /authn/reset-password/verify', () => {
     expect(res.status).toBe(401);
   });
 
-  it('returns 400 if password is to weak', async () => {
+  it('returns 400 if password is too weak', async () => {
     const res = await getRequest()
       .post('/authn/reset-password/verify')
       .send({ reset_token: generatedToken, password: 'password' });

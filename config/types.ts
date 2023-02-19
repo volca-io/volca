@@ -33,10 +33,34 @@ interface AwsConfig {
     | 'sa-east-1';
 }
 
+export enum EnvironmentVariable {
+  APP_DOMAIN = 'APP_DOMAIN',
+  DB_HOST = 'DB_HOST',
+  DB_PASSWORD = 'DB_PASSWORD',
+  DB_PORT = 'DB_PORT',
+  DB_USERNAME = 'DB_USERNAME',
+  ENVIRONMENT = 'ENVIRONMENT',
+  FROM_EMAIL = 'FROM_EMAIL',
+  IS_TEST = 'IS_TEST',
+  LOG_LEVEL = 'LOG_LEVEL',
+  LOGGING_ENABLED = 'LOGGING_ENABLED',
+  REGION = 'REGION',
+  SIGNING_KEY = 'SIGNING_KEY',
+  SKIP_TOKEN_VERIFICATION = 'SKIP_TOKEN_VERIFICATION',
+  STRIPE_KEY = 'STRIPE_KEY',
+  STRIPE_PRICE_ID = 'STRIPE_PRICE_ID',
+  STRIPE_WEBHOOK_SECRET = 'STRIPE_WEBHOOK_SECRET',
+  TEST_CARD_ENABLED = 'TEST_CARD_ENABLED',
+}
+
+export type EnvironmentVariables = Record<EnvironmentVariable, string>;
+
 export interface EnvironmentConfig {
-  aws: AwsConfig;
-  domain: string;
-  testCardEnabled?: boolean;
+  environmentVariables: EnvironmentVariables;
+  deploymentConfig?: {
+    aws: AwsConfig;
+    domain: string;
+  };
 }
 
 type GithubConfig = {
@@ -45,16 +69,17 @@ type GithubConfig = {
 };
 
 export enum Environment {
+  LOCAL = 'local',
   STAGING = 'staging',
   PRODUCTION = 'production',
 }
 
 export type Config = {
+  name: string;
+  github: GithubConfig;
   environments: {
+    local: EnvironmentConfig;
     staging: EnvironmentConfig;
     production: EnvironmentConfig;
   };
-  name: string;
-  fromEmail: string;
-  github: GithubConfig;
 };

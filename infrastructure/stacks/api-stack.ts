@@ -1,11 +1,6 @@
-import { Stack, StackProps, RemovalPolicy, CfnOutput } from 'aws-cdk-lib';
-import {
-  DatabaseInstanceEngine,
-  DatabaseInstance,
-  PostgresEngineVersion,
-  Credentials,
-  SubnetGroup,
-} from 'aws-cdk-lib/aws-rds';
+import { Stack, StackProps, RemovalPolicy, CfnOutput, SecretValue } from 'aws-cdk-lib';
+import { DatabaseInstanceEngine, DatabaseInstance, PostgresEngineVersion, SubnetGroup } from 'aws-cdk-lib/aws-rds';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import {
   IVpc,
   InstanceType,
@@ -30,13 +25,16 @@ import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 
 import { Effect, ManagedPolicy, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Environment } from '../../config/types';
 
 interface ApiStackProps extends StackProps {
   service: string;
-  stage: string;
+  stage: Environment;
   vpc: IVpc;
   hostedZone: IHostedZone | null;
   publicDatabase: boolean;
+  dbUsername: string;
+  dbPassword: SecretValue;
 }
 
 export class ApiStack extends Stack {
@@ -66,11 +64,7 @@ export class ApiStack extends Stack {
       vpc: props.vpc,
     });
 
-    apiSecurityGroup.addIngressRule(
-      Peer.anyIpv4(),
-      Port.allTcp(),
-      'All inbound'
-    )
+    apiSecurityGroup.addIngressRule(Peer.anyIpv4(), Port.allTcp(), 'All inbound');
 
     rdsSecurityGroup.addIngressRule(
       props.publicDatabase ? Peer.anyIpv4() : apiSecurityGroup,
@@ -78,12 +72,13 @@ export class ApiStack extends Stack {
       'Postgres database access'
     );
 
-    new DatabaseInstance(this, 'ApiDatabase', {
+    const database = new DatabaseInstance(this, 'ApiDatabase', {
       engine,
       vpc: props.vpc,
-      credentials: Credentials.fromGeneratedSecret('postgres', {
-        secretName: `${props.service}-${props.stage}-api-credentials`,
-      }),
+      credentials: {
+        username: props.dbUsername,
+        password: props.dbPassword,
+      },
       copyTagsToSnapshot: true,
       instanceType,
       subnetGroup,
@@ -189,6 +184,10 @@ export class ApiStack extends Stack {
       );
     }
 
+    new StringParameter(this, 'DbHost', {
+      parameterName: `/${props.stage}/DB_HOST`,
+      stringValue: database.dbInstanceEndpointAddress,
+    });
     new CfnOutput(this, 'LambdaExecutionRole', { value: lambdaExecutionRole.roleArn });
     new CfnOutput(this, 'ApiSecurityGroupOutput', { value: apiSecurityGroup.securityGroupId });
   }
