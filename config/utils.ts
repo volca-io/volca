@@ -18,4 +18,5 @@ export const DEFAULT_ENVIRONMENT_VARIABLES = {
   [EnvironmentVariable.SKIP_TOKEN_VERIFICATION]: '0',
   [EnvironmentVariable.TEST_CARD_ENABLED]: '0',
   [EnvironmentVariable.LOGGING_ENABLED]: '1',
+  [EnvironmentVariable.FREE_TRIAL_DAYS]: '7',
 } as const;

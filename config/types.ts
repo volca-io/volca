@@ -51,6 +51,7 @@ export enum EnvironmentVariable {
   STRIPE_PRICE_ID = 'STRIPE_PRICE_ID',
   STRIPE_WEBHOOK_SECRET = 'STRIPE_WEBHOOK_SECRET',
   TEST_CARD_ENABLED = 'TEST_CARD_ENABLED',
+  FREE_TRIAL_DAYS = 'FREE_TRIAL_DAYS',
 }
 
 export type EnvironmentVariables = Record<EnvironmentVariable, string>;

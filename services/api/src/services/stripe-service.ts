@@ -73,7 +73,7 @@ export class StripeService {
         ? {}
         : {
             subscription_data: {
-              trial_period_days: 7, // TODO: Make configurable
+              trial_period_days: parseInt(this.environment.getOrFail(EnvironmentVariable.FREE_TRIAL_DAYS)),
             },
           }),
     });
