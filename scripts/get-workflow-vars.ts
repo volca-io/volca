@@ -9,11 +9,11 @@ program.parse();
 const { environment } = program.opts();
 const env = config.environments[environment as Environment];
 
-if (!env || !env.aws) {
+if (!env || !env.deploymentConfig) {
   console.error(`Failed to read environment config for ${environment}`);
   process.exit(1);
 }
 
 console.log(`APPLICATION_NAME=${config.name}`);
-console.log(`AWS_ACCOUNT=${env.aws.account}`);
-console.log(`AWS_REGION=${env.aws.region}`);
+console.log(`AWS_ACCOUNT=${env.deploymentConfig.aws.account}`);
+console.log(`AWS_REGION=${env.deploymentConfig.aws.region}`);
