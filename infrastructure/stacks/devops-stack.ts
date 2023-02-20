@@ -279,10 +279,8 @@ export class DevopsStack extends Stack {
         new PolicyStatement({
           sid: 'ReadSecrets',
           effect: Effect.ALLOW,
-          actions: ['ssm:GetParameter'],
-          resources: [
-            `arn:aws:ssm:${props.env?.region}:${props.env?.account}:parameter/aws/reference/secretsmanager/${props.service}-${props.stage}-api-credentials`,
-          ],
+          actions: ['ssm:GetParameter', 'ssm:GetParameters'],
+          resources: [`arn:aws:ssm:${props.env?.region}:${props.env?.account}:parameter/${props.stage}/*`],
         }),
         new PolicyStatement({
           sid: 'ReadSecretsManager',
