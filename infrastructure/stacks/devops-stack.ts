@@ -300,6 +300,20 @@ export class DevopsStack extends Stack {
             },
           },
         }),
+        new PolicyStatement({
+          sid: 'Lambda',
+          effect: Effect.ALLOW,
+          actions: ['lambda:InvokeFunction'],
+          resources: [
+            `arn:aws:lambda:${props.env?.region}:${props.env?.account}:function:${props.service}-${props.stage}-migration`,
+          ],
+          conditions: {
+            StringEquals: {
+              'kms:CallerAccount': props.env?.account,
+              'kms:ViaService': `secretsmanager.${props.env?.region}.amazonaws.com`,
+            },
+          },
+        }),
       ],
     });
 
