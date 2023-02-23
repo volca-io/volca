@@ -128,7 +128,7 @@ jobs:
           name: volca-core
 
       - name: Unzip artifact
-        run: unzip ./bundle-os.zip
+        run: unzip ./bundle-customer.zip
 
       - name: Push to repository
         env:
@@ -136,11 +136,46 @@ jobs:
         run: |
           repo_url="https://github.com/volca-io/volca-core.git"
           date=$(date '+%Y-%m-%d')
-          git config --global user.name "okarlsson"
-          git config --global user.email "okarlsson@users.noreply.github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
           git init --initial-branch main
           git add --all
           git commit -m "Update $date"
           git status
           git remote add origin https://okarlsson:$GITHUB_PAT@github.com/volca-io/volca-core.git
           git push --set-upstream origin main --force
+
+  push-customer-repo:
+    name: push-customer-repo
+    runs-on: ubuntu-latest
+    needs: 
+      - test-bundle
+      - test-os-bundle
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: volca
+
+      - name: Clone repository
+        env:
+          GITHUB_PAT: ${{ secrets.OSKAR_VOLCA_PERSONAL_ACCESS_TOKEN }}
+        run: |
+          git clone https://okarlsson:$GITHUB_PAT@github.com/volca-io/volca.git
+
+      - name: Unzip artifact
+        run: unzip -o ./bundle-os.zip volca
+
+      - name: Push to repository
+        env:
+          GITHUB_PAT: ${{ secrets.OSKAR_VOLCA_PERSONAL_ACCESS_TOKEN }}
+        run: |
+          date=$(date '+%Y-%m-%d')
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add --all
+          git commit -m "Update $date"
+          git status
+          git push
