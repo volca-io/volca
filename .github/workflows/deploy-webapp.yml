@@ -29,7 +29,7 @@ jobs:
         run: |
           yarn build:${{ inputs.environment }}
       - name: Configure AWS credentials from ${{ inputs.environment }} account
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-github-actions-webapp-deployment-role
           aws-region: ${{ env.AWS_REGION }}
