@@ -1,0 +1,51 @@
+name: deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  ################################
+  ## Deploy to staging
+  ################################
+
+  deploy-api-staging:
+    permissions:
+      id-token: write
+      contents: read
+    name: deploy api staging
+    uses: ./.github/workflows/deploy-api.yml
+    with:
+      environment: staging
+
+  deploy-webapp-staging:
+    permissions:
+      id-token: write
+      contents: read
+    name: deploy webapp staging
+    uses: ./.github/workflows/deploy-webapp.yml
+    with:
+      environment: staging
+
+  ################################
+  ## Deploy to production
+  ################################
+
+  deploy-api-production:
+    permissions:
+      id-token: write
+      contents: read
+    name: deploy api production
+    needs: deploy-api-staging
+    uses: ./.github/workflows/deploy-api.yml
+    with:
+      environment: production
+
+  deploy-webapp-production:
+    permissions:
+      id-token: write
+      contents: read
+    name: deploy webapp production
+    needs: deploy-webapp-staging
+    uses: ./.github/workflows/deploy-webapp.yml
+    with:
+      environment: production

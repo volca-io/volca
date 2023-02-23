@@ -1,0 +1,19 @@
+name: tests
+on: [pull_request]
+jobs:
+  tests:
+    name: unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code.
+        uses: actions/checkout@v3.3.0
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Install Dependencies
+        run: yarn install --immutable
+      - name: Run tests
+        run: yarn test
