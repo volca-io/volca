@@ -33,9 +33,9 @@ jobs:
         id: stack-status
         working-directory: services/api
         run: |
-          SERVERLESS_INFO=$(STAGE=${{ inputs.environment }} ./node_modules/.bin/sls info)
+          SERVERLESS_INFO=$(STAGE=${{ inputs.environment }} ./node_modules/.bin/sls info || echo "DOES_NOT_EXIST") 
 
-          if [[ "$SERVERLESS_INFO" == *"does not exist"* ]]; then
+          if [[ "$SERVERLESS_INFO" == *"DOES_NOT_EXIST"* ]]; then
             echo "EXISTS=0" >> $GITHUB_OUTPUT
           else
             echo "EXISTS=1" >> $GITHUB_OUTPUT

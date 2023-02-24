@@ -36,12 +36,13 @@ const serverlessConfiguration: AWS = {
         ? {
             securityGroupIds: [`\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiSecurityGroupOutput}`],
             subnetIds: {
-              'Fn::Split': [', ', `\${cf:${config.name}-\${self:provider.stage}-vpc-stack.IsolatedSubnets}`],
+              'Fn::Split': [', ', `\${cf:${config.name}-\${self:provider.stage}-vpc-stack.PrivateSubnets}`],
             },
           }
         : undefined,
     stackName: `${config.name}-${environment}-api-service`,
     runtime: 'nodejs16.x',
+    versionFunctions: false,
     stage: environment,
     region: deploymentConfig ? deploymentConfig.aws.region : undefined,
     apiGateway: deploymentConfig

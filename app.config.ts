@@ -35,6 +35,7 @@ export const config: Config = {
       environmentVariables: {
         ...DEFAULT_ENVIRONMENT_VARIABLES,
         APP_DOMAIN: '${ssm:/staging/APP_DOMAIN}',
+        DB_HOST: '${ssm:/staging/DB_HOST}',
         DB_PASSWORD: '${ssm:/staging/DB_PASSWORD}',
         DB_USERNAME: 'app',
         ENVIRONMENT: 'staging',
@@ -59,6 +60,7 @@ export const config: Config = {
       environmentVariables: {
         ...DEFAULT_ENVIRONMENT_VARIABLES,
         APP_DOMAIN: '${ssm:/production/APP_DOMAIN}',
+        DB_HOST: '${ssm:/production/DB_HOST}',
         DB_PASSWORD: '${ssm:/production/DB_PASSWORD}',
         DB_USERNAME: 'app',
         ENVIRONMENT: 'production',
