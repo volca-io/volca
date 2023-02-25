@@ -185,7 +185,7 @@ export class ApiStack extends Stack {
     }
 
     new StringParameter(this, 'DbHost', {
-      parameterName: `/${props.stage}/DB_HOST`,
+      parameterName: `/${props.service}/${props.stage}/DB_HOST`,
       stringValue: database.dbInstanceEndpointAddress,
     });
     new CfnOutput(this, 'LambdaExecutionRole', { value: lambdaExecutionRole.roleArn });

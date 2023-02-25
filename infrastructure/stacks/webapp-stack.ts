@@ -91,7 +91,7 @@ export class WebappStack extends Stack {
     new CfnOutput(this, 'WebappHostingBucketName', { value: this.bucket.bucketName });
     new CfnOutput(this, 'CloudFrontID', { value: distribution.distributionId });
     new StringParameter(this, 'DbHost', {
-      parameterName: `/${props.stage}/APP_DOMAIN`,
+      parameterName: `/${props.service}/${props.stage}/APP_DOMAIN`,
       stringValue: props.hostedZone ? `app.${props.hostedZone.zoneName}` : distribution.distributionDomainName,
     });
 
