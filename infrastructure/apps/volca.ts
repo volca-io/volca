@@ -63,7 +63,7 @@ const apiStack = new ApiStack(app, `${name}-${stage}-api-stack`, {
   hostedZone,
   publicDatabase: aws.publicDatabase,
   dbUsername,
-  dbPassword: SecretValue.ssmSecure(`/${stage}/DB_PASSWORD`)
+  dbPassword: SecretValue.ssmSecure(`/${name}/${stage}/DB_PASSWORD`),
 });
 
 Tags.of(apiStack).add('service', name);

@@ -41,9 +41,9 @@ const run = async (stage: string, stacks: string) => {
       console.error(`[ Error ] ${error}`);
       process.exit(1);
     }
-    console.log(`[ INFO ] Creating SSM parameters...`);
-    await createSsmParameters();
   }
+
+  await createSsmParameters({ environment: stage });
 
   console.log(`[ INFO ] Deploying...`);
 
