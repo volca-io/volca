@@ -15,5 +15,5 @@ if (!env || !env.deploymentConfig) {
 }
 
 console.log(`APPLICATION_NAME=${config.name}`);
-console.log(`AWS_ACCOUNT=${env.deploymentConfig.aws.account}`);
-console.log(`AWS_REGION=${env.deploymentConfig.aws.region}`);
+console.log(`AWS_ACCOUNT=${config.aws.account}`);
+console.log(`AWS_REGION=${config.aws.region}`);

@@ -13,11 +13,13 @@ import { Construct } from 'constructs';
 import { CertificateValidation, DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { config } from '../../app.config';
+import { Environment } from '../../config/types';
 
 interface WebappStackProps extends StackProps {
-  service: string;
-  stage: string;
-  hostedZone: IHostedZone | null;
+  name: string;
+  environment: Environment;
+  hostedZone: IHostedZone;
 }
 
 export class WebappStack extends Stack {
@@ -27,6 +29,18 @@ export class WebappStack extends Stack {
   constructor(scope: Construct, id: string, props: WebappStackProps) {
     super(scope, id, props);
 
+    const { deploymentConfig } = config.environments[props.environment];
+    if (!deploymentConfig) {
+      throw new Error(
+        'Can not deploy an environment without a deployment config. Please add one to your environment in app.config.ts'
+      );
+    }
+
+    const { subdomain } = deploymentConfig;
+
+    const domainName = subdomain ? `app.${subdomain}.${props.hostedZone.zoneName}` : `app.${props.hostedZone.zoneName}`;
+
+    // Creates a new bucket that we will upload our React app to
     this.bucket = new Bucket(this, 'WebappHostingBucket', {
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
@@ -35,26 +49,28 @@ export class WebappStack extends Stack {
       autoDeleteObjects: true,
     });
 
+    // Creates an origin access identity so we can control access to the bucket
     const oai = new OriginAccessIdentity(this, 'WebappCloudFrontOriginAccessIdentity');
     this.bucket.grantRead(oai.grantPrincipal);
 
+    // Creates a new certificate for our domain name so we can add it to CloudFront
+    // and access the webapp with our own domain name
     let certificate: DnsValidatedCertificate | null = null;
-    if (props.hostedZone) {
-      certificate = new DnsValidatedCertificate(this, 'Certificate', {
-        domainName: props.hostedZone.zoneName,
-        subjectAlternativeNames: [`app.${props.hostedZone.zoneName}`, `www.app.${props.hostedZone.zoneName}`],
-        validation: CertificateValidation.fromDns(props.hostedZone),
-        region: 'us-east-1',
-        hostedZone: props.hostedZone,
-        cleanupRoute53Records: true,
-      });
-    }
+    certificate = new DnsValidatedCertificate(this, 'Certificate', {
+      domainName,
+      subjectAlternativeNames: [`www.${domainName}`],
+      validation: CertificateValidation.fromDns(props.hostedZone),
+      region: 'us-east-1',
+      hostedZone: props.hostedZone,
+      cleanupRoute53Records: true,
+    });
 
-    const distribution = new CloudFrontWebDistribution(this, 'WebappDistribution', {
+    // Creates a new CloudFront distribution that we will use to access our webapp
+    this.distribution = new CloudFrontWebDistribution(this, 'WebappDistribution', {
       viewerCertificate:
         props.hostedZone && certificate
           ? ViewerCertificate.fromAcmCertificate(certificate, {
-              aliases: [`app.${props.hostedZone.zoneName}`, `www.app.${props.hostedZone.zoneName}`],
+              aliases: [domainName, `www.${domainName}`],
               securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
               sslMethod: SSLMethod.SNI,
             })
@@ -78,23 +94,20 @@ export class WebappStack extends Stack {
       ],
     });
 
-    this.bucket.grantRead(oai.grantPrincipal);
-
-    if (props.hostedZone) {
-      new ARecord(this, 'WebappARecord', {
-        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-        zone: props.hostedZone,
-        recordName: `app.${props.hostedZone.zoneName}`,
-      });
-    }
-
-    new CfnOutput(this, 'WebappHostingBucketName', { value: this.bucket.bucketName });
-    new CfnOutput(this, 'CloudFrontID', { value: distribution.distributionId });
-    new StringParameter(this, 'DbHost', {
-      parameterName: `/${props.service}/${props.stage}/APP_DOMAIN`,
-      stringValue: props.hostedZone ? `app.${props.hostedZone.zoneName}` : distribution.distributionDomainName,
+    // Create a new A record for our domain that will route requests from app.<your-domain> to the react app
+    new ARecord(this, 'WebappARecord', {
+      target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+      zone: props.hostedZone,
+      recordName: domainName,
     });
 
-    this.distribution = distribution;
+    // Creates some stack outputs that we can read when deploying to know where to upload the webapp
+    new CfnOutput(this, 'WebappHostingBucketName', { value: this.bucket.bucketName });
+    new CfnOutput(this, 'CloudFrontID', { value: this.distribution.distributionId });
+
+    new StringParameter(this, 'AppDomainParameter', {
+      parameterName: `/${props.name}/${props.environment}/APP_DOMAIN`,
+      stringValue: domainName,
+    });
   }
 }

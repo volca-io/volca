@@ -18,11 +18,15 @@ export const environments: EnvironmentConfig = {
     REACT_APP_STRIPE_TEST_MODE: config.environments.local.environmentVariables.TEST_CARD_ENABLED,
   },
   staging: {
-    REACT_APP_API_URL: `https://api.${config.environments.staging.deploymentConfig?.domain}/`,
+    REACT_APP_API_URL: config.environments.staging.deploymentConfig?.subdomain
+      ? `https://api.${config.environments.staging.deploymentConfig?.subdomain}.${config.domain}/`
+      : `https://api.${config.domain}/`,
     REACT_APP_STRIPE_TEST_MODE: config.environments.staging.environmentVariables.TEST_CARD_ENABLED,
   },
   production: {
-    REACT_APP_API_URL: `https://api.${config.environments.production.deploymentConfig?.domain}/`,
+    REACT_APP_API_URL: config.environments.production.deploymentConfig?.subdomain
+      ? `https://api.${config.environments.production.deploymentConfig?.subdomain}.${config.domain}/`
+      : `https://api.${config.domain}/`,
     REACT_APP_STRIPE_TEST_MODE: config.environments.production.environmentVariables.TEST_CARD_ENABLED,
   },
 };

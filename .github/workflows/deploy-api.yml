@@ -27,8 +27,11 @@ jobs:
       - name: Configure AWS credentials from ${{ inputs.environment }} account
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-github-actions-api-deployment-role
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-github-actions-deployment-role
           aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy infrastructure
+        run: |
+          yarn cdk deploy -c environment=${{ inputs.environment }} ${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-api-stack --require-approval never
       - name: Stack status
         id: stack-status
         working-directory: services/api
@@ -45,7 +48,7 @@ jobs:
         if: steps.stack-status.outputs.EXISTS == '1'
         run: |
           STAGE=${{ inputs.environment }} yarn migrate:latest:${{ inputs.environment}}
-      - name: Deploy
+      - name: Deploy service
         working-directory: services/api
         run: |
           yarn deploy:${{ inputs.environment}}

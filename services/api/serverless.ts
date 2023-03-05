@@ -25,18 +25,19 @@ const serverlessConfiguration: AWS = {
   plugins: ['serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
-    iam: deploymentConfig
-      ? {
-          role: `\${cf:${config.name}-\${self:provider.stage}-api-stack.LambdaExecutionRole}`,
-          deploymentRole: `\${cf:${config.name}-\${self:provider.stage}-devops-stack.ApiCloudformationDeploymentRoleArn}`,
-        }
-      : undefined,
+    iam:
+      environment !== Environment.LOCAL
+        ? {
+            role: `\${cf:${config.name}-\${self:provider.stage}-api-stack.LambdaExecutionRole}`,
+            deploymentRole: `\${cf:${config.name}-core-stack.ApiCloudformationDeploymentRoleArn}`,
+          }
+        : undefined,
     vpc:
-      deploymentConfig?.aws.publicDatabase === false
+      environment !== Environment.LOCAL && deploymentConfig?.publicDatabase === false
         ? {
             securityGroupIds: [`\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiSecurityGroupOutput}`],
             subnetIds: {
-              'Fn::Split': [', ', `\${cf:${config.name}-\${self:provider.stage}-vpc-stack.PrivateSubnets}`],
+              'Fn::Split': [', ', `\${cf:${config.name}-\${self:provider.stage}-api-stack.PrivateSubnets}`],
             },
           }
         : undefined,
@@ -44,13 +45,14 @@ const serverlessConfiguration: AWS = {
     runtime: 'nodejs16.x',
     versionFunctions: false,
     stage: environment,
-    region: deploymentConfig ? deploymentConfig.aws.region : undefined,
-    apiGateway: deploymentConfig
-      ? {
-          restApiId: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiGatewayID}`,
-          restApiRootResourceId: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiGatewayRootResourceID}`,
-        }
-      : undefined,
+    region: config.aws.region,
+    apiGateway:
+      environment !== Environment.LOCAL
+        ? {
+            restApiId: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiGatewayID}`,
+            restApiRootResourceId: `\${cf:${config.name}-\${self:provider.stage}-api-stack.ApiGatewayRootResourceID}`,
+          }
+        : undefined,
     environment: config.environments[environment].environmentVariables,
   },
   custom: {

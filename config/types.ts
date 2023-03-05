@@ -1,6 +1,5 @@
 interface AwsConfig {
   account: string;
-  publicDatabase: boolean;
   region:
     | 'us-east-1'
     | 'us-east-2'
@@ -59,8 +58,8 @@ export type EnvironmentVariables = Record<EnvironmentVariable, string>;
 export interface EnvironmentConfig {
   environmentVariables: EnvironmentVariables;
   deploymentConfig?: {
-    aws: AwsConfig;
-    domain: string;
+    subdomain?: string;
+    publicDatabase: boolean;
   };
 }
 
@@ -75,12 +74,15 @@ export enum Environment {
   PRODUCTION = 'production',
 }
 
+export type Environments = {
+  [env in Environment]: EnvironmentConfig;
+};
+
 export type Config = {
   name: string;
   github: GithubConfig;
-  environments: {
-    local: EnvironmentConfig;
-    staging: EnvironmentConfig;
-    production: EnvironmentConfig;
-  };
+  aws: AwsConfig;
+  domain: string;
+  fromEmail: string;
+  environments: Environments;
 };

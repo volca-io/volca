@@ -1,0 +1,76 @@
+import { VerifySesEmailAddress } from '@seeebiii/ses-verify-identities';
+import { CfnOutput, Fn, Stack, StackProps } from 'aws-cdk-lib';
+import { OpenIdConnectProvider, Role, WebIdentityPrincipal } from 'aws-cdk-lib/aws-iam';
+import { HostedZone } from 'aws-cdk-lib/aws-route53';
+
+import { Construct } from 'constructs';
+import { DeploymentPolicy } from '../constructs';
+
+interface CoreStackProps extends StackProps {
+  name: string;
+  domain: string;
+  githubOrg: string;
+  githubRepo: string;
+  email: string;
+}
+
+export class CoreStack extends Stack {
+  public provider: OpenIdConnectProvider;
+  public hostedZone: HostedZone;
+
+  constructor(scope: Construct, id: string, props: CoreStackProps) {
+    super(scope, id, props);
+
+    if (!props.env || !props.env.region || !props.env.account) {
+      throw new Error('Environment was not set when trying to deploy account bootstrap stack');
+    }
+
+    // Creates a new OIDC provider for the account that allows GitHub actions to connect to the account
+    // and get short lived tokens
+    this.provider = new OpenIdConnectProvider(this, 'GithubOidcProvider', {
+      url: 'https://token.actions.githubusercontent.com',
+      clientIds: ['sts.amazonaws.com'],
+      thumbprints: ['6938fd4d98bab03faadb97b34396831e3780aea1'],
+    });
+
+    // Creates a hosted zone for us to later add DNS records when we deploy the API and webapp
+    this.hostedZone = new HostedZone(this, 'HostedZone', { zoneName: props.domain });
+
+    // Will verify the email address in SES
+    new VerifySesEmailAddress(this, 'SesEmailVerificatoion', {
+      emailAddress: props.email,
+    });
+
+    // Creates a new role that will be assumed by GitHub actions.
+    // The role gives limited access to your AWS account so it can deploy volca to your account
+    const deploymentRole = new Role(this, 'GithubActionsDeploymentRole', {
+      roleName: `${props.name}-github-actions-deployment-role`,
+      assumedBy: new WebIdentityPrincipal(this.provider.openIdConnectProviderArn, {
+        StringLike: {
+          'token.actions.githubusercontent.com:sub': `repo:${props.githubOrg}/${props.githubRepo}:*`,
+        },
+        StringEquals: {
+          'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
+        },
+      }),
+    });
+
+    const { cloudformationDeploymentRoleArn } = new DeploymentPolicy(this, 'DeploymentPolicy', {
+      name: props.name,
+      region: props.env.region,
+      account: props.env.account,
+      deploymentRole,
+    });
+
+    if (!this.hostedZone.hostedZoneNameServers) {
+      throw new Error('Failed to get hosted zone name servers');
+    }
+
+    // Exports the name servers to know where to point the domain to
+    new CfnOutput(this, 'NameServers', { value: Fn.join(', ', this.hostedZone.hostedZoneNameServers) });
+
+    // Creates some outputs so the serverless framework knows what role to use when deploying
+    new CfnOutput(this, 'DeploymentRoleArn', { value: deploymentRole.roleArn });
+    new CfnOutput(this, 'ApiCloudformationDeploymentRoleArn', { value: cloudformationDeploymentRoleArn });
+  }
+}

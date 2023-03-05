@@ -6,9 +6,9 @@
     "clients/*"
   ],
   "scripts": {
-    "bootstrap": "./scripts/bootstrap.ts",
-    "infra:deploy": "./scripts/deploy-infra.ts",
-    "infra:destroy": "./scripts/destroy-infra.ts",
+    "configure": "./scripts/configure.ts",
+    "setup:aws": "yarn cdk bootstrap --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess && yarn setup:parameters && cdk deploy --stacks core-stack",
+    "setup:parameters": "./scripts/create-ssm-parameters.ts -e staging && ./scripts/create-ssm-parameters.ts -e production",
     "start": "yarn workspaces foreach --exclude @volca/root -vpi run start:dev",
     "check:lint": "yarn workspaces foreach --exclude @volca/root -vpi run check:lint",
     "check:types": "yarn workspaces foreach --exclude @volca/root -vpi run check:types",
@@ -53,5 +53,5 @@
   "resolutions": {
     "serverless-webpack@^5.8.0": "patch:serverless-webpack@npm:5.8.0#.yarn/patches/serverless-webpack-npm-5.8.0-8563ff4c80.patch"
   },
-  "version": "0.23.0"
+  "version": "0.24.0"
 }
