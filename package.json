@@ -53,5 +53,5 @@
   "resolutions": {
     "serverless-webpack@^5.8.0": "patch:serverless-webpack@npm:5.8.0#.yarn/patches/serverless-webpack-npm-5.8.0-8563ff4c80.patch"
   },
-  "version": "0.24.0"
+  "version": "0.25.0"
 }
