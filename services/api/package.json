@@ -48,7 +48,7 @@
     "deploy:staging": "STAGE=staging serverless deploy",
     "deploy:production": "STAGE=production serverless deploy",
     "migrate:up:local": "serverless invoke local -f migrate --data '{ \"type\": \"up\" }'",
-    "migrate:down:local": "serverless invoke local -f migrate --data '{ \"type\": \"down\" }",
+    "migrate:down:local": "serverless invoke local -f migrate --data '{ \"type\": \"down\" }'",
     "migrate:latest:local": "serverless invoke local -f migrate --data '{ \"type\": \"latest\" }'",
     "migrate:up:staging": "STAGE=staging serverless invoke -f migrate --data '{ \"type\": \"up\" }'",
     "migrate:down:staging": "STAGE=staging serverless invoke -f migrate --data '{ \"type\": \"down\" }'",
