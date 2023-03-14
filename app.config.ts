@@ -21,7 +21,7 @@ const environments: Environments = {
       ...DEFAULT_ENVIRONMENT_VARIABLES,
       APP_DOMAIN: getEnvVar('APP_DOMAIN', '127.0.0.1:3000'),
       DB_PASSWORD: getEnvVar('PASSWORD', 'postgres'),
-      DB_USERNAME: getEnvVar('USERNAME', 'postgres'),
+      DB_USERNAME: getEnvVar('DB_USERNAME', 'postgres'),
       ENVIRONMENT: 'local',
       FROM_EMAIL: getEnvVar('FROM_EMAIL', 'noreply@example.com'),
       LOG_LEVEL: getEnvVar('LOG_LEVEL', 'debug'),
