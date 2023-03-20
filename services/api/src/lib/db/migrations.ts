@@ -97,7 +97,11 @@ export default [
       });
     },
     down: (knex: Knex) => {
-      return knex.schema.dropTable('users');
+      return knex.schema.alterTable('users', (table) => {
+        table.dropColumn('stripe_id');
+        table.dropColumn('has_active_subscription');
+        table.dropColumn('free_trial_activated');
+      });
     },
   },
   {
