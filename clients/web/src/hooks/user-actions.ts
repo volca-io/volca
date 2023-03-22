@@ -9,6 +9,7 @@ export const useUserActions = () => {
   const setUser = useSetRecoilState(currentUserState);
   const setProjects = useSetRecoilState(projectsState);
   const setSelectedProject = useSetRecoilState(selectedProjectSelector);
+
   const navigate = useNavigate();
   const location = useLocation();
   const { executeApiAction } = useApiActions();
@@ -47,8 +48,9 @@ export const useUserActions = () => {
           localStorage.removeItem('remembered_user_identifier');
         }
 
-        const user = await getMe();
-        if (user) setUser(user);
+        const userState = await Promise.all([ApiClient.getMe(), ApiClient.getProjects()]);
+        setProjects(userState[1]);
+        setUser(userState[0].me);
       },
       errorMessage: 'Wrong user name or password',
     });

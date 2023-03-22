@@ -43,7 +43,6 @@ export const useApiActions = () => {
     setLoading(true);
     try {
       const result = await executeApiCall<T>({ action });
-      setLoading(false);
       if (successMessage) {
         toast({
           title: 'Success',
@@ -53,10 +52,11 @@ export const useApiActions = () => {
           isClosable: true,
         });
       }
-      if (onSuccess) onSuccess(result);
+      if (onSuccess) await onSuccess(result);
+      setLoading(false);
       return result;
     } catch (error) {
-      if (onError) onError();
+      if (onError) await onError();
       if (errorMessage) {
         toast({
           title: 'Error',
