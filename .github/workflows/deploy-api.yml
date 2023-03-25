@@ -47,6 +47,7 @@ jobs:
         working-directory: services/api
         if: steps.stack-status.outputs.EXISTS == '1'
         run: |
+          STAGE=${{ inputs.environment }} ./node_modules/.bin/sls deploy --function migrate
           STAGE=${{ inputs.environment }} yarn migrate:latest:${{ inputs.environment}}
       - name: Deploy service
         working-directory: services/api
