@@ -1,14 +1,13 @@
 import Knex from 'knex';
 import { Model, knexSnakeCaseMappers } from 'objection';
 import { container } from 'tsyringe';
-import { EnvironmentUtils, EnvironmentVariable } from '../../utils/environment';
+import { EnvironmentVariables } from '../../utils/environment';
 import { Logger } from '../../utils/logger';
 import { MigrationSource } from './migration-source';
 import { SeedSource } from './seed-source';
 
 export const initialize = () => {
   const logger = container.resolve(Logger);
-  const environment = container.resolve(EnvironmentUtils);
 
   logger.debug('Creating new knex client');
 
@@ -16,10 +15,10 @@ export const initialize = () => {
     client: 'postgres',
     useNullAsDefault: true,
     connection: {
-      host: environment.getOrFail(EnvironmentVariable.DB_HOST),
+      host: EnvironmentVariables.DB_HOST,
       port: 5432,
-      user: environment.getOrFail(EnvironmentVariable.DB_USERNAME),
-      password: environment.getOrFail(EnvironmentVariable.DB_PASSWORD),
+      user: EnvironmentVariables.DB_USERNAME,
+      password: EnvironmentVariables.DB_PASSWORD,
       database: 'postgres',
       pool: { min: 1, max: 1, idleTimeoutMillis: 1000 },
     },

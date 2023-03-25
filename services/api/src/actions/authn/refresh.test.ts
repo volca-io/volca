@@ -6,7 +6,6 @@ describe('POST /authn/refresh', () => {
 
   it('can refresh a token after signing in', async () => {
     await getAgent().post('/authn/password').send({ email: userOne.email, password: userOne.password });
-
     const res = await getAgent().post('/authn/refresh');
     expect(res.status).toBe(200);
 
@@ -17,7 +16,7 @@ describe('POST /authn/refresh', () => {
 
   it('fails to refresh if no cookie is supplied', async () => {
     await getAgent().post('/authn/sign-out').send();
-    
+
     const res = await getAgent().post('/authn/refresh');
     expect(res.status).toBe(401);
   });

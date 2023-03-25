@@ -1,11 +1,16 @@
 import { injectable } from 'tsyringe';
 import Stripe from 'stripe';
 import { User } from '../entities';
-import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
+import { EnvironmentConfig, EnvironmentVariables } from '../utils/environment';
 import { UserService } from './user-service';
+import { PlanId } from '../../../../config/types';
+import { ServiceError } from '../errors/service-error';
+import { ErrorNames } from '../constants';
+import { StatusCodes } from 'http-status-codes';
 
 type CreateStripeSessionParams = {
   user: User;
+  planId: PlanId;
 };
 
 type CreateStripeBillingPortalSessionParams = {
@@ -31,13 +36,27 @@ type CreateCardParams = {
 export class StripeService {
   private stripe: Stripe;
 
-  constructor(private environment: EnvironmentUtils, private userService: UserService) {
-    this.stripe = new Stripe(this.environment.getOrFail(EnvironmentVariable.STRIPE_KEY), {
+  constructor(private userService: UserService) {
+    this.stripe = new Stripe(EnvironmentVariables.STRIPE_KEY, {
       apiVersion: '2020-08-27',
     });
   }
 
-  public async createSession({ user }: CreateStripeSessionParams): Promise<StripeSession> {
+  public listPlans() {
+    return EnvironmentConfig.plans;
+  }
+
+  public async createSession({ user, planId }: CreateStripeSessionParams): Promise<StripeSession> {
+    const plan = this.listPlans().find((plan) => plan.id === planId);
+
+    if (!plan) {
+      throw new ServiceError({
+        name: ErrorNames.VALIDATION_ERROR,
+        message: `Plan ${planId} not found`,
+        statusCode: StatusCodes.BAD_REQUEST,
+      });
+    }
+
     const getStripeCustomerId = async () => {
       if (!user.stripeId) {
         const { id: stripeId } = await this.stripe.customers.create({ email: user.email });
@@ -49,20 +68,19 @@ export class StripeService {
     };
 
     const customer = await getStripeCustomerId();
-    const appDomain = this.environment.getWebappDomain();
 
-    if (this.environment.get(EnvironmentVariable.TEST_CARD_ENABLED) === '1') {
+    if (EnvironmentVariables.TEST_CARD_ENABLED === '1') {
       await this.createTestCard({ user, customer });
     }
 
     const session = await this.stripe.checkout.sessions.create({
-      success_url: appDomain,
-      cancel_url: `${appDomain}/onboarding?status=warning`,
+      success_url: EnvironmentVariables.APP_DOMAIN,
+      cancel_url: `${EnvironmentVariables.APP_DOMAIN}/onboarding?status=warning`,
       customer,
       mode: 'subscription',
       line_items: [
         {
-          price: this.environment.getOrFail(EnvironmentVariable.STRIPE_PRICE_ID),
+          price: plan.stripePriceId,
           quantity: 1,
         },
       ],
@@ -73,7 +91,7 @@ export class StripeService {
         ? {}
         : {
             subscription_data: {
-              trial_period_days: parseInt(this.environment.getOrFail(EnvironmentVariable.FREE_TRIAL_DAYS)),
+              trial_period_days: parseInt(EnvironmentVariables.FREE_TRIAL_DAYS),
             },
           }),
     });
@@ -84,8 +102,8 @@ export class StripeService {
     };
 
     // Set user as subscribed in local environment since we can't receive the webhook from stripe.
-    if (this.environment.getOrFail(EnvironmentVariable.ENVIRONMENT) === 'local') {
-      this.userService.setSubscribed({ userId: user.id, hasActiveSubscription: true });
+    if (EnvironmentVariables.ENVIRONMENT === 'local') {
+      this.userService.setSubscribed({ userId: user.id, planId, hasActiveSubscription: true });
     }
 
     return stripeSession;
@@ -94,10 +112,9 @@ export class StripeService {
   public async createBillingPortalSession({
     stripeCustomerId,
   }: CreateStripeBillingPortalSessionParams): Promise<StripeSession> {
-    const appDomain = this.environment.getWebappDomain();
     const session = await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: `${appDomain}/settings`,
+      return_url: `${EnvironmentVariables.APP_DOMAIN}/settings`,
     });
     const billingPortalSession = {
       id: session.id,
@@ -140,10 +157,6 @@ export class StripeService {
   }
 
   public async verifyWebhookSignature({ body, signature }: VerifyStripeWebhookSignatureParams) {
-    return this.stripe.webhooks.constructEventAsync(
-      body,
-      signature,
-      this.environment.getOrFail(EnvironmentVariable.STRIPE_WEBHOOK_SECRET)
-    );
+    return this.stripe.webhooks.constructEventAsync(body, signature, EnvironmentVariables.STRIPE_WEBHOOK_SECRET);
   }
 }

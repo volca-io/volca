@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 process.env = {
   ...process.env,
-  APP_DOMAIN: '127.0.0.1:3000',
+  APP_DOMAIN: 'http://127.0.0.1:3000',
   DB_HOST: 'localhost',
   DB_PASSWORD: 'postgres',
   DB_PORT: '5432',
@@ -15,6 +15,5 @@ process.env = {
   SIGNING_KEY: 'signing-key',
   SKIP_TOKEN_VERIFICATION: '0',
   STRIPE_KEY: 'stripe-key',
-  STRIPE_PRICE_ID: 'price-id',
   STRIPE_WEBHOOK_SECRET: 'stripe-webhook-secret',
 };

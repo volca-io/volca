@@ -11,5 +11,6 @@ export const action = useApiAction(async () => {
   const comsService = container.resolve(CommunicationsService);
 
   const token = security.createToken({ payload: { sub: email }, expiresIn: 60 * 60 * 24 });
+
   await comsService.sendVerificationEmail({ email, firstName, token });
 });

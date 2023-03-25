@@ -10,6 +10,7 @@ export class User extends Model {
   password?: string;
   hasActiveSubscription!: boolean;
   freeTrialActivated!: boolean;
+  planId?: string;
   verifiedAt!: Date;
   createdAt!: Date;
   updatedAt!: Date;

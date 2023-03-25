@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 
-import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
+import { EnvironmentVariables } from '../utils/environment';
 import { resetPasswordTemplate, verifyAccountTemplate } from '../email-templates';
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
 import { Logger } from '../utils/logger';
@@ -27,17 +27,15 @@ export type SendEmailParams = {
 export class CommunicationsService {
   private emailClient: SESv2Client;
 
-  public constructor(private environment: EnvironmentUtils, private logger: Logger) {
-    this.emailClient = new SESv2Client({ region: this.environment.getOrFail(EnvironmentVariable.REGION) });
+  public constructor(private logger: Logger) {
+    this.emailClient = new SESv2Client({ region: EnvironmentVariables.REGION });
   }
 
   public async sendEmail({ email, subject, body, replyTo = null }: SendEmailParams): Promise<void> {
     this.logger.debug('Sending email', { email, subject, body });
 
-    const fromEmail = this.environment.getOrFail(EnvironmentVariable.FROM_EMAIL);
-
     const command = new SendEmailCommand({
-      FromEmailAddress: fromEmail,
+      FromEmailAddress: EnvironmentVariables.FROM_EMAIL,
       Destination: { ToAddresses: [email] },
       Content: { Simple: { Subject: { Data: subject }, Body: { Text: { Data: body }, Html: { Data: body } } } },
       ...(replyTo ? { ReplyToAddresses: [replyTo] } : {}),
@@ -51,12 +49,10 @@ export class CommunicationsService {
   }
 
   public async sendVerificationEmail({ email, firstName, token }: SendVerificationEmailProperties): Promise<void> {
-    const protocol = this.environment.get(EnvironmentVariable.ENVIRONMENT) === 'local' ? 'http://' : 'https://';
-    const appDomain = this.environment.getOrFail(EnvironmentVariable.APP_DOMAIN);
-    const url = new URL(`/verify`, protocol + appDomain);
+    const url = new URL(`/verify`, EnvironmentVariables.APP_DOMAIN);
     url.searchParams.append('verify-token', token);
 
-    this.sendEmail({
+    return this.sendEmail({
       email,
       subject: verifyAccountTemplate.subject,
       body: verifyAccountTemplate.generateBody({ firstName, url: url.toString() }),
@@ -64,10 +60,7 @@ export class CommunicationsService {
   }
 
   public async sendPasswordResetEmail({ email, token }: SendPasswordResetEmailProperties): Promise<void> {
-    const protocol = this.environment.get(EnvironmentVariable.ENVIRONMENT) === 'local' ? 'http://' : 'https://';
-    const appDomain = this.environment.getOrFail(EnvironmentVariable.APP_DOMAIN);
-
-    const url = new URL(`reset-password/verify`, protocol + appDomain);
+    const url = new URL(`reset-password/verify`, EnvironmentVariables.APP_DOMAIN);
     url.searchParams.append('reset-token', token);
 
     this.sendEmail({

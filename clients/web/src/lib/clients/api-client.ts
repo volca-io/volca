@@ -1,6 +1,6 @@
 import ky, { HTTPError } from 'ky';
 import jwt_decode from 'jwt-decode';
-import { Project, ProjectInvitation, User, StripeSession } from '../../types';
+import { Project, ProjectInvitation, User, StripeSession, Plan } from '../../types';
 
 export type AccessToken = {
   exp: number;
@@ -51,6 +51,10 @@ type CreateStripeSessionResponse = {
 
 type CreateStripeBillingPortalSessionResponse = {
   stripe_billing_portal_session: StripeSession;
+};
+
+type StripePlansReponse = {
+  plans: Plan[];
 };
 
 type TokenResponse = {
@@ -231,9 +235,9 @@ export class ApiClient {
     return this.handleApiError(this.tokenClient.get(`project-invitations/${key}`).json());
   }
 
-  static async createStripeSession(): Promise<StripeSession> {
+  static async createStripeSession({ planId }: { planId: string }): Promise<StripeSession> {
     const { stripe_session } = await this.handleApiError(
-      this.tokenClient.post('stripe/sessions').json<CreateStripeSessionResponse>()
+      this.tokenClient.post('stripe/sessions', { json: { plan_id: planId } }).json<CreateStripeSessionResponse>()
     );
 
     return stripe_session;
@@ -245,6 +249,12 @@ export class ApiClient {
     );
 
     return stripe_billing_portal_session;
+  }
+
+  static async listStripePlans(): Promise<Plan[]> {
+    const { plans } = await this.handleApiError(this.tokenClient.get('stripe/plans').json<StripePlansReponse>());
+
+    return plans;
   }
 
   static async sendSupportMessage(message: string): Promise<void> {

@@ -148,4 +148,15 @@ export default [
         table.dropColumn('verified_at');
       }),
   },
+  {
+    name: '09_plans',
+    up: (knex: Knex) =>
+      knex.schema.table('users', (table) => {
+        table.string('plan_id').nullable().defaultTo(null);
+      }),
+    down: async (knex: Knex) =>
+      knex.schema.table('users', (table) => {
+        table.dropColumn('plan_id');
+      }),
+  },
 ] as Array<Migration>;

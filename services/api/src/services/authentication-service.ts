@@ -6,7 +6,7 @@ import { ErrorNames } from '../constants';
 import { RefreshToken, User } from '../entities';
 import { UserService } from './user-service';
 import { Security } from '../lib/security/security';
-import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
+import { EnvironmentVariables } from '../utils/environment';
 import { JwtPayload } from 'jsonwebtoken';
 
 export type AccessTokenCookieSettings = {
@@ -33,11 +33,7 @@ export class AuthenticationService {
   private REFRESH_TOKEN_EXPIRATION_DURATION = 60 * 60 * 24 * 365; // 1 year
   private ACCESS_TOKEN_EXPIRATION_DURATION = 60 * 15; // 15 minutes
 
-  public constructor(
-    private userService: UserService,
-    private security: Security,
-    private environment: EnvironmentUtils
-  ) {}
+  public constructor(private userService: UserService, private security: Security) {}
 
   public async createNewSession(user: User): Promise<SessionResponse> {
     const sessionId = uuid();
@@ -119,10 +115,10 @@ export class AuthenticationService {
     expires.setSeconds(expires.getSeconds() + this.REFRESH_TOKEN_EXPIRATION_DURATION);
 
     return {
-      secure: this.environment.getOrFail(EnvironmentVariable.ENVIRONMENT) !== 'local',
+      secure: EnvironmentVariables.ENVIRONMENT !== 'local',
       httpOnly: true,
       sameSite: 'lax',
-      domain: this.environment.getOrFail(EnvironmentVariable.ENVIRONMENT) ? undefined : process.env.APP_DOMAIN,
+      domain: EnvironmentVariables.APP_DOMAIN.replace(/^https?:\/\//, '').split(':')[0],
       expires,
     };
   }

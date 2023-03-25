@@ -8303,7 +8303,7 @@ __metadata:
     react: ^18.1.0
     react-dom: ^18.1.0
     react-hook-form: ^7.33.1
-    react-icons: ^4.4.0
+    react-icons: ^4.8.0
     react-router-dom: ^6.3.0
     react-scripts: 5.0.1
     recoil: ^0.7.6
@@ -20520,12 +20520,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-icons@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "react-icons@npm:4.4.0"
+"react-icons@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "react-icons@npm:4.8.0"
   peerDependencies:
     react: "*"
-  checksum: dd93a1dcc8ac8a3cf46a2b33e80b586fa967331fa5fcb90d061abf276155a8363a331643e203d67cb9bab4261d00a757da854bcce1fce2c6e4258bf3e33f711b
+  checksum: 4dbba7ad989c295b410e19b2a702722dae44368cb04b6515f9471353552f31ac80bd350f121d5bff79f81504b84039ede44d09e9f035f48bb1032e6eace126c4
   languageName: node
   linkType: hard
 

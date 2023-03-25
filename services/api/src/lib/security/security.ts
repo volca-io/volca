@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import crypto from 'crypto';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
-import { EnvironmentUtils, EnvironmentVariable } from '../../utils/environment';
+import { EnvironmentVariables } from '../../utils/environment';
 
 type CreateTokenProperties = {
   payload: Record<string, unknown>;
@@ -21,12 +21,6 @@ type VerifyTokenProperties = {
 
 @injectable()
 export class Security {
-  private signingKey: string;
-
-  public constructor(private environment: EnvironmentUtils) {
-    this.signingKey = this.environment.getOrFail(EnvironmentVariable.SIGNING_KEY);
-  }
-
   public verifyPassword(hash: string, plain: string): boolean {
     return bcrypt.compareSync(plain, hash);
   }
@@ -36,7 +30,7 @@ export class Security {
   }
 
   public createToken({ payload, expiresIn, secret }: CreateTokenProperties): string {
-    return jwt.sign(payload, secret || this.signingKey, { expiresIn });
+    return jwt.sign(payload, secret || EnvironmentVariables.SIGNING_KEY, { expiresIn });
   }
 
   public createRefreshToken(): string {
@@ -45,7 +39,7 @@ export class Security {
 
   public verifyToken({ token, secret }: VerifyTokenProperties): JwtPayload {
     try {
-      const result = jwt.verify(token, secret || this.signingKey);
+      const result = jwt.verify(token, secret || EnvironmentVariables.SIGNING_KEY);
 
       if (typeof result !== 'object') {
         throw new ServiceError({

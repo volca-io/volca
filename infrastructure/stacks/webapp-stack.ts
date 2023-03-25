@@ -107,7 +107,7 @@ export class WebappStack extends Stack {
 
     new StringParameter(this, 'AppDomainParameter', {
       parameterName: `/${props.name}/${props.environment}/APP_DOMAIN`,
-      stringValue: domainName,
+      stringValue: `https://${domainName}`,
     });
   }
 }

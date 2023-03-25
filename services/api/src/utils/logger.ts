@@ -1,7 +1,7 @@
 import winston from 'winston';
 import { injectable } from 'tsyringe';
 import correlator from 'correlation-id';
-import { EnvironmentUtils, EnvironmentVariable } from './environment';
+import { EnvironmentVariables } from './environment';
 
 export enum LoggingFormat {
   JSON = 'json',
@@ -56,18 +56,15 @@ const createLogger = ({ level, format, defaultMeta = {}, silent = false }: Loggi
 export class Logger {
   private logger;
 
-  public constructor(private environment: EnvironmentUtils) {
-    const definedLevel = this.environment.get(EnvironmentVariable.LOG_LEVEL) || 'info';
-    const loggingEnabled = this.environment.get(EnvironmentVariable.LOGGING_ENABLED) === '1';
+  public constructor() {
+    const definedLevel = EnvironmentVariables.LOG_LEVEL || 'info';
+    const loggingEnabled = EnvironmentVariables.LOGGING_ENABLED === '1';
 
     const level = LogLevel[definedLevel as keyof typeof LogLevel];
 
     this.logger = createLogger({
       level,
-      format:
-        this.environment.getOrFail(EnvironmentVariable.ENVIRONMENT) === 'local'
-          ? LoggingFormat.SIMPLE
-          : LoggingFormat.JSON,
+      format: EnvironmentVariables.ENVIRONMENT === 'local' ? LoggingFormat.SIMPLE : LoggingFormat.JSON,
       silent: !loggingEnabled,
     });
   }

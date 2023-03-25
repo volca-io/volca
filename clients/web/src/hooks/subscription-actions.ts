@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { ApiClient } from '../lib/clients/api-client';
-import { StripeSession } from '../types';
+import { Plan, StripeSession } from '../types';
 import { useApiActions } from './api-actions';
 
 export const useSubscriptionActions = () => {
@@ -14,16 +14,23 @@ export const useSubscriptionActions = () => {
         'Failed to create Stripe session. Make sure you have configured your Stripe API keys for this environment.',
     });
 
-  const activateSubscription = async () =>
+  const activateSubscription = async (planId: string) =>
     await executeApiAction<StripeSession>({
-      action: () => ApiClient.createStripeSession(),
+      action: () => ApiClient.createStripeSession({ planId }),
       onSuccess: (session: StripeSession) => window.location.replace(session.url),
       errorMessage:
         'Failed to create Stripe session. Make sure you have configured your Stripe API keys for this environment.',
     });
 
+  const listPlans = async () =>
+    executeApiAction<Plan[]>({
+      action: () => ApiClient.listStripePlans(),
+      errorMessage: 'Failed to fetch products.',
+    });
+
   return {
     manageSubscriptions: useCallback(manageSubscriptions, [executeApiAction]),
     activateSubscription: useCallback(activateSubscription, [executeApiAction]),
+    listPlans: useCallback(listPlans, [executeApiAction]),
   };
 };

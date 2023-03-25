@@ -47,7 +47,6 @@ export enum EnvironmentVariable {
   SIGNING_KEY = 'SIGNING_KEY',
   SKIP_TOKEN_VERIFICATION = 'SKIP_TOKEN_VERIFICATION',
   STRIPE_KEY = 'STRIPE_KEY',
-  STRIPE_PRICE_ID = 'STRIPE_PRICE_ID',
   STRIPE_WEBHOOK_SECRET = 'STRIPE_WEBHOOK_SECRET',
   TEST_CARD_ENABLED = 'TEST_CARD_ENABLED',
   FREE_TRIAL_DAYS = 'FREE_TRIAL_DAYS',
@@ -55,8 +54,20 @@ export enum EnvironmentVariable {
 
 export type EnvironmentVariables = Record<EnvironmentVariable, string>;
 
+export enum PlanId {
+  BASIC = 'BASIC',
+  PLUS = 'PLUS',
+  PREMIUM = 'PREMIUM',
+}
+
+type Plan = {
+  id: PlanId;
+  stripePriceId: string;
+};
+
 export interface EnvironmentConfig {
   environmentVariables: EnvironmentVariables;
+  plans: Plan[];
   deploymentConfig?: {
     subdomain?: string;
     publicDatabase: boolean;

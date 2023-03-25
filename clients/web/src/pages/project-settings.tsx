@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FormLabel, Heading, Input, Button, Spacer } from '@chakra-ui/react';
+import { FormLabel, Heading, Input, Button, Spacer, Box } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { MdSettings } from 'react-icons/md';
 
@@ -50,13 +50,19 @@ export const ProjectSettingsPage: React.FC = () => {
             </Button>
           </form>
           <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
+            Plan
+          </Heading>
+          {project.admin.plan_id}
+          <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
             Manage
           </Heading>
-          <DangerButton
-            onClick={onDeleteProject}
-            title={'Delete Project'}
-            body={'Are you sure you want to delete this project?'}
-          />
+          <Box>
+            <DangerButton
+              onClick={onDeleteProject}
+              title={'Delete'}
+              body={'Are you sure you want to delete this project?'}
+            />
+          </Box>
         </SoftCard>
       )}
     </AuthenticatedLayout>

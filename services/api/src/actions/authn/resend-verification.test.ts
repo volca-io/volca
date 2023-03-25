@@ -6,7 +6,9 @@ describe('POST /authn/resend-verification', () => {
   let headers: Record<string, string>;
 
   beforeAll(async () => {
-    const { body } = await getRequest().post('/authn/password').send({ email: userOne.email, password: userOne.password });
+    const { body } = await getRequest()
+      .post('/authn/password')
+      .send({ email: userOne.email, password: userOne.password });
     headers = { Authorization: `Bearer ${body.access_token}` };
   });
 

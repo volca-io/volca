@@ -1,4 +1,4 @@
-import { Config, Environments } from './config/types';
+import { Config, Environments, PlanId } from './config/types';
 import { DEFAULT_ENVIRONMENT_VARIABLES, getEnvVar } from './config/utils';
 
 const coreConfig: Omit<Config, 'environments'> = {
@@ -17,9 +17,15 @@ const coreConfig: Omit<Config, 'environments'> = {
 
 const environments: Environments = {
   local: {
+    plans: [
+      {
+        id: PlanId.BASIC,
+        stripePriceId: 'stripe-price-id',
+      },
+    ],
     environmentVariables: {
       ...DEFAULT_ENVIRONMENT_VARIABLES,
-      APP_DOMAIN: getEnvVar('APP_DOMAIN', '127.0.0.1:3000'),
+      APP_DOMAIN: getEnvVar('APP_DOMAIN', 'http://127.0.0.1:3000'),
       DB_PASSWORD: getEnvVar('PASSWORD', 'postgres'),
       DB_USERNAME: getEnvVar('DB_USERNAME', 'postgres'),
       ENVIRONMENT: 'local',
@@ -27,7 +33,6 @@ const environments: Environments = {
       LOG_LEVEL: getEnvVar('LOG_LEVEL', 'debug'),
       SIGNING_KEY: getEnvVar('SIGNING_KEY', 'signing-key'),
       STRIPE_KEY: getEnvVar('STRIPE_KEY', 'stripe-key'),
-      STRIPE_PRICE_ID: getEnvVar('STRIPE_PRICE_ID', 'stripe-price-id'),
       STRIPE_WEBHOOK_SECRET: getEnvVar('STRIPE_WEBHOOK_SECRET', 'stripe-webhook-secret'),
       TEST_CARD_ENABLED: getEnvVar('TEST_CARD_ENABLED', '1'),
     },
@@ -37,6 +42,12 @@ const environments: Environments = {
       subdomain: 'staging',
       publicDatabase: true,
     },
+    plans: [
+      {
+        id: PlanId.BASIC,
+        stripePriceId: 'stripe-price-id',
+      },
+    ],
     environmentVariables: {
       ...DEFAULT_ENVIRONMENT_VARIABLES,
       APP_DOMAIN: '${ssm:/my-app/staging/APP_DOMAIN}',
@@ -49,7 +60,6 @@ const environments: Environments = {
       REGION: coreConfig.aws.region,
       SIGNING_KEY: '${ssm:/my-app/staging/SIGNING_KEY}',
       STRIPE_KEY: '${ssm:/my-app/staging/STRIPE_KEY}',
-      STRIPE_PRICE_ID: '',
       STRIPE_WEBHOOK_SECRET: '${ssm:/my-app/staging/STRIPE_WEBHOOK_SECRET}',
       TEST_CARD_ENABLED: '1',
     },
@@ -58,6 +68,12 @@ const environments: Environments = {
     deploymentConfig: {
       publicDatabase: true,
     },
+    plans: [
+      {
+        id: PlanId.BASIC,
+        stripePriceId: 'stripe-price-id',
+      },
+    ],
     environmentVariables: {
       ...DEFAULT_ENVIRONMENT_VARIABLES,
       APP_DOMAIN: '${ssm:/my-app/production/APP_DOMAIN}',
@@ -70,7 +86,6 @@ const environments: Environments = {
       REGION: coreConfig.aws.region,
       SIGNING_KEY: '${ssm:/my-app/production/SIGNING_KEY}',
       STRIPE_KEY: '${ssm:/my-app/production/STRIPE_KEY}',
-      STRIPE_PRICE_ID: '',
       STRIPE_WEBHOOK_SECRET: '${ssm:/my-app/production/STRIPE_WEBHOOK_SECRET}',
       TEST_CARD_ENABLED: '0',
     },

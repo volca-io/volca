@@ -5,7 +5,8 @@ export type User = {
   last_name: string;
   has_active_subscription: boolean;
   free_trial_activated: boolean;
-  verified_at: Date
-  created_at: Date
-  updated_at: Date
+  plan_id: string;
+  verified_at: Date;
+  created_at: Date;
+  updated_at: Date;
 };

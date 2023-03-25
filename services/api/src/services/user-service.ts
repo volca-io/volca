@@ -60,7 +60,15 @@ export class UserService {
     return User.query().findOne({ id }).update(properties).returning('*').first();
   }
 
-  public async setSubscribed({ userId, hasActiveSubscription }: { userId: string; hasActiveSubscription: boolean }) {
+  public async setSubscribed({
+    userId,
+    hasActiveSubscription,
+    planId,
+  }: {
+    userId: string;
+    hasActiveSubscription: boolean;
+    planId: string;
+  }) {
     const user = await this.findById(userId);
 
     if (!user) {
@@ -73,6 +81,7 @@ export class UserService {
 
     return this.update(user.id, {
       hasActiveSubscription,
+      planId,
       ...(hasActiveSubscription ? { freeTrialActivated: true } : {}),
     });
   }

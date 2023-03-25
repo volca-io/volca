@@ -6,12 +6,11 @@ import { ErrorNames } from '../constants';
 import { StatusCodes } from 'http-status-codes';
 import { UserService } from '../services';
 import { Security } from '../lib/security/security';
-import { EnvironmentUtils, EnvironmentVariable } from '../utils/environment';
+import { EnvironmentVariables } from '../utils/environment';
 import { User } from '../entities';
 
 export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Next) => {
   const security = container.resolve(Security);
-  const environment = container.resolve(EnvironmentUtils);
 
   const header = ctx.header.authorization;
 
@@ -36,7 +35,7 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
   const token = header.replace('Bearer ', '');
 
   const { sub } =
-    environment.getOrFail(EnvironmentVariable.SKIP_TOKEN_VERIFICATION) === '1'
+    EnvironmentVariables.SKIP_TOKEN_VERIFICATION === '1'
       ? security.decodeToken(token)
       : security.verifyToken({ token });
 

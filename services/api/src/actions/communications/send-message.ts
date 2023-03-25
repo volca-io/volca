@@ -1,5 +1,5 @@
 import joi, { Schema } from 'joi';
-import { EnvironmentUtils, EnvironmentVariable } from '../../utils/environment';
+import { EnvironmentVariables } from '../../utils/environment';
 
 import { CustomContext } from '../../types';
 import { container } from 'tsyringe';
@@ -13,9 +13,8 @@ export const schema: Schema = joi.object({
 
 export const action = useApiAction(async (ctx: CustomContext) => {
   const commsService = container.resolve(CommunicationsService);
-  const environment = container.resolve(EnvironmentUtils);
   const user = container.resolve<User>('AuthenticatedUser');
-  const email = environment.getOrFail(EnvironmentVariable.FROM_EMAIL);
+  const email = EnvironmentVariables.FROM_EMAIL;
 
   const { message } = ctx.request.body;
 

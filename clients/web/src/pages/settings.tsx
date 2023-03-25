@@ -8,11 +8,13 @@ import { currentUserState } from '../state';
 import { SoftCard } from '../components/generic/SoftCard';
 import { PageHeading } from '../components/generic/PageHeading';
 import { useSubscriptionActions, useUserActions } from '../hooks';
+import { useNavigate } from 'react-router-dom';
 
 export const SettingsPage: React.FC = () => {
   const user = useRecoilValue(currentUserState);
-  const { manageSubscriptions, activateSubscription } = useSubscriptionActions();
+  const { manageSubscriptions } = useSubscriptionActions();
   const { resendVerification } = useUserActions();
+  const navigate = useNavigate();
 
   return (
     <AuthenticatedLayout sidebar={false}>
@@ -52,7 +54,7 @@ export const SettingsPage: React.FC = () => {
         <SoftCard>
           <PageHeading title="Subscriptions" icon={MdPayment} />
           {!user?.has_active_subscription && (
-            <Button mt={6} colorScheme="blue" rightIcon={<MdAddShoppingCart />} onClick={activateSubscription}>
+            <Button mt={6} colorScheme="blue" rightIcon={<MdAddShoppingCart />} onClick={() => navigate('/onboarding')}>
               Activate Subscription
             </Button>
           )}
