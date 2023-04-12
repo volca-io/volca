@@ -245,7 +245,7 @@ export class DeploymentPolicy extends Construct {
         new PolicyStatement({
           sid: 'Lambda',
           effect: Effect.ALLOW,
-          actions: ['lambda:InvokeFunction'],
+          actions: ['lambda:Update*', 'lambda:InvokeFunction'],
           resources: [`arn:aws:lambda:${props.region}:${props.account}:function:${props.name}-api-*-migrate`],
         }),
         new PolicyStatement({
