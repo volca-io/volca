@@ -1,9 +1,19 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { ApiClient } from '../lib/clients/api-client';
+import { apiClient } from '../lib/api-client';
 import { currentUserState, projectsState, selectedProjectSelector } from '../state';
 import { User } from '../types';
+import { ListProjectsResponse } from './project-actions';
 import { useApiActions } from './api-actions';
+
+type TokenResponse = {
+  access_token: string;
+  expires_in: number;
+};
+
+export type GetMeResponse = {
+  me: User;
+};
 
 export const useUserActions = () => {
   const setUser = useSetRecoilState(currentUserState);
@@ -17,14 +27,17 @@ export const useUserActions = () => {
   const getMe = () =>
     executeApiAction<User>({
       action: async () => {
-        const { me } = await ApiClient.getMe();
+        const { me } = await apiClient.get('me').json<GetMeResponse>();
         return me;
       },
     });
 
   const register = async (firstName: string, lastName: string, email: string, password: string) =>
     executeApiAction<{ me: User }>({
-      action: async () => ApiClient.register(firstName, lastName, email, password),
+      action: async () =>
+        apiClient
+          .post('authn/register', { json: { first_name: firstName, last_name: lastName, email, password } })
+          .json<TokenResponse>(),
       onSuccess: async ({ access_token }: { access_token: string }) => {
         localStorage.setItem('access_token', access_token);
         const continueUrl = new URLSearchParams(location.search).get('continue') || '/';
@@ -37,7 +50,7 @@ export const useUserActions = () => {
 
   const authnPassword = (email: string, password: string, remember: boolean) =>
     executeApiAction({
-      action: () => ApiClient.authnPassword(email, password),
+      action: () => apiClient.post('authn/password', { json: { email, password } }).json<TokenResponse>(),
       onSuccess: async (response: { access_token: string }) => {
         const { access_token } = response;
         localStorage.setItem('access_token', access_token);
@@ -48,8 +61,11 @@ export const useUserActions = () => {
           localStorage.removeItem('remembered_user_identifier');
         }
 
-        const userState = await Promise.all([ApiClient.getMe(), ApiClient.getProjects()]);
-        setProjects(userState[1]);
+        const userState = await Promise.all([
+          apiClient.get('me').json<GetMeResponse>(),
+          apiClient.get('projects').json<ListProjectsResponse>(),
+        ]);
+        setProjects(userState[1].projects);
         setUser(userState[0].me);
       },
       errorMessage: 'Wrong user name or password',
@@ -57,7 +73,7 @@ export const useUserActions = () => {
 
   const resetPassword = (email: string) =>
     executeApiAction({
-      action: () => ApiClient.resetPassword(email),
+      action: () => apiClient.post('authn/reset-password', { json: { email } }),
       successMessage:
         'Your request was successful. If there is an account connected to this email, you will soon get an email with instructions on how to reset your password.',
       errorMessage: 'Something went wrong when processing your request. Please try again later.',
@@ -65,14 +81,14 @@ export const useUserActions = () => {
 
   const verifyResetPassword = (password: string, resetToken: string) =>
     executeApiAction({
-      action: () => ApiClient.verifyResetPassword(password, resetToken),
+      action: () => apiClient.post('authn/reset-password/verify', { json: { password, reset_token: resetToken } }),
       successMessage: 'Your password was successfully set.',
       errorMessage: 'Your reset link is invalid. Request a new one on the reset password page.',
     });
 
   const verifyUser = (verifyToken: string) =>
     executeApiAction({
-      action: () => ApiClient.verifyUser(verifyToken),
+      action: () => apiClient.post('authn/verify-user', { json: { verify_token: verifyToken } }),
       onSuccess: async () => {
         const user = await getMe();
         if (user) setUser(user);
@@ -85,14 +101,14 @@ export const useUserActions = () => {
 
   const resendVerification = () =>
     executeApiAction({
-      action: () => ApiClient.resendVerification(),
+      action: () => apiClient.post('authn/resend-verification'),
       successMessage: 'Verification re-sent',
       errorMessage: 'Failed to re-send verification',
     });
 
   const signOut = () =>
     executeApiAction({
-      action: () => ApiClient.signOut(),
+      action: () => apiClient.post('authn/sign-out'),
       onSuccess: () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('selected_project_id');
@@ -113,7 +129,7 @@ export const useUserActions = () => {
 
   const sendSupportMessage = (message: string) =>
     executeApiAction({
-      action: () => ApiClient.sendSupportMessage(message),
+      action: () => apiClient.post('communications/support', { json: { message } }),
       successMessage: 'Thank you for your message!',
       errorMessage: 'Failed to send message',
     });

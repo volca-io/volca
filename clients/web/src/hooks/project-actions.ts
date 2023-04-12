@@ -1,10 +1,22 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { ApiClient } from '../lib/clients/api-client';
+import { apiClient } from '../lib/api-client';
 import { projectsState, selectedProjectSelector } from '../state';
 import { Project } from '../types';
 import { useApiActions } from './api-actions';
+
+export type ListProjectsResponse = {
+  projects: Project[];
+};
+
+type CreateProjectResponse = {
+  project: Project;
+};
+
+type UpdateProjectResponse = {
+  project: Project;
+};
 
 export const useProjectActions = () => {
   const navigate = useNavigate();
@@ -12,16 +24,9 @@ export const useProjectActions = () => {
   const [selectedProject, setSelectedProject] = useRecoilState(selectedProjectSelector);
   const { executeApiAction } = useApiActions();
 
-  const getProject = async (id: string) =>
-    await executeApiAction<Project>({
-      action: () => ApiClient.getProject(id),
-      onError: () => navigate('/'),
-      errorMessage: 'Failed to load project, refresh to try again',
-    });
-
   const createProject = async ({ name }: { name: string }) =>
     await executeApiAction({
-      action: () => ApiClient.createProject({ name }),
+      action: async () => (await apiClient.post('projects', { json: { name } }).json<CreateProjectResponse>()).project,
       onSuccess: (project: Project) => {
         setProjects([...projects, project]);
         setSelectedProject(project);
@@ -31,10 +36,10 @@ export const useProjectActions = () => {
       successMessage: 'Project created',
     });
 
-  const updateProject = async (data: Partial<Project>) =>
+  const updateProject = async ({ id, name }: Partial<Project>) =>
     await executeApiAction({
-      action: () => ApiClient.updateProject(data),
-      onSuccess: (project: Project) => {
+      action: () => apiClient.put(`projects/${id}`, { json: { name } }).json<UpdateProjectResponse>(),
+      onSuccess: ({ project }: UpdateProjectResponse) => {
         if (project.id === selectedProject?.id) {
           setSelectedProject(project);
         }
@@ -46,7 +51,7 @@ export const useProjectActions = () => {
 
   const deleteProject = async (id: string) =>
     await executeApiAction({
-      action: () => ApiClient.deleteProject(id),
+      action: () => apiClient.delete(`projects/${id}`),
       onSuccess: () => {
         setProjects(projects.filter((p) => p.id !== id));
         if (selectedProject?.id === id) {
@@ -60,7 +65,6 @@ export const useProjectActions = () => {
     });
 
   return {
-    getProject: useCallback(getProject, [executeApiAction, navigate]),
     createProject: useCallback(createProject, [setProjects, setSelectedProject, executeApiAction, navigate, projects]),
     updateProject: useCallback(updateProject, [
       setProjects,

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useToast } from '@chakra-ui/react';
 
-import { ApiError } from '../lib/clients/api-client';
+import { ApiError } from '../lib/api-client';
 import { loadingState, currentUserState } from '../state';
 
 export const useApiActions = () => {
