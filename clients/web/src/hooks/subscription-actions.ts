@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { apiClient } from '../lib/api-client';
+import { getClient } from '../lib/api-client';
 import { Plan, StripeSession } from '../types';
 import { useApiActions } from './api-actions';
 
@@ -20,7 +20,7 @@ export const useSubscriptionActions = () => {
 
   const manageSubscriptions = async () =>
     await executeApiAction<StripeSession>({
-      action: () => apiClient.post('stripe/billing-portal-sessions').json<CreateStripeBillingPortalSessionResponse>(),
+      action: () => getClient().post('stripe/billing-portal-sessions').json<CreateStripeBillingPortalSessionResponse>(),
       onSuccess: (response: CreateStripeBillingPortalSessionResponse) =>
         window.location.replace(response.stripe_billing_portal_session.url),
       errorMessage:
@@ -30,7 +30,9 @@ export const useSubscriptionActions = () => {
   const activateSubscription = async (planId: string) =>
     await executeApiAction<StripeSession>({
       action: () =>
-        apiClient.post('stripe/sessions', { json: { plan_id: planId } }).json<CreateStripeSessionResponse>(),
+        getClient()
+          .post('stripe/sessions', { json: { plan_id: planId } })
+          .json<CreateStripeSessionResponse>(),
       onSuccess: (response: CreateStripeSessionResponse) => window.location.replace(response.stripe_session.url),
       errorMessage:
         'Failed to create Stripe session. Make sure you have configured your Stripe API keys for this environment.',
@@ -38,7 +40,7 @@ export const useSubscriptionActions = () => {
 
   const listPlans = async () =>
     executeApiAction<Plan[]>({
-      action: async () => (await apiClient.get('stripe/plans').json<StripePlansReponse>()).plans,
+      action: async () => (await getClient().get('stripe/plans').json<StripePlansReponse>()).plans,
       errorMessage: 'Failed to fetch products.',
     });
 

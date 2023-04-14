@@ -119,8 +119,7 @@ export const SubscribePage: React.FC = () => {
 
   const onActivate = async (id: string) => {
     try {
-      const session = await activateSubscription(id);
-      if (session) window.location.replace(session.url);
+      await activateSubscription(id);
     } catch (error) {
       console.error(error);
     }

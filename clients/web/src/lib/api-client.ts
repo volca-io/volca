@@ -78,9 +78,10 @@ const client = ky.create({
   mode: 'cors',
 });
 
-export const apiClient = client.extend({
-  hooks: {
-    beforeRequest: [tokenHook],
-    afterResponse: [errorHook],
-  },
-});
+export const getClient = ({ skipAuthentication } = { skipAuthentication: false }) =>
+  client.extend({
+    hooks: {
+      beforeRequest: skipAuthentication ? [] : [tokenHook],
+      afterResponse: [errorHook],
+    },
+  });
