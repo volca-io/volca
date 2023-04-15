@@ -23,10 +23,12 @@ export const useProjectUserActions = () => {
 
   const createProjectInvitation = async ({ toUserEmail, projectId }: { toUserEmail: string; projectId: string }) =>
     await executeApiAction<ProjectInvitation>({
-      action: () =>
-        getClient()
-          .post('project-invitations', { json: { project_id: projectId, to_user_email: toUserEmail } })
-          .json<CreateProjectInvitationResponse>(),
+      action: async () =>
+        (
+          await getClient()
+            .post('project-invitations', { json: { project_id: projectId, to_user_email: toUserEmail } })
+            .json<CreateProjectInvitationResponse>()
+        ).project_invitation,
       successMessage: '',
       errorMessage: 'Failed to create project invitation',
     });

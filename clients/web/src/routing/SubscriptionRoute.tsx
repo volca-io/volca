@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { currentUserState } from '../state';
+import { currentUserState, projectsState } from '../state';
 import { AuthenticatedRoute } from './AuthenticatedRoute';
 
 interface SubscriptionRouteProps {
@@ -10,13 +10,14 @@ interface SubscriptionRouteProps {
 
 export const SubscriptionRoute: React.FC<SubscriptionRouteProps> = ({ children }) => {
   const user = useRecoilValue(currentUserState);
+  const projects = useRecoilValue(projectsState);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user?.has_active_subscription) {
+    if (!projects.find((project) => project.admin.has_active_subscription)) {
       navigate('/onboarding');
     }
-  }, [navigate, user?.has_active_subscription]);
+  }, [navigate, user?.has_active_subscription, projects]);
 
   return <AuthenticatedRoute>{children}</AuthenticatedRoute>;
 };
