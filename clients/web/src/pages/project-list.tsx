@@ -69,21 +69,23 @@ export const ProjectListPage: React.FC = () => {
       <Box mt={8} />
       <SimpleGrid minChildWidth="200px" width="100%" spacingX="40px" spacingY="20px">
         {user && projects && projects.map((project) => <ProjectCard key={project.id} project={project} />)}
-        <SoftCard
-          onClick={() => navigate('/projects/create')}
-          style={{
-            ...cardStyle,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Icon boxSize="48px" as={MdAdd} />
-          <Heading as="h3" size="sm" textAlign="center">
-            Create Project
-          </Heading>
-        </SoftCard>
+        {user?.has_active_subscription && (
+          <SoftCard
+            onClick={() => navigate('/projects/create')}
+            style={{
+              ...cardStyle,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Icon boxSize="48px" as={MdAdd} />
+            <Heading as="h3" size="sm" textAlign="center">
+              Create Project
+            </Heading>
+          </SoftCard>
+        )}
       </SimpleGrid>
     </AuthenticatedLayout>
   );

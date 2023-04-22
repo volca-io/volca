@@ -74,7 +74,7 @@ export class StripeService {
     }
 
     const session = await this.stripe.checkout.sessions.create({
-      success_url: EnvironmentVariables.APP_DOMAIN,
+      success_url: `${EnvironmentVariables.APP_DOMAIN}/projects/create`,
       cancel_url: `${EnvironmentVariables.APP_DOMAIN}/onboarding?status=warning`,
       customer,
       mode: 'subscription',
