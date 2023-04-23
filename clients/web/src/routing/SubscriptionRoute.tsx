@@ -14,10 +14,10 @@ export const SubscriptionRoute: React.FC<SubscriptionRouteProps> = ({ children }
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!projects.find((project) => project.admin.has_active_subscription)) {
+    if (!(user?.has_active_subscription || projects.some((project) => project.admin.has_active_subscription))) {
       navigate('/onboarding');
     }
-  }, [navigate, user?.has_active_subscription, projects]);
+  }, [navigate, user, projects]);
 
   return <AuthenticatedRoute>{children}</AuthenticatedRoute>;
 };
