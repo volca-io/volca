@@ -60,20 +60,20 @@ export const PricingCard = ({
   onActivate: (id: string) => Promise<void>;
   user: User;
 }) => {
-  const accentColor = useColorModeValue('blue.600', 'blue.200');
+  const background = useColorModeValue('white', 'gray.900');
   if (!(plan.id in plans)) return null;
   const { features, title, price } = plans[plan.id as keyof typeof plans];
 
   return (
-    <Card rounded={{ sm: 'xl' }} display="flex" p="10" overflow="hidden" mb={8} w="380px">
+    <Card rounded={{ sm: 'xl' }} background={background} display="flex" p="10" overflow="hidden" mb={8} w="380px">
       <VStack spacing={6}>
         <Heading size="lg">{title}</Heading>
       </VStack>
       <Flex align="flex-end" justify="center" fontWeight="extrabold" my="8">
-        <Text fontWeight="inherit" fontSize="4xl" lineHeight={'1.4em'} mr={1}>
+        <Text fontWeight="inherit" fontSize="4xl" lineHeight={'1.4em'} mr={0.8}>
           $
         </Text>
-        <Heading size="3xl" fontWeight="inherit" lineHeight="0.9em" color={accentColor}>
+        <Heading size="3xl" fontWeight="inherit" lineHeight="0.9em">
           {price}
         </Heading>
         <Text fontWeight="inherit" fontSize="2xl" lineHeight={'2.2em'} ml={1}>
@@ -83,13 +83,12 @@ export const PricingCard = ({
       <List spacing="4" mb="8" maxW="28ch" mx="auto">
         {features.map((feature, index) => (
           <ListItem fontWeight="medium" key={index}>
-            <ListIcon fontSize="xl" as={MdCheckCircle} marginEnd={2} color={accentColor} />
+            <ListIcon fontSize="xl" as={MdCheckCircle} marginEnd={2} />
             {feature}
           </ListItem>
         ))}
       </List>
       <Button
-        colorScheme="blue"
         size="lg"
         w="full"
         fontWeight="extrabold"

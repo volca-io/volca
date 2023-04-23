@@ -7,7 +7,7 @@ interface MainPanelProps {
 }
 
 export const MainPanel: React.FC<MainPanelProps> = ({ children, clearSidebar }) => {
-  const bg = useColorModeValue('gray.100', 'gray.900');
+  const bg = useColorModeValue('gray.100', 'black');
 
   return (
     <Flex

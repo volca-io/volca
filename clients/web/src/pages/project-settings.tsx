@@ -45,7 +45,7 @@ export const ProjectSettingsPage: React.FC = () => {
             <FormLabel htmlFor="name">Name</FormLabel>
             <Input defaultValue={project.name} {...register('name', { required: true })} />
             {errors?.name && <p>Name is required</p>}
-            <Button marginTop="1em" type="submit" colorScheme="blue">
+            <Button marginTop="1em" type="submit">
               Save
             </Button>
           </form>

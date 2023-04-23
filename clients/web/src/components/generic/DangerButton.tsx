@@ -26,7 +26,7 @@ export const DangerButton = ({
   const cancelRef = React.useRef<HTMLButtonElement>(null);
   return (
     <>
-      <Button w={'auto'} onClick={onOpen} leftIcon={icon} colorScheme="red">
+      <Button w={'auto'} onClick={onOpen} leftIcon={icon} colorScheme="red" color="white">
         {title}
       </Button>
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
@@ -42,7 +42,7 @@ export const DangerButton = ({
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={onClick} ml={3}>
+              <Button onClick={onClick} ml={3} colorScheme="red" color="white">
                 {title}
               </Button>
             </AlertDialogFooter>

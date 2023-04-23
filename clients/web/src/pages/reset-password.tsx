@@ -1,4 +1,4 @@
-import { Text, Flex, useColorModeValue, Box, Heading, Link } from '@chakra-ui/react';
+import { Text, Flex, Box, Heading, Link } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { DefaultLayout } from '../layouts';
@@ -8,10 +8,6 @@ import { ResetPasswordForm } from '../components/forms/ResetPassword';
 
 export const ResetPasswordPage: React.FC = () => {
   const { resetPassword } = useUserActions();
-
-  const titleColor = useColorModeValue('teal.400', 'teal.200');
-  const textColor = useColorModeValue('gray.600', 'white');
-  const linkColor = useColorModeValue('teal.400', 'teal.200');
 
   const onSubmit = async ({ email }: { email: string }) => resetPassword(email);
 
@@ -29,19 +25,11 @@ export const ResetPasswordPage: React.FC = () => {
           }}
         >
           <Box mb={2}>
-            <Heading color={titleColor} mb={2}>
-              Reset your password
-            </Heading>
-            <Text fontSize="sm" color={textColor}>
+            <Heading mb={2}>Reset your password</Heading>
+            <Text fontSize="sm">
               Enter the email address you signed up with and we'll send you instructions as how to reset your password.
               Or go back to{' '}
-              <Link
-                color={linkColor}
-                textDecoration="underline"
-                textUnderlineOffset={1.5}
-                to="/sign-in"
-                as={RouterLink}
-              >
+              <Link textDecoration="underline" textUnderlineOffset={1.5} to="/sign-in" as={RouterLink}>
                 sign in page
               </Link>
               .

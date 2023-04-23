@@ -14,7 +14,6 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = (props) => {
       size="md"
       fontSize="lg"
       variant="ghost"
-      color="current"
       marginLeft="2"
       onClick={toggleColorMode}
       icon={<SwitchIcon />}

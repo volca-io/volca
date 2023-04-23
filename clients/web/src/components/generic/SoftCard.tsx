@@ -10,7 +10,7 @@ export const SoftCard = ({
   onClick?: (...args: any[]) => void;
   [x: string]: any;
 }) => {
-  const background = useColorModeValue('white', 'gray.700');
+  const background = useColorModeValue('white', 'gray.900');
   const backgroundHover = useColorModeValue('gray.100', 'gray.800');
 
   return (

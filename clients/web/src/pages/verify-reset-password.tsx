@@ -1,4 +1,4 @@
-import { Text, Flex, useColorModeValue, Box, Heading, Link } from '@chakra-ui/react';
+import { Text, Flex, Box, Heading, Link } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 import { DefaultLayout } from '../layouts';
@@ -11,9 +11,6 @@ export const VerifyResetPasswordPage: React.FC = () => {
   const { verifyResetPassword } = useUserActions();
   const location = useLocation();
   const resetToken = new URLSearchParams(location.search).get('reset-token');
-
-  const titleColor = useColorModeValue('teal.400', 'teal.200');
-  const textColor = useColorModeValue('gray.600', 'white');
 
   return (
     <DefaultLayout displayLogo>
@@ -29,10 +26,8 @@ export const VerifyResetPasswordPage: React.FC = () => {
           }}
         >
           <Box mb={2}>
-            <Heading color={titleColor} mb={2}>
-              Reset password
-            </Heading>
-            <Text fontSize="sm" color={textColor}>
+            <Heading mb={2}>Reset password</Heading>
+            <Text fontSize="sm">
               Enter a new password in the form below and click submit to change the password on your account.
             </Text>
           </Box>

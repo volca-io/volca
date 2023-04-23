@@ -40,7 +40,6 @@ export const SupportButton: React.FC<SupportButtonProps> = (props) => {
         size="md"
         fontSize="lg"
         variant="ghost"
-        color="current"
         marginLeft="2"
         aria-label="Request support"
         onClick={onOpen}
@@ -66,7 +65,7 @@ export const SupportButton: React.FC<SupportButtonProps> = (props) => {
                 <Button ref={cancelRef} onClick={onClose}>
                   Cancel
                 </Button>
-                <Button type="submit" colorScheme={'blue'} ml={3}>
+                <Button type="submit" ml={3}>
                   Send
                 </Button>
               </AlertDialogFooter>

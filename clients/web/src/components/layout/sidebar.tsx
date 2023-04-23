@@ -99,7 +99,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   return (
     <Flex
       transition="3s ease"
-      bg={useColorModeValue('white', 'gray.900')}
+      bg={useColorModeValue('white', 'black')}
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
@@ -150,7 +150,7 @@ const NavItem = ({ icon, onClick, children, ...rest }: NavItemProps) => {
         role="group"
         cursor="pointer"
         _hover={{
-          bg: 'cyan.400',
+          bg: 'gray.900',
           color: 'white',
         }}
         {...rest}
@@ -185,7 +185,7 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
       px={{ base: 4, md: 4 }}
       height="20"
       alignItems="center"
-      bg={useColorModeValue('white', 'gray.900')}
+      bg={useColorModeValue('white', 'black')}
       justifyContent={{ base: 'space-between' }}
       {...rest}
     >
@@ -221,7 +221,7 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
                 </Box>
               </HStack>
             </MenuButton>
-            <MenuList >
+            <MenuList>
               <MenuItem onClick={() => navigate('/')}>Projects</MenuItem>
               <MenuItem onClick={() => navigate('/settings')}>Settings</MenuItem>
               <MenuDivider />

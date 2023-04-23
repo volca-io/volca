@@ -54,11 +54,11 @@ export const SettingsPage: React.FC = () => {
         <SoftCard>
           <PageHeading title="Subscriptions" icon={MdPayment} />
           {!user?.has_active_subscription && (
-            <Button mt={6} colorScheme="blue" rightIcon={<MdAddShoppingCart />} onClick={() => navigate('/onboarding')}>
+            <Button mt={6} rightIcon={<MdAddShoppingCart />} onClick={() => navigate('/onboarding')}>
               Activate Subscription
             </Button>
           )}
-          <Button mt={6} colorScheme="blue" rightIcon={<MdPayments />} onClick={manageSubscriptions}>
+          <Button mt={6} rightIcon={<MdPayments />} onClick={manageSubscriptions}>
             Manage Subscription
           </Button>
         </SoftCard>

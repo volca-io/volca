@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Text, useColorModeValue, Flex, Link, Heading, Box } from '@chakra-ui/react';
+import { Text, Flex, Link, Heading, Box } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -13,10 +13,6 @@ export const SignInPage: React.FC = () => {
   const { authnPassword, getRememberInfo } = useUserActions();
   const user = useRecoilValue(currentUserState);
   const navigate = useNavigate();
-
-  const titleColor = useColorModeValue('teal.400', 'teal.200');
-  const textColor = useColorModeValue('gray.600', 'white');
-  const linkColor = useColorModeValue('teal.400', 'teal.200');
 
   useEffect(() => {
     if (user) {
@@ -34,18 +30,10 @@ export const SignInPage: React.FC = () => {
       <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
         <Flex direction="column" justifyContent={{ base: 'flex-start ', md: 'center' }} flexGrow={1} maxW={600}>
           <Box paddingY="8">
-            <Heading color={titleColor} mb={2}>
-              Sign in
-            </Heading>
-            <Text fontSize="sm" color={textColor}>
+            <Heading mb={2}>Sign in</Heading>
+            <Text fontSize="sm">
               Don't have an account to sign in to?{' '}
-              <Link
-                color={linkColor}
-                textDecoration="underline"
-                textUnderlineOffset={1.5}
-                to="/register"
-                as={RouterLink}
-              >
+              <Link textDecoration="underline" textUnderlineOffset={1.5} to="/register" as={RouterLink}>
                 Register an account instead
               </Link>
             </Text>
@@ -53,14 +41,8 @@ export const SignInPage: React.FC = () => {
           <SoftCard>
             <SignInForm defaultIdentifier={identifier} defaultRemember={remember} onSubmit={onSubmit} />
             <Flex justifyContent="space-between" mt={5}>
-              <Text fontSize="sm" color={textColor}>
-                <Link
-                  color={linkColor}
-                  textDecoration="underline"
-                  textUnderlineOffset={1.5}
-                  to="/reset-password"
-                  as={RouterLink}
-                >
+              <Text fontSize="sm">
+                <Link textDecoration="underline" textUnderlineOffset={1.5} to="/reset-password" as={RouterLink}>
                   Forgot your password?
                 </Link>
               </Text>

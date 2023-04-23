@@ -71,25 +71,9 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, defaultIdentif
           <FormLabel htmlFor="remember" fontSize="sm" mb="0">
             Remember me
           </FormLabel>
-          <Switch id="remember" {...register('remember')} colorScheme="teal" />
+          <Switch id="remember" {...register('remember')} />
         </FormControl>
-        <Button
-          fontSize="10px"
-          type="submit"
-          bg="teal.300"
-          w="100%"
-          h="45"
-          mb="20px"
-          color="white"
-          mt="20px"
-          _hover={{
-            bg: 'teal.200',
-          }}
-          _active={{
-            bg: 'teal.400',
-          }}
-          isLoading={loading}
-        >
+        <Button fontSize="10px" type="submit" w="100%" h="45" mb="20px" mt="20px" isLoading={loading}>
           SIGN IN
         </Button>
       </VStack>

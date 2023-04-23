@@ -46,7 +46,7 @@ export const InactiveProjectDialog = ({
 
             <AlertDialogFooter>
               {project.admin_id === user.id && (
-                <Button colorScheme="blue" onClick={onSubscribe} mr={4}>
+                <Button onClick={onSubscribe} mr={4}>
                   Subscribe
                 </Button>
               )}

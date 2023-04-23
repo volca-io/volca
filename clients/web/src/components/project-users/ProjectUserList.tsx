@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Table, TableContainer, Thead, Th, Tr, Td, Tbody, Avatar } from '@chakra-ui/react';
+import { Table, TableContainer, Thead, Th, Tr, Td, Tbody, Avatar } from '@chakra-ui/react';
 
 import { User, Project } from '../../types';
+import { DangerButton } from '../generic/DangerButton';
 
 type ProjectUserListProps = {
   project: Project;
@@ -34,9 +35,11 @@ const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users, delet
                 <Td>{user.id === project.admin_id ? 'Admin' : 'Member'}</Td>
                 <Td style={{ textAlign: 'end' }}>
                   {user.id === project.admin_id ? null : (
-                    <Button minWidth="160px" colorScheme="red" onClick={() => deleteUser(project.id, user.id)}>
-                      Delete
-                    </Button>
+                    <DangerButton
+                      onClick={() => deleteUser(project.id, user.id)}
+                      title={'Delete'}
+                      body={'Are you sure you want to delete this user?'}
+                    />
                   )}
                 </Td>
               </Tr>
