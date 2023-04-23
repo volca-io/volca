@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { getClient } from '../lib/api-client';
+import { apiClient } from '../lib/api-client';
 import { projectsState, selectedProjectSelector } from '../state';
 import { Project } from '../types';
 import { useApiActions } from './api-actions';
@@ -26,10 +26,7 @@ export const useProjectActions = () => {
 
   const createProject = async ({ name }: { name: string }) =>
     await executeApiAction({
-      action: async () =>
-        (
-          await getClient().post('projects', { json: { name } }).json<CreateProjectResponse>()
-        ).project,
+      action: async () => (await apiClient.post('projects', { json: { name } }).json<CreateProjectResponse>()).project,
       onSuccess: (project: Project) => {
         setProjects([...projects, project]);
         setSelectedProject(project);
@@ -41,7 +38,7 @@ export const useProjectActions = () => {
 
   const updateProject = async ({ id, name }: Partial<Project>) =>
     await executeApiAction({
-      action: () => getClient().put(`projects/${id}`, { json: { name } }).json<UpdateProjectResponse>(),
+      action: () => apiClient.put(`projects/${id}`, { json: { name } }).json<UpdateProjectResponse>(),
       onSuccess: ({ project }: UpdateProjectResponse) => {
         if (project.id === selectedProject?.id) {
           setSelectedProject(project);
@@ -54,7 +51,7 @@ export const useProjectActions = () => {
 
   const deleteProject = async (id: string) =>
     await executeApiAction({
-      action: () => getClient().delete(`projects/${id}`),
+      action: () => apiClient.delete(`projects/${id}`),
       onSuccess: () => {
         setProjects(projects.filter((p) => p.id !== id));
         if (selectedProject?.id === id) {

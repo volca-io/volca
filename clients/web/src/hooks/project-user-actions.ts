@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { getClient } from '../lib/api-client';
+import { apiClient } from '../lib/api-client';
 import { ProjectInvitation, User } from '../types';
 import { useApiActions } from './api-actions';
 
@@ -17,7 +17,7 @@ export const useProjectUserActions = () => {
 
   const getProjectUsers = async (projectId: string) =>
     await executeApiAction<User[]>({
-      action: async () => (await getClient().get(`projects/${projectId}/users`).json<GetProjectUsersResponse>()).users,
+      action: async () => (await apiClient.get(`projects/${projectId}/users`).json<GetProjectUsersResponse>()).users,
       errorMessage: 'Failed to load users',
     });
 
@@ -25,7 +25,7 @@ export const useProjectUserActions = () => {
     await executeApiAction<ProjectInvitation>({
       action: async () =>
         (
-          await getClient()
+          await apiClient
             .post('project-invitations', { json: { project_id: projectId, to_user_email: toUserEmail } })
             .json<CreateProjectInvitationResponse>()
         ).project_invitation,
@@ -35,13 +35,13 @@ export const useProjectUserActions = () => {
 
   const acceptProjectInvitation = async (key: string) =>
     await executeApiAction<void>({
-      action: () => getClient().get(`project-invitations/${key}`).json(),
+      action: () => apiClient.get(`project-invitations/${key}`).json(),
       errorMessage: 'Something went wrong, make sure your invitation is still valid',
     });
 
   const deleteProjectUser = async (projectId: string, userId: string) =>
     await executeApiAction<void>({
-      action: () => getClient().delete(`projects/${projectId}/users/${userId}`),
+      action: () => apiClient.delete(`projects/${projectId}/users/${userId}`),
       errorMessage: 'Failed to delete user',
     });
 

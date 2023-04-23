@@ -1,5 +1,5 @@
 import { atom, DefaultValue, selector } from 'recoil';
-import { getClient } from '../lib/api-client';
+import { apiClient } from '../lib/api-client';
 import { Project } from '../types';
 import { currentUserState } from './current-user';
 import { ListProjectsResponse } from '../hooks/project-actions';
@@ -10,7 +10,7 @@ const defaultProjectsSelector = selector<Project[]>({
     try {
       const currentUser = get(currentUserState);
       if (currentUser) {
-        const projectsResponse = await getClient().get('projects').json<ListProjectsResponse>();
+        const projectsResponse = await apiClient.get('projects').json<ListProjectsResponse>();
         return projectsResponse.projects;
       } else {
         return [];
