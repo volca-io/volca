@@ -8229,7 +8229,7 @@ __metadata:
     serverless: ^3.11.0
     serverless-domain-manager: ^6.0.4
     serverless-esbuild: ^1.32.5
-    serverless-http: ^3.0.1
+    serverless-http: ^3.2.0
     serverless-offline: ^8.8.0
     serverless-webpack: ^5.11.0
     snakecase-keys: ^5.4.4
@@ -21576,10 +21576,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serverless-http@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "serverless-http@npm:3.0.1"
-  checksum: 2f35619e9effa430c9e90c5b636cfe662d2f47bf70628ad1b12845d784a9e4c706c139224175bca3b4fd0a13297ee81da5ce3e7d35f0654136497453e18c0c35
+"serverless-http@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "serverless-http@npm:3.2.0"
+  checksum: aaa3b6e416ad25931bf00c3a1c31cb5f9a56c678ca8a6bc99749b90bb49ee6e8c53d7edd6bc0b587a171bb8c39c6093dc9980cb0142b8c18881533859d3b769f
   languageName: node
   linkType: hard
 
