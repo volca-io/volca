@@ -8264,7 +8264,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.30.5
     aws-cdk: ^2.51.1
     aws-cdk-lib: ^2.51.1
-    aws-crt: ^1.14.8
+    aws-crt: ^1.15.16
     commander: ^9.4.0
     constructs: ^10.0.0
     dotenv: ^16.0.3
@@ -9148,18 +9148,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-crt@npm:^1.14.8":
-  version: 1.14.8
-  resolution: "aws-crt@npm:1.14.8"
+"aws-crt@npm:^1.15.16":
+  version: 1.15.16
+  resolution: "aws-crt@npm:1.15.16"
   dependencies:
     "@aws-sdk/util-utf8-browser": ^3.109.0
     "@httptoolkit/websocket-stream": ^6.0.0
     axios: ^0.24.0
+    buffer: ^6.0.3
     cmake-js: ^6.3.2
     crypto-js: ^4.0.0
     mqtt: ^4.3.7
+    process: ^0.11.10
     tar: ^6.1.11
-  checksum: cd51165d70af6445d26e6ce808bd18b81cc1dbfd2dbbf7aa2fc7334ab8a665da096b1848a515c0979db1747da3c56ed763bd41d034da8e29206e33ad3e71160c
+  checksum: fbd090550aaf8349c4e1db74675b35edc2de40b779b4c05c886f8ce426d1fdcf6ea0682a152c31c6b9fb2009f491bcc3730089fa2fa2f40e3891e12215756762
   languageName: node
   linkType: hard
 
@@ -20187,6 +20189,13 @@ __metadata:
     memoizee: ^0.4.14
     type: ^2.1.0
   checksum: bd0208ca9e174ec957d6d4d12a26eec179623b62fead2ef72b85943ba46deb0a1e2c84283b9e034db5b938dca0471342cfec627c5382efe7a4eaa280ff5a058e
+  languageName: node
+  linkType: hard
+
+"process@npm:^0.11.10":
+  version: 0.11.10
+  resolution: "process@npm:0.11.10"
+  checksum: bfcce49814f7d172a6e6a14d5fa3ac92cc3d0c3b9feb1279774708a719e19acd673995226351a082a9ae99978254e320ccda4240ddc474ba31a76c79491ca7c3
   languageName: node
   linkType: hard
 
