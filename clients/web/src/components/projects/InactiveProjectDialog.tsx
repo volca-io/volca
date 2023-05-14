@@ -23,9 +23,9 @@ export const InactiveProjectDialog = ({
   onClose: () => void;
 }) => {
   const body =
-    project.admin_id === user.id
+    project.owner_id === user.id
       ? 'This project is not available because you do not have an active subscription. Press the button below to subscribe and gain access to your project.'
-      : `This project is not available because the admin does not have an active subscription. Contact the project admin ${project.admin.email} to re-activate their subscription and gain access to the project.`;
+      : `This project is not available because the owner does not have an active subscription. Contact the project owner ${project.owner.email} to re-activate their subscription and gain access to the project.`;
   const cancelRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ export const InactiveProjectDialog = ({
             <AlertDialogBody>{body}</AlertDialogBody>
 
             <AlertDialogFooter>
-              {project.admin_id === user.id && (
+              {project.owner_id === user.id && (
                 <Button onClick={onSubscribe} mr={4}>
                   Subscribe
                 </Button>

@@ -159,4 +159,21 @@ export default [
         table.dropColumn('plan_id');
       }),
   },
+  {
+    name: '10_roles',
+    up: async (knex: Knex) => {
+      await knex.schema.table('project_users', (table) => table.string('role').defaultTo('MEMBER').notNullable());
+      await knex.schema.table('projects', (table) => table.renameColumn('admin_id', 'owner_id'));
+      // Set the OWNER role for existing project owners
+      await knex('project_users')
+        .whereIn('project_id', function () {
+          this.select('id').from('projects').whereRaw('owner_id = project_users.user_id');
+        })
+        .update('role', 'OWNER');
+    },
+    down: async (knex: Knex) => {
+      await knex.schema.table('project_users', (table) => table.dropColumn('role'));
+      await knex.schema.table('projects', (table) => table.renameColumn('owner_id', 'admin_id'));
+    },
+  },
 ] as Array<Migration>;

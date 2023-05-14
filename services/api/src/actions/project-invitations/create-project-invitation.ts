@@ -31,14 +31,6 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  if (project.adminId !== user.id) {
-    throw new ServiceError({
-      name: ErrorNames.AUTHORIZATION_FAILED,
-      message: 'The user is not authorized for this project',
-      statusCode: StatusCodes.UNAUTHORIZED,
-    });
-  }
-
   const toUser = await userService.findByEmail(toUserEmail);
 
   if (!toUser) {

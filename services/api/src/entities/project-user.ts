@@ -4,6 +4,7 @@ export class ProjectUser extends Model {
   id!: string;
   userId!: string;
   projectId!: string;
+  role!: string;
   createdAt!: Date;
   updatedAt!: Date;
 

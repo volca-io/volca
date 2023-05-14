@@ -2,20 +2,30 @@ import { injectable } from 'tsyringe';
 import { Project, ProjectUser } from '../entities';
 
 type CreateProjectInput = {
-  adminId: string;
+  ownerId: string;
   name: string;
 };
 
 type UpdateProjectInput = {
   id: string;
-  adminId: string;
+  ownerId: string;
   name: string;
+};
+
+export enum ProjectRoleId {
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+  MEMBER = 'MEMBER',
+}
+
+type ProjectRole = {
+  id: ProjectRoleId;
 };
 
 @injectable()
 export class ProjectService {
   public async get(id: string): Promise<Project | undefined> {
-    return Project.query().findById(id).withGraphFetched('admin').withGraphFetched('users');
+    return Project.query().findById(id).withGraphFetched('owner').withGraphFetched('users');
   }
 
   public async list(userId: string): Promise<Project[]> {
@@ -25,27 +35,33 @@ export class ProjectService {
         'projects.id',
         memberProjects.map((p) => p.projectId)
       )
-      .withGraphFetched('admin')
+      .withGraphFetched('owner')
       .withGraphFetched('users');
   }
 
-  public async create({ adminId, name }: CreateProjectInput): Promise<Project> {
-    const project = await Project.query().insert({ adminId, name }).withGraphFetched('admin').returning('*');
-    await ProjectUser.query().insert({ userId: adminId, projectId: project.id });
+  public async create({ ownerId, name }: CreateProjectInput): Promise<Project> {
+    const project = await Project.query().insert({ ownerId, name }).withGraphFetched('owner').returning('*');
+    await ProjectUser.query().insert({ userId: ownerId, projectId: project.id, role: ProjectRoleId.OWNER });
     return project;
   }
 
-  public async update({ id, adminId, name }: UpdateProjectInput): Promise<Project | undefined> {
+  public async update({ id, ownerId, name }: UpdateProjectInput): Promise<Project | undefined> {
     return Project.query()
       .where({ id })
-      .update({ adminId, name })
+      .update({ ownerId, name })
       .returning('*')
-      .withGraphFetched('admin')
+      .withGraphFetched('owner')
       .withGraphFetched('users')
       .first();
   }
 
   public async delete(id: string): Promise<void> {
     await Project.query().deleteById(id);
+  }
+
+  public listRoles(): ProjectRole[] {
+    return Object.keys(ProjectRoleId).map((id) => ({
+      id: id as ProjectRoleId,
+    }));
   }
 }

@@ -6,6 +6,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  ButtonProps,
   useDisclosure,
 } from '@chakra-ui/react';
 import React from 'react';
@@ -16,17 +17,18 @@ export const DangerButton = ({
   icon,
   onClick,
   body,
+  ...rest
 }: {
   title: string;
   icon?: ReactElement<any>;
   onClick: () => void;
   body: string;
-}) => {
+} & ButtonProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
   return (
     <>
-      <Button w={'auto'} onClick={onOpen} leftIcon={icon} colorScheme="red" color="white">
+      <Button {...rest} w={'auto'} onClick={onOpen} leftIcon={icon} colorScheme="red">
         {title}
       </Button>
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
@@ -42,7 +44,7 @@ export const DangerButton = ({
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
-              <Button onClick={onClick} ml={3} colorScheme="red" color="white">
+              <Button onClick={onClick} ml={3} colorScheme="red">
                 {title}
               </Button>
             </AlertDialogFooter>

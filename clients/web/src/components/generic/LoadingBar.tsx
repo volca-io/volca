@@ -7,5 +7,5 @@ export const LoadingBar = ({ full }: { full: boolean }) => {
 
   const props = loading ? {} : { display: 'none' };
 
-  return <Progress {...props} ml={{ base: 0, md: full ? 0 : 60 }} size="xs" isIndeterminate />;
+  return <Progress {...props} ml={{ base: 0, md: full ? 0 : 60 }} mb={-1} zIndex={1000} size="xs" isIndeterminate />;
 };

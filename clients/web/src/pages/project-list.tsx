@@ -39,20 +39,20 @@ export const ProjectListPage: React.FC = () => {
       key={project.id}
       style={{ ...cardStyle, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
       onClick={() =>
-        project.admin.has_active_subscription ? onSelectProject(project) : setInactiveProjectId(project.id)
+        project.owner.has_active_subscription ? onSelectProject(project) : setInactiveProjectId(project.id)
       }
     >
       <Box textAlign={['center', 'left']}>
         <Heading size="md">{project.name}</Heading>
-        <Badge variant={project.admin.has_active_subscription ? 'solid' : 'subtle'}>
-          {project.admin.has_active_subscription ? 'Active' : 'Inactive'}
+        <Badge variant={project.owner.has_active_subscription ? 'solid' : 'subtle'}>
+          {project.owner.has_active_subscription ? 'Active' : 'Inactive'}
         </Badge>
       </Box>
       <Box display="flex" flexDir="row">
         <Icon as={MdGroup} boxSize="24px" />
         <Text ml="2">{project.users?.length}</Text>
       </Box>
-      {user && !project.admin.has_active_subscription && (
+      {user && !project.owner.has_active_subscription && (
         <InactiveProjectDialog
           isOpen={inactiveProjectId === project.id}
           onClose={() => setInactiveProjectId(null)}

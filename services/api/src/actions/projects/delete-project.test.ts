@@ -43,5 +43,5 @@ describe('DELETE /projects/:id', () => {
   });
 
   // Todo - test that we cannot delete another users project
-  // Todo - test that a project can't be deleted if not admin
+  // Todo - test that a project can't be deleted if not owner
 });

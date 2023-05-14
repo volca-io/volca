@@ -5,6 +5,7 @@ import { action as listProjectUsersAction } from './list-project-users';
 import { action as listProjectsAction } from './list-projects';
 import { action as updateProjectAction, schema as updateProjectSchema } from './update-project';
 import { action as deleteProjectUserAction } from './delete-project-user';
+import { action as updateProjectUserAction, schema as updateProjectUserSchema } from './update-project-user';
 
 export {
   createProjectAction,
@@ -16,4 +17,6 @@ export {
   updateProjectAction,
   deleteProjectUserAction,
   updateProjectSchema,
+  updateProjectUserAction,
+  updateProjectUserSchema,
 };

@@ -1,5 +1,11 @@
 import { injectable } from 'tsyringe';
-import { ProjectUser, User } from '../entities';
+import { Project, ProjectUser, User } from '../entities';
+import { ProjectRoleId } from './project-service';
+
+type UpdateProjectUserInput = {
+  id: string;
+  role: ProjectRoleId;
+};
 
 @injectable()
 export class ProjectUserService {
@@ -8,20 +14,30 @@ export class ProjectUserService {
   }
 
   public async list(projectId: string): Promise<User[]> {
-    const projectUsers = await ProjectUser.query().where({ projectId });
-    return User.query().whereIn(
-      'id',
-      projectUsers.map((pu) => pu.userId)
-    );
+    const project = await Project.query().where({ id: projectId }).withGraphFetched('users').first();
+    if (!project) return [];
+    return project.users;
   }
 
   public async delete(projectId: string, userId: string) {
     return ProjectUser.query().where({ userId, projectId }).del();
   }
 
-  public async create({ userId, projectId }: { userId: string; projectId: string }): Promise<ProjectUser> {
+  public async create({
+    userId,
+    projectId,
+    role,
+  }: {
+    userId: string;
+    projectId: string;
+    role: string;
+  }): Promise<ProjectUser> {
     const expiresAt = new Date();
     expiresAt.setTime(expiresAt.getTime() + 1 * 60 * 60 * 1000);
-    return ProjectUser.query().insert({ userId, projectId }).returning('*');
+    return ProjectUser.query().insert({ userId, projectId, role }).returning('*');
+  }
+
+  public async update({ id, role }: UpdateProjectUserInput): Promise<void> {
+    await ProjectUser.query().where({ id }).update({ role });
   }
 }

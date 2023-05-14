@@ -5,21 +5,22 @@ import { User } from './user';
 export class Project extends Model {
   id!: string;
   name!: string;
-  adminId!: string;
-  admin!: User;
+  ownerId!: string;
+  owner!: User;
   createdAt!: Date;
   updatedAt!: Date;
+  users!: User[];
 
   static get tableName() {
     return 'projects';
   }
 
   static relationMappings = {
-    admin: {
+    owner: {
       relation: Model.BelongsToOneRelation,
       modelClass: User,
       join: {
-        from: 'projects.adminId',
+        from: 'projects.ownerId',
         to: 'users.id',
       },
     },
@@ -31,6 +32,9 @@ export class Project extends Model {
         through: {
           from: 'project_users.projectId',
           to: 'project_users.userId',
+          extra: {
+            role: 'role',
+          },
         },
         to: 'projects.id',
       },

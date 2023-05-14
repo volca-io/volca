@@ -10,7 +10,7 @@ describe('POST /projects', () => {
     accessToken = await authenticate(getRequest(), userOne);
   });
 
-  it('can create a new project and return it together with the admin', async () => {
+  it('can create a new project and return it together with the owner', async () => {
     const response = await getRequest()
       .post('/projects')
       .set({ Authorization: `Bearer ${accessToken}` })
@@ -23,8 +23,8 @@ describe('POST /projects', () => {
       project: {
         id: expect.any(String),
         name: 'My new project!',
-        admin_id: expect.any(String),
-        admin: {
+        owner_id: expect.any(String),
+        owner: {
           id: expect.any(String),
           has_active_subscription: true,
           first_name: userOne.firstName,
@@ -46,11 +46,9 @@ describe('POST /projects', () => {
   });
 
   it('returns 401 if user is not authorized', async () => {
-    const response = await getRequest()
-      .post('/projects')
-      .send({
-        name: 'My new project!',
-      });
+    const response = await getRequest().post('/projects').send({
+      name: 'My new project!',
+    });
 
     expect(response.status).toBe(401);
   });

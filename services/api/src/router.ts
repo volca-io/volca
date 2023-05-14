@@ -37,6 +37,8 @@ import {
   listProjectUsersAction,
   updateProjectAction,
   updateProjectSchema,
+  updateProjectUserAction,
+  updateProjectUserSchema,
 } from './actions/projects';
 
 import {
@@ -47,13 +49,9 @@ import {
   createStripeSessionSchema,
 } from './actions/stripe';
 
-import {
-  authenticationMiddleware,
-  schemaValidationMiddleware,
-  projectAdminMiddleware,
-  projectUserMiddleware,
-} from './middlewares';
+import { authenticationMiddleware, schemaValidationMiddleware, projectAuthorizationMiddleware } from './middlewares';
 import { sendMessageAction, sendMessageSchema } from './actions/communications';
+import { ProjectRoleId } from './services';
 /* volca-exclude-end os */
 import { CustomContext } from './types';
 
@@ -70,8 +68,18 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   /* volca-exclude-start os */
   // Projects
-  router.get('/projects/:projectId', authenticationMiddleware, projectUserMiddleware, getProjectAction);
-  router.delete('/projects/:projectId', authenticationMiddleware, projectAdminMiddleware, deleteProjectAction);
+  router.get(
+    '/projects/:projectId',
+    authenticationMiddleware,
+    projectAuthorizationMiddleware(ProjectRoleId.MEMBER),
+    getProjectAction
+  );
+  router.delete(
+    '/projects/:projectId',
+    authenticationMiddleware,
+    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
+    deleteProjectAction
+  );
   router.get('/projects', authenticationMiddleware, listProjectsAction);
   router.post(
     '/projects',
@@ -82,25 +90,37 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.put(
     '/projects/:projectId',
     authenticationMiddleware,
-    projectUserMiddleware,
+    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
     schemaValidationMiddleware(updateProjectSchema),
     updateProjectAction
   );
 
   // Project users
-  router.get('/projects/:projectId/users', authenticationMiddleware, projectUserMiddleware, listProjectUsersAction);
+  router.get(
+    '/projects/:projectId/users',
+    authenticationMiddleware,
+    projectAuthorizationMiddleware(ProjectRoleId.MEMBER),
+    listProjectUsersAction
+  );
   router.delete(
     '/projects/:projectId/users/:userId',
     authenticationMiddleware,
-    projectAdminMiddleware,
+    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
     deleteProjectUserAction
+  );
+  router.put(
+    '/projects/:projectId/users/:userId',
+    authenticationMiddleware,
+    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
+    schemaValidationMiddleware(updateProjectUserSchema),
+    updateProjectUserAction
   );
 
   // Project invitations
   router.post(
     '/project-invitations',
     authenticationMiddleware,
-    projectUserMiddleware,
+    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
     schemaValidationMiddleware(createProjectInvitationSchema),
     createProjectInvitationAction
   );

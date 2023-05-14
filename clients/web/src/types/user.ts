@@ -9,4 +9,5 @@ export type User = {
   verified_at: Date;
   created_at: Date;
   updated_at: Date;
+  role?: string;
 };

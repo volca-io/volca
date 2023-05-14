@@ -35,8 +35,8 @@ describe('PUT /projects', () => {
     expect(project).toMatchObject({
       id: expect.any(String),
       name: 'Updated project',
-      admin_id: expect.any(String),
-      admin: expect.any(Object),
+      owner_id: expect.any(String),
+      owner: expect.any(Object),
       users: expect.any(Array),
       created_at: expect.any(String),
       updated_at: expect.any(String),

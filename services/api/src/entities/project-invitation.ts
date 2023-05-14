@@ -7,6 +7,7 @@ export class ProjectInvitation extends Model {
   projectId!: string;
   expiresAt!: Date;
   key!: string;
+  role!: string;
   createdAt!: Date;
   updatedAt!: Date;
 

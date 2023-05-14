@@ -2,20 +2,19 @@ import joi, { Schema } from 'joi';
 import { CustomContext } from '../../types';
 import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
-import { ProjectService } from '../../services';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 import { StatusCodes } from 'http-status-codes';
+import { ProjectService } from '../../services';
 
 export const schema: Schema = joi.object({
   name: joi.string().required(),
-  admin_id: joi.string().optional(),
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
   const projectService = container.resolve(ProjectService);
 
-  const { name, adminId } = ctx.request.body;
+  const { name } = ctx.request.body;
   const { projectId: id } = ctx.params;
 
   const oldProject = await projectService.get(id);
@@ -27,7 +26,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  const project = await projectService.update({ ...oldProject, adminId, name });
+  const project = await projectService.update({ ...oldProject, name });
 
   return {
     body: {

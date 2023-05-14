@@ -1,6 +1,6 @@
 import joi, { Schema } from 'joi';
-import { StatusCodes } from 'http-status-codes';
 import { container } from 'tsyringe';
+import { StatusCodes } from 'http-status-codes';
 
 import { CustomContext } from '../../types';
 import { useApiAction } from '../utils/api-action';
@@ -27,7 +27,15 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   const { name } = ctx.request.body;
 
-  const project = await projectService.create({ adminId: user.id, name });
+  if (!user.hasActiveSubscription) {
+    throw new ServiceError({
+      name: ErrorNames.SUBCRIPTION_REQUIRED,
+      message: 'An active subscription is required to create a project',
+      statusCode: StatusCodes.BAD_REQUEST,
+    });
+  }
+
+  const project = await projectService.create({ ownerId: user.id, name });
   return {
     body: {
       project: project.toJSON(),

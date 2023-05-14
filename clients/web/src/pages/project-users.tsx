@@ -12,9 +12,11 @@ import { PageHeading } from '../components/generic/PageHeading';
 import { selectedProjectSelector } from '../state';
 import { useProjectUserActions } from '../hooks/project-user-actions';
 import { AlertBox, AlertBoxProps } from '../components/generic/AlertBox';
+import { usePrivileges } from '../hooks/roles';
 
 export const ProjectUsersPage: React.FC = () => {
   const project = useRecoilValue(selectedProjectSelector);
+  const privileges = usePrivileges();
   const [inviteAlert, setInviteAlert] = useState<AlertBoxProps | null>();
   const [users, setUsers] = useState<User[]>([]);
   const { getProjectUsers, createProjectInvitation, deleteProjectUser } = useProjectUserActions();
@@ -50,9 +52,11 @@ export const ProjectUsersPage: React.FC = () => {
         <SimpleGrid pt={2} columns={[1]} width="100%" spacingY="20px">
           <SoftCard>
             {inviteAlert && <AlertBox {...inviteAlert} />}
-            <Flex alignItems="center" justifyContent="space-between">
-              <InviteProjectUser onSubmit={onInvite} />
-            </Flex>
+            {privileges.PROJECT_USERS.CREATE && (
+              <Flex alignItems="center" justifyContent="space-between">
+                <InviteProjectUser onSubmit={onInvite} />
+              </Flex>
+            )}
             {users && (
               <ProjectUserList
                 project={project}

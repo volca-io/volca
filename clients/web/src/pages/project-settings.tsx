@@ -12,6 +12,7 @@ import { DangerButton } from '../components/generic/DangerButton';
 import { useProjectActions } from '../hooks/project-actions';
 import { selectedProjectSelector } from '../state';
 import { useRecoilValue } from 'recoil';
+import { usePrivileges } from '../hooks/roles';
 
 type FormValues = {
   name: string;
@@ -24,6 +25,7 @@ export const ProjectSettingsPage: React.FC = () => {
     formState: { errors },
   } = useForm<FormValues>();
   const selectedProject = useRecoilValue(selectedProjectSelector);
+  const privileges = usePrivileges();
   const [project] = useState<Project | null>(selectedProject);
 
   const { updateProject, deleteProject } = useProjectActions();
@@ -43,26 +45,36 @@ export const ProjectSettingsPage: React.FC = () => {
           <Spacer mt={6} />
           <form onSubmit={handleSubmit(onUpdateProject)}>
             <FormLabel htmlFor="name">Name</FormLabel>
-            <Input defaultValue={project.name} {...register('name', { required: true })} />
+            <Input
+              disabled={!privileges.PROJECTS.UPDATE}
+              defaultValue={project.name}
+              {...register('name', { required: true })}
+            />
             {errors?.name && <p>Name is required</p>}
-            <Button marginTop="1em" type="submit">
-              Save
-            </Button>
+            {privileges.PROJECTS.UPDATE && (
+              <Button marginTop="1em" type="submit">
+                Save
+              </Button>
+            )}
           </form>
           <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
             Plan
           </Heading>
-          {project.admin.plan_id}
-          <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
-            Manage
-          </Heading>
-          <Box>
-            <DangerButton
-              onClick={onDeleteProject}
-              title={'Delete'}
-              body={'Are you sure you want to delete this project?'}
-            />
-          </Box>
+          {project.owner.plan_id}
+          {privileges.PROJECTS.DELETE && (
+            <>
+              <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
+                Manage
+              </Heading>
+              <Box>
+                <DangerButton
+                  onClick={onDeleteProject}
+                  title={'Delete'}
+                  body={'Are you sure you want to delete this project?'}
+                />
+              </Box>
+            </>
+          )}
         </SoftCard>
       )}
     </AuthenticatedLayout>

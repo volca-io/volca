@@ -2,6 +2,8 @@ import React from 'react';
 import { Table, TableContainer, Thead, Th, Tr, Td, Tbody, Avatar } from '@chakra-ui/react';
 
 import { User, Project } from '../../types';
+import { RolePicker } from './RolePicker';
+import { usePrivileges } from '../../hooks/roles';
 import { DangerButton } from '../generic/DangerButton';
 
 type ProjectUserListProps = {
@@ -11,6 +13,7 @@ type ProjectUserListProps = {
 };
 
 const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users, deleteUser }) => {
+  const privileges = usePrivileges();
   return (
     <>
       <TableContainer w="100%" mt={6}>
@@ -20,7 +23,7 @@ const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users, delet
               <Th></Th>
               <Th>Name</Th>
               <Th>E-mail</Th>
-              <Th>Role</Th>
+              <Th minW={150}>Role</Th>
               <Th></Th>
             </Tr>
           </Thead>
@@ -32,10 +35,13 @@ const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users, delet
                 </Td>
                 <Td>{`${user.first_name} ${user.last_name}`}</Td>
                 <Td>{user.email}</Td>
-                <Td>{user.id === project.admin_id ? 'Admin' : 'Member'}</Td>
+                <Td>
+                  <RolePicker project={project} user={user} />
+                </Td>
                 <Td style={{ textAlign: 'end' }}>
-                  {user.id === project.admin_id ? null : (
+                  {privileges.PROJECT_USERS.DELETE && user.role !== 'OWNER' && (
                     <DangerButton
+                      minW={100}
                       onClick={() => deleteUser(project.id, user.id)}
                       title={'Delete'}
                       body={'Are you sure you want to delete this user?'}

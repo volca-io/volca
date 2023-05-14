@@ -45,10 +45,18 @@ export const useProjectUserActions = () => {
       errorMessage: 'Failed to delete user',
     });
 
+  const updateProjectUser = async (projectId: string, userId: string, role: string) =>
+    await executeApiAction<void>({
+      action: () => apiClient.put(`projects/${projectId}/users/${userId}`, { json: { role } }),
+      errorMessage: 'Failed to set role',
+      successMessage: 'Role updated',
+    });
+
   return {
     getProjectUsers: useCallback(getProjectUsers, [executeApiAction]),
     acceptProjectInvitation: useCallback(acceptProjectInvitation, [executeApiAction]),
     createProjectInvitation: useCallback(createProjectInvitation, [executeApiAction]),
     deleteProjectUser: useCallback(deleteProjectUser, [executeApiAction]),
+    updateProjectUser: useCallback(updateProjectUser, [executeApiAction]),
   };
 };

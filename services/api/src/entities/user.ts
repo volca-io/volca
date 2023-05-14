@@ -1,5 +1,6 @@
 import { Model, Pojo } from 'objection';
 import _ from 'lodash';
+import { ProjectRoleId } from '../services';
 
 export class User extends Model {
   id!: string;
@@ -14,6 +15,7 @@ export class User extends Model {
   verifiedAt!: Date;
   createdAt!: Date;
   updatedAt!: Date;
+  role?: ProjectRoleId;
 
   private static hiddenFields = ['password', 'stripeId'];
 
