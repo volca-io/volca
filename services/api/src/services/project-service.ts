@@ -1,5 +1,9 @@
+import { StatusCodes } from 'http-status-codes';
 import { injectable } from 'tsyringe';
+
 import { Project, ProjectUser } from '../entities';
+import { ServiceError } from '../errors/service-error';
+import { ErrorNames } from '../constants';
 
 type CreateProjectInput = {
   ownerId: string;
@@ -40,9 +44,21 @@ export class ProjectService {
   }
 
   public async create({ ownerId, name }: CreateProjectInput): Promise<Project> {
-    const project = await Project.query().insert({ ownerId, name }).withGraphFetched('owner').returning('*');
+    const project = await Project.query().insert({ ownerId, name }).returning('id');
     await ProjectUser.query().insert({ userId: ownerId, projectId: project.id, role: ProjectRoleId.OWNER });
-    return project;
+    const projectWithUsers = await Project.query()
+      .findById(project.id)
+      .withGraphFetched('owner')
+      .withGraphFetched('users');
+
+    if (!projectWithUsers) {
+      throw new ServiceError({
+        name: ErrorNames.INTERNAL_SERVER_ERROR,
+        message: 'Failed to create project',
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      });
+    }
+    return projectWithUsers;
   }
 
   public async update({ id, ownerId, name }: UpdateProjectInput): Promise<Project | undefined> {

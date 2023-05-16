@@ -36,6 +36,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   }
 
   const project = await projectService.create({ ownerId: user.id, name });
+
   return {
     body: {
       project: project.toJSON(),
