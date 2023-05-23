@@ -16,14 +16,14 @@ type UpdateProjectInput = {
   name: string;
 };
 
-export enum ProjectRoleId {
+export enum Role {
   OWNER = 'OWNER',
   ADMIN = 'ADMIN',
   MEMBER = 'MEMBER',
 }
 
 type ProjectRole = {
-  id: ProjectRoleId;
+  id: Role;
 };
 
 @injectable()
@@ -45,7 +45,7 @@ export class ProjectService {
 
   public async create({ ownerId, name }: CreateProjectInput): Promise<Project> {
     const project = await Project.query().insert({ ownerId, name }).returning('id');
-    await ProjectUser.query().insert({ userId: ownerId, projectId: project.id, role: ProjectRoleId.OWNER });
+    await ProjectUser.query().insert({ userId: ownerId, projectId: project.id, role: Role.OWNER });
     const projectWithUsers = await Project.query()
       .findById(project.id)
       .withGraphFetched('owner')
@@ -76,8 +76,8 @@ export class ProjectService {
   }
 
   public listRoles(): ProjectRole[] {
-    return Object.keys(ProjectRoleId).map((id) => ({
-      id: id as ProjectRoleId,
+    return Object.keys(Role).map((id) => ({
+      id: id as Role,
     }));
   }
 }

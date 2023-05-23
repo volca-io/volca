@@ -27,14 +27,6 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   const { name } = ctx.request.body;
 
-  if (!user.hasActiveSubscription) {
-    throw new ServiceError({
-      name: ErrorNames.SUBCRIPTION_REQUIRED,
-      message: 'An active subscription is required to create a project',
-      statusCode: StatusCodes.BAD_REQUEST,
-    });
-  }
-
   const project = await projectService.create({ ownerId: user.id, name });
 
   return {

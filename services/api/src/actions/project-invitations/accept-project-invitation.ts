@@ -5,7 +5,7 @@ import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
-import { ProjectInvitationService, ProjectRoleId, ProjectUserService } from '../../services';
+import { ProjectInvitationService, Role, ProjectUserService } from '../../services';
 import { User } from '../../entities';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
@@ -48,13 +48,11 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     await projectUserService.create({
       userId: user.id,
       projectId: projectInvitation.projectId,
-      role: ProjectRoleId.MEMBER,
+      role: Role.MEMBER,
     });
   }
 
   return {
-    body: {
-      accepted: true,
-    },
+    body: { accepted: true },
   };
 });

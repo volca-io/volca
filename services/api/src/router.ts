@@ -49,9 +49,9 @@ import {
   createStripeSessionSchema,
 } from './actions/stripe';
 
-import { authenticationMiddleware, schemaValidationMiddleware, projectAuthorizationMiddleware } from './middlewares';
+import { authenticationMiddleware, schemaValidationMiddleware, authorizationMiddleware } from './middlewares';
 import { sendMessageAction, sendMessageSchema } from './actions/communications';
-import { ProjectRoleId } from './services';
+import { Role } from './services';
 /* volca-exclude-end os */
 import { CustomContext } from './types';
 
@@ -71,13 +71,13 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.get(
     '/projects/:projectId',
     authenticationMiddleware,
-    projectAuthorizationMiddleware(ProjectRoleId.MEMBER),
+    authorizationMiddleware([Role.ADMIN, Role.OWNER, Role.MEMBER]),
     getProjectAction
   );
   router.delete(
     '/projects/:projectId',
     authenticationMiddleware,
-    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
+    authorizationMiddleware([Role.OWNER, Role.ADMIN]),
     deleteProjectAction
   );
   router.get('/projects', authenticationMiddleware, listProjectsAction);
@@ -90,7 +90,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.put(
     '/projects/:projectId',
     authenticationMiddleware,
-    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
+    authorizationMiddleware([Role.OWNER, Role.ADMIN]),
     schemaValidationMiddleware(updateProjectSchema),
     updateProjectAction
   );
@@ -99,19 +99,19 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.get(
     '/projects/:projectId/users',
     authenticationMiddleware,
-    projectAuthorizationMiddleware(ProjectRoleId.MEMBER),
+    authorizationMiddleware([Role.OWNER, Role.ADMIN, Role.MEMBER]),
     listProjectUsersAction
   );
   router.delete(
     '/projects/:projectId/users/:userId',
     authenticationMiddleware,
-    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
+    authorizationMiddleware([Role.OWNER, Role.ADMIN]),
     deleteProjectUserAction
   );
   router.put(
     '/projects/:projectId/users/:userId',
     authenticationMiddleware,
-    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
+    authorizationMiddleware([Role.OWNER, Role.ADMIN]),
     schemaValidationMiddleware(updateProjectUserSchema),
     updateProjectUserAction
   );
@@ -120,7 +120,7 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.post(
     '/project-invitations',
     authenticationMiddleware,
-    projectAuthorizationMiddleware(ProjectRoleId.ADMIN),
+    authorizationMiddleware([Role.OWNER, Role.ADMIN]),
     schemaValidationMiddleware(createProjectInvitationSchema),
     createProjectInvitationAction
   );

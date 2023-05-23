@@ -1,10 +1,10 @@
 import { injectable } from 'tsyringe';
 import { Project, ProjectUser, User } from '../entities';
-import { ProjectRoleId } from './project-service';
+import { Role } from './project-service';
 
 type UpdateProjectUserInput = {
   id: string;
-  role: ProjectRoleId;
+  role: Role;
 };
 
 @injectable()
@@ -30,7 +30,7 @@ export class ProjectUserService {
   }: {
     userId: string;
     projectId: string;
-    role: string;
+    role: Role;
   }): Promise<ProjectUser> {
     const expiresAt = new Date();
     expiresAt.setTime(expiresAt.getTime() + 1 * 60 * 60 * 1000);

@@ -3,14 +3,14 @@ import joi, { Schema } from 'joi';
 import { CustomContext } from '../../types';
 import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
-import { ProjectRoleId, ProjectUserService } from '../../services';
+import { Role, ProjectUserService } from '../../services';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
 export const schema: Schema = joi.object({
   role: joi
     .string()
-    .valid(...Object.keys(ProjectRoleId))
+    .valid(...Object.keys(Role))
     .optional(),
 });
 

@@ -12,7 +12,8 @@ import { DangerButton } from '../components/generic/DangerButton';
 import { useProjectActions } from '../hooks/project-actions';
 import { selectedProjectSelector } from '../state';
 import { useRecoilValue } from 'recoil';
-import { usePrivileges } from '../hooks/roles';
+import { Entity, Operation, usePrivileges } from '../hooks/roles';
+import { PrivilegeContainer } from '../components/generic/PrivilegeContainer';
 
 type FormValues = {
   name: string;
@@ -51,30 +52,29 @@ export const ProjectSettingsPage: React.FC = () => {
               {...register('name', { required: true })}
             />
             {errors?.name && <p>Name is required</p>}
-            {privileges.PROJECTS.UPDATE && (
+            <PrivilegeContainer entity={Entity.PROJECTS} operation={Operation.UPDATE}>
               <Button marginTop="1em" type="submit">
                 Save
               </Button>
-            )}
+            </PrivilegeContainer>
           </form>
           <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
             Plan
           </Heading>
           {project.owner.plan_id}
-          {privileges.PROJECTS.DELETE && (
-            <>
-              <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
-                Manage
-              </Heading>
-              <Box>
-                <DangerButton
-                  onClick={onDeleteProject}
-                  title={'Delete'}
-                  body={'Are you sure you want to delete this project?'}
-                />
-              </Box>
-            </>
-          )}
+
+          <PrivilegeContainer entity={Entity.PROJECTS} operation={Operation.DELETE}>
+            <Heading as="h2" size="md" style={{ marginTop: '1em', marginBottom: '1em' }}>
+              Manage
+            </Heading>
+            <Box>
+              <DangerButton
+                onClick={onDeleteProject}
+                title={'Delete'}
+                body={'Are you sure you want to delete this project?'}
+              />
+            </Box>
+          </PrivilegeContainer>
         </SoftCard>
       )}
     </AuthenticatedLayout>

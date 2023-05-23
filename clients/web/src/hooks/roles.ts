@@ -1,48 +1,58 @@
 import { useRecoilValue } from 'recoil';
 import { currentUserState, selectedProjectSelector } from '../state';
 
-type PrivilegeFlags = {
-  CREATE: boolean;
-  READ: boolean;
-  UPDATE: boolean;
-  DELETE: boolean;
-};
+export enum Entity {
+  PROJECTS = 'PROJECTS',
+  PROJECT_USERS = 'PROJECT_USERS',
+}
 
-type Privileges = {
-  PROJECTS: PrivilegeFlags;
-  PROJECT_USERS: PrivilegeFlags;
-};
+export enum Operation {
+  CREATE = 'CREATE',
+  READ = 'READ',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+}
 
-const basicPrivileges: Privileges = {
-  PROJECTS: {
-    CREATE: true,
-    READ: true,
-    UPDATE: false,
-    DELETE: false,
+enum Role {
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+  MEMBER = 'MEMBER',
+}
+
+type Privileges = Record<Role, Record<Entity, Record<Operation, boolean>>>;
+
+// Returns an object { <operation>: <boolean> } that defaults to false if the operation is not in the allowedOperations array
+const getOperations = (allowedOperations: Operation[]) =>
+  Object.keys(Operation).reduce(
+    (all, one) => ({
+      [one]: allowedOperations.includes(one as Operation),
+      ...all,
+    }),
+    {} as Record<Operation, boolean>
+  );
+
+const privileges: Privileges = {
+  OWNER: {
+    PROJECTS: getOperations([Operation.CREATE, Operation.READ, Operation.UPDATE, Operation.DELETE]),
+    PROJECT_USERS: getOperations([Operation.CREATE, Operation.READ, Operation.UPDATE, Operation.DELETE]),
   },
-  PROJECT_USERS: {
-    CREATE: false,
-    READ: true,
-    UPDATE: false,
-    DELETE: false,
+  ADMIN: {
+    PROJECTS: getOperations([Operation.CREATE, Operation.READ, Operation.UPDATE, Operation.DELETE]),
+    PROJECT_USERS: getOperations([Operation.CREATE, Operation.READ, Operation.UPDATE, Operation.DELETE]),
+  },
+  MEMBER: {
+    PROJECTS: getOperations([Operation.CREATE, Operation.READ]),
+    PROJECT_USERS: getOperations([Operation.READ]),
   },
 };
 
 const useCurrentRole = () => {
   const selectedProject = useRecoilValue(selectedProjectSelector);
   const currentUser = useRecoilValue(currentUserState);
-  return selectedProject?.users?.find((u) => u.id === currentUser?.id)?.role;
+  return selectedProject?.users?.find((u) => u.id === currentUser?.id)?.role as Role;
 };
 
 export const usePrivileges = () => {
   const currentRole = useCurrentRole();
-  const privileges = { ...basicPrivileges };
-  if (currentRole === 'ADMIN' || currentRole === 'OWNER') {
-    privileges.PROJECTS.UPDATE = true;
-    privileges.PROJECTS.DELETE = true;
-    privileges.PROJECT_USERS.CREATE = true;
-    privileges.PROJECT_USERS.UPDATE = true;
-    privileges.PROJECT_USERS.DELETE = true;
-  }
-  return privileges;
+  return privileges[currentRole];
 };
