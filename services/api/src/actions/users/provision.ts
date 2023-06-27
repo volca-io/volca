@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import joi, { Schema } from 'joi';
 import { container } from 'tsyringe';
+import _ from 'lodash';
 import { ErrorNames } from '../../constants';
 import { ServiceError } from '../../errors/service-error';
 import { AuthenticationService, UserService } from '../../services';
@@ -45,7 +46,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   const user = {
     sub: sub.toString(),
-    firstName: givenName?.toString() || config.name,
+    firstName: givenName?.toString() || _.upperFirst(config.name),
     lastName: familyName?.toString() || 'User',
     email: email.toString(),
     picture: primaryIdentity ? parsePicture(primaryIdentity.providerName, picture?.toString()) : null,
