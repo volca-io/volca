@@ -1,9 +1,10 @@
 import Koa from 'koa';
 import cors from '@koa/cors';
 import { Knex } from 'knex';
+import * as Sentry from '@sentry/node';
 import { createRouter } from './router';
 import { requestLoggingMiddleware, correlationIdMiddleware, errorHandlingMiddleware } from './middlewares';
-import { EnvironmentVariables } from './utils/environment';
+import { EnvironmentConfig, EnvironmentVariables } from './utils/environment';
 import { initialize } from './lib/db/knex';
 
 type CreateServerResponse = {
@@ -14,6 +15,13 @@ type CreateServerResponse = {
 export const createServer = (): CreateServerResponse => {
   const app = new Koa();
   const router = createRouter();
+
+  if (EnvironmentConfig.sentry) {
+    Sentry.init({
+      dsn: EnvironmentConfig.sentry.apiDsn,
+      environment: process.env.ENVIRONMENT,
+    });
+  }
 
   app.use(
     cors({

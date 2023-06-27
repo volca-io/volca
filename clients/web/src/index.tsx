@@ -1,7 +1,15 @@
 import * as ReactDOM from 'react-dom/client';
+import * as Sentry from '@sentry/react';
 import { App } from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
+
+if (process.env.REACT_APP_SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+    environment: process.env.REACT_APP_ENVIRONMENT,
+  });
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 

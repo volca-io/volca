@@ -1,8 +1,21 @@
 import Koa from 'koa';
 import { container } from 'tsyringe';
+import * as Sentry from '@sentry/node';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 import { Logger } from '../utils/logger';
+import { EnvironmentConfig } from '../utils/environment';
+
+const logError = (ctx: Koa.Context, error: unknown) => {
+  if (EnvironmentConfig.sentry) {
+    Sentry.withScope((scope) => {
+      scope.addEventProcessor((event) => {
+        return Sentry.addRequestDataToEvent(event, ctx.request);
+      });
+      Sentry.captureException(error);
+    });
+  }
+};
 
 export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
   const logger = container.resolve(Logger);
@@ -17,6 +30,10 @@ export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) 
         name: error.name,
         message: error.message,
       };
+
+      if (error.statusCode >= 500 && error.statusCode <= 599) {
+        logError(ctx, error);
+      }
     } else {
       if (error instanceof Error) {
         logger.error(error.message, { stackTrace: error.stack });
@@ -29,6 +46,8 @@ export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) 
         name: ErrorNames.INTERNAL_SERVER_ERROR,
         message: 'An unexpected error occurred',
       };
+
+      logError(ctx, error);
     }
   }
 };

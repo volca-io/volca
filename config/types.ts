@@ -137,6 +137,10 @@ export interface EnvironmentConfig {
     subdomain?: string;
     publicDatabase: boolean;
   };
+  sentry?: {
+    webappDsn: string;
+    apiDsn: string;
+  };
 }
 
 type GithubConfig = {

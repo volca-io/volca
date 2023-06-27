@@ -60,6 +60,7 @@
     "@aws-sdk/client-sesv2": "^3.350.0",
     "@koa/cors": "^4.0.0",
     "@koa/router": "^12.0.0",
+    "@sentry/node": "^7.56.0",
     "aws-jwt-verify": "^4.0.0",
     "aws-lambda": "^1.0.7",
     "correlation-id": "^5.0.0",

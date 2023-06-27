@@ -119,6 +119,11 @@ const environments: Environments = {
       AWS_COGNITO_USERPOOL_ID: '${ssm:/my-app/staging/AWS_COGNITO_USERPOOL_ID',
       AWS_COGNITO_APP_CLIENT_ID: '${ssm:/my-app/staging/AWS_COGNITO_APP_CLIENT_ID',
     },
+    // Optional, get your dsn from senty.io for error tracking
+    // sentry: {
+    //   webappDsn: '',
+    //   apiDsn: '',
+    // },
   },
   production: {
     authentication: {
@@ -168,6 +173,11 @@ const environments: Environments = {
       AWS_COGNITO_USERPOOL_ID: '${ssm:/volca/production/AWS_COGNITO_USERPOOL_ID}',
       AWS_COGNITO_APP_CLIENT_ID: '${ssm:/volca/production/AWS_COGNITO_APP_CLIENT_ID}',
     },
+    // Optional, get your dsn from senty.io for error tracking
+    // sentry: {
+    //   webappDsn: '',
+    //   apiDsn: '',
+    // },
   },
 };
 

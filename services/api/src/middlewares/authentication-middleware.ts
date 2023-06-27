@@ -4,8 +4,10 @@ import { container } from 'tsyringe';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 import { StatusCodes } from 'http-status-codes';
+import * as Sentry from '@sentry/node';
 import { AuthenticationService, UserService } from '../services';
 import { User } from '../entities';
+import { EnvironmentConfig } from '../utils/environment';
 
 export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Next) => {
   const header = ctx.header.authorization;
@@ -45,6 +47,11 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
       statusCode: StatusCodes.UNAUTHORIZED,
     });
   }
+
+  if (EnvironmentConfig.sentry) {
+    Sentry.setUser({ id: user.id, email: user.email });
+  }
+
   container.register<User>('AuthenticatedUser', {
     useValue: user,
   });

@@ -3,6 +3,7 @@ import { Amplify, Auth, Hub } from 'aws-amplify';
 import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth';
 import { createContext } from 'react';
 import _ from 'lodash';
+import { Sentry } from '@sentry/react'
 import { v4 as uuid } from 'uuid';
 import { LoadingPage } from '../pages';
 import { User } from '../types';
@@ -143,6 +144,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (process.env.REACT_APP_SENTRY_DSN) {
+      if (user) {
+        Sentry.setUser({ id: user.id, email: user.email });
+      } else {
+        Sentry.setUser(null);
+      }
+    }
+  }, [user]);
 
   const storeCustomState = () => {
     const key = uuid();
