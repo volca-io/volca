@@ -3,7 +3,7 @@ import { Amplify, Auth, Hub } from 'aws-amplify';
 import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth';
 import { createContext } from 'react';
 import _ from 'lodash';
-import Sentry from '@sentry/react'
+import * as Sentry from '@sentry/react';
 import { v4 as uuid } from 'uuid';
 import { LoadingPage } from '../pages';
 import { User } from '../types';

@@ -1,6 +1,6 @@
 #!/usr/bin/env -S ts-node -P ../../tsconfig.json
 
-import { spawn } from 'child_process';
+import { spawnSync } from 'child_process';
 import { environments, Environment } from '../environment';
 
 const envArg = process.argv[2];
@@ -13,4 +13,6 @@ if (!Object.keys(environments).includes(envArg)) {
 
 const env = Object.assign({}, process.env, environments[envArg as Environment]);
 
-spawn(command, args, { env, stdio: 'inherit' });
+const result = spawnSync(command, args, { env, stdio: 'inherit' });
+
+process.exit(result.status || 0);
