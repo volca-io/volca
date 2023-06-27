@@ -10203,6 +10203,7 @@ __metadata:
     aws-cdk: ^2.83.1
     aws-cdk-lib: ^2.83.1
     aws-crt: ^1.15.18
+    commander: ^11.0.0
     constructs: ^10.2.52
     dotenv: ^16.1.4
     eslint: 8.42.0
@@ -12665,6 +12666,13 @@ __metadata:
   dependencies:
     delayed-stream: ~1.0.0
   checksum: 49fa4aeb4916567e33ea81d088f6584749fc90c7abec76fd516bf1c5aa5c79f3584b5ba3de6b86d26ddd64bae5329c4c7479343250cfe71c75bb366eae53bb7c
+  languageName: node
+  linkType: hard
+
+"commander@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "commander@npm:11.0.0"
+  checksum: 6621954e1e1d078b4991c1f5bbd9439ad37aa7768d6ab4842de1dbd4d222c8a27e1b8e62108b3a92988614af45031d5bb2a2aaa92951f4d0c934d1a1ac564bb4
   languageName: node
   linkType: hard
 

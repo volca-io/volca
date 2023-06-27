@@ -29,6 +29,7 @@
     "aws-cdk": "^2.83.1",
     "aws-cdk-lib": "^2.83.1",
     "aws-crt": "^1.15.18",
+    "commander": "^11.0.0",
     "constructs": "^10.2.52",
     "dotenv": "^16.1.4",
     "eslint": "8.42.0",
@@ -52,5 +53,5 @@
     "serverless-webpack@^5.8.0": "patch:serverless-webpack@npm:5.8.0#.yarn/patches/serverless-webpack-npm-5.8.0-8563ff4c80.patch",
     "fork-ts-checker-webpack-plugin@^6.5.0": "^6.5.3"
   },
-  "version": "1.0.0"
+  "version": "1.1.0"
 }
