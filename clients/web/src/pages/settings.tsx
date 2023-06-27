@@ -55,14 +55,15 @@ export const SettingsPage: React.FC = () => {
                 <Text>View, edit or cancel your subscription</Text>
               </Box>
 
-              {!user?.hasActiveSubscription && (
+              {user?.hasActiveSubscription ? (
                 <Button rightIcon={<MdAddShoppingCart />} onClick={() => navigate('/onboarding')}>
                   Manage
                 </Button>
+              ) : (
+                <Button leftIcon={<MdOutlineOpenInNew />} onClick={manageSubscriptions}>
+                  Manage
+                </Button>
               )}
-              <Button leftIcon={<MdOutlineOpenInNew />} onClick={manageSubscriptions}>
-                Manage
-              </Button>
             </Flex>
           </SoftCard>
         </Box>
