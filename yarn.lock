@@ -10201,7 +10201,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.59.11
     "@typescript-eslint/parser": ^5.59.11
     aws-cdk: ^2.83.1
-    aws-cdk-lib: ^2.83.1
+    aws-cdk-lib: ^2.85.0
     aws-crt: ^1.15.18
     commander: ^11.0.0
     constructs: ^10.2.52
@@ -11281,9 +11281,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk-lib@npm:^2.83.1":
-  version: 2.83.1
-  resolution: "aws-cdk-lib@npm:2.83.1"
+"aws-cdk-lib@npm:^2.85.0":
+  version: 2.85.0
+  resolution: "aws-cdk-lib@npm:2.85.0"
   dependencies:
     "@aws-cdk/asset-awscli-v1": ^2.2.177
     "@aws-cdk/asset-kubectl-v20": ^2.1.1
@@ -11300,7 +11300,7 @@ __metadata:
     yaml: 1.10.2
   peerDependencies:
     constructs: ^10.0.0
-  checksum: 6ae7dcff1a25949770ca56e38a9890b409a2d96fdd918b553c2b265500c137c4cb7d37e245606e82678565ce940c8383550905563b31eba66907210f58ec9636
+  checksum: 2bcb61a7ff78bf17bd979da81fb89997d9d2b52b9a26b6c91bba8d8d6735699a995db0272902b4262f8cda2e5edd6d3793ed5a4093497021a6f0bbd1810c43b5
   languageName: node
   linkType: hard
 
