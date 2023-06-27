@@ -31,7 +31,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Deploy infrastructure
         run: |
-          yarn cdk deploy -c environment=${{ inputs.environment }} ${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-api-stack --require-approval never
+          yarn cdk deploy -c environment=${{ inputs.environment }} --exclusively ${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-api-stack --require-approval never
       - name: Stack status
         id: stack-status
         working-directory: services/api
