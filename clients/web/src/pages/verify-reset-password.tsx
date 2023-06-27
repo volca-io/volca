@@ -1,16 +1,23 @@
-import { Text, Flex, Box, Heading, Link } from '@chakra-ui/react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Text, Flex, Box, Heading } from '@chakra-ui/react';
+import { useLocation } from 'react-router-dom';
 
 import { DefaultLayout } from '../layouts';
 import { SoftCard } from '../components/generic/SoftCard';
 import { VerifyResetPasswordForm } from '../components/forms/VerifyResetPasswordForm';
-import { useUserActions } from '../hooks';
-import { AlertBox } from '../components/generic/AlertBox';
+import { useAuthContext } from '../providers';
+
+type PageState = {
+  email: string;
+};
 
 export const VerifyResetPasswordPage: React.FC = () => {
-  const { verifyResetPassword } = useUserActions();
+  const { completeResetPassword } = useAuthContext();
   const location = useLocation();
-  const resetToken = new URLSearchParams(location.search).get('reset-token');
+  const { email } = location.state as PageState;
+
+  const onSubmit = async ({ password, code }: { password: string; code: string }) => {
+    await completeResetPassword({ email, password, code });
+  };
 
   return (
     <DefaultLayout displayLogo>
@@ -28,31 +35,13 @@ export const VerifyResetPasswordPage: React.FC = () => {
           <Box mb={2}>
             <Heading mb={2}>Reset password</Heading>
             <Text fontSize="sm">
-              Enter a new password in the form below and click submit to change the password on your account.
+              Enter the verification code that was sent to your email and select a new password for your account.
             </Text>
           </Box>
-          {!resetToken && (
-            <AlertBox
-              title="Invalid link"
-              status="warning"
-              description={
-                <Text>
-                  Your reset link is invalid. Click{' '}
-                  <Link textDecoration="underline" textUnderlineOffset={1.5} to="/reset-password" as={RouterLink}>
-                    here
-                  </Link>{' '}
-                  to request a new one.
-                </Text>
-              }
-            />
-          )}
-          {resetToken && (
-            <SoftCard mt={2}>
-              <VerifyResetPasswordForm
-                onSubmit={({ password }) => (resetToken ? verifyResetPassword(password, resetToken) : null)}
-              />
-            </SoftCard>
-          )}
+
+          <SoftCard mt={2}>
+            <VerifyResetPasswordForm onSubmit={onSubmit} />
+          </SoftCard>
         </Flex>
       </Flex>
     </DefaultLayout>

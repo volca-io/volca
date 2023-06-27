@@ -1,8 +1,9 @@
 import Koa from 'koa';
 import { Logger } from '../utils/logger';
 import { container } from 'tsyringe';
+import { RouterContext } from '@koa/router';
 
-export const requestLoggingMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
+export const requestLoggingMiddleware = async (ctx: RouterContext, next: Koa.Next) => {
   const logger = container.resolve(Logger);
 
   // TODO - Clean body to not disclose sensitive values

@@ -4,20 +4,20 @@ import { Role } from '../services';
 
 export class User extends Model {
   id!: string;
+  cognitoSubject!: string;
   firstName!: string;
   lastName!: string;
   stripeId?: string;
   email!: string;
-  password?: string;
+  picture?: string;
   hasActiveSubscription!: boolean;
   freeTrialActivated!: boolean;
   planId?: string;
-  verifiedAt!: Date;
   createdAt!: Date;
   updatedAt!: Date;
   role?: Role;
 
-  private static hiddenFields = ['password', 'stripeId'];
+  private static hiddenFields = ['stripeId', 'cognitoSubject'];
 
   static get tableName() {
     return 'users';

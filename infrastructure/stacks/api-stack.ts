@@ -7,11 +7,13 @@ import { IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { config } from '../../app.config';
 import { ApiGateway, ApiLambdaExecutionRole, Database } from '../constructs';
 import { Environment } from '../../config/types';
+import { Cognito } from '../constructs/cognito';
 
 interface ApiStackProps extends StackProps {
   name: string;
   environment: Environment;
   hostedZone: IHostedZone;
+  fromEmail: string;
 }
 
 export class ApiStack extends Stack {
@@ -22,7 +24,7 @@ export class ApiStack extends Stack {
       throw new Error('Environment was not set when trying to deploy account bootstrap stack');
     }
 
-    const { deploymentConfig, environmentVariables } = config.environments[props.environment];
+    const { deploymentConfig, environmentVariables, authentication } = config.environments[props.environment];
     if (!deploymentConfig) {
       throw new Error(
         'Can not deploy an environment without a deployment config. Please add one to your environment in app.config.ts'
@@ -31,6 +33,8 @@ export class ApiStack extends Stack {
 
     const { publicDatabase, subdomain } = deploymentConfig;
     const { DB_USERNAME: dbUsername } = environmentVariables;
+
+    const fullDomain = subdomain ? `${subdomain}.${props.hostedZone.zoneName}` : props.hostedZone.zoneName;
 
     // Creates a VPC that the api lambda functions will run in
     const vpc = new Vpc(this, 'ApplicationVpc', {
@@ -74,7 +78,7 @@ export class ApiStack extends Stack {
     const api = new ApiGateway(this, 'ApiGateway', {
       name: props.name,
       environment: props.environment,
-      subdomain: subdomain,
+      domain: fullDomain,
       hostedZone: props.hostedZone,
     });
 
@@ -84,13 +88,33 @@ export class ApiStack extends Stack {
       environment: props.environment,
       region: props.env?.region,
       account: props.env?.account,
-      publicDatabase: publicDatabase,
+      publicDatabase,
+    });
+
+    // Cognito
+    const cognito = new Cognito(this, 'Cognito', {
+      name: props.name,
+      environment: props.environment,
+      fromEmail: props.fromEmail,
+      hostedZone: props.hostedZone,
+      domain: fullDomain,
+      authenticationConfig: authentication,
     });
 
     // Creates a new SSM parameter that the lambdas will use to know where the database is located
     new StringParameter(this, 'DbHost', {
       parameterName: `/${props.name}/${props.environment}/DB_HOST`,
       stringValue: database.endpointAddress,
+    });
+
+    // Creates new SSM parameters so that the lambdas can reference the cognito user pool
+    new StringParameter(this, 'CognitoUserPoolID', {
+      parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_USERPOOL_ID`,
+      stringValue: cognito.userPool.userPoolId,
+    });
+    new StringParameter(this, 'CognitoUserPoolAppClientID', {
+      parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_APP_CLIENT_ID`,
+      stringValue: cognito.userPoolAppClient.userPoolClientId,
     });
 
     // Stack outputs that can be imported by the serverless framework

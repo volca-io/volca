@@ -1,4 +1,4 @@
-import { VerifySesEmailAddress } from '@seeebiii/ses-verify-identities';
+import { VerifySesDomain } from '@seeebiii/ses-verify-identities';
 import { CfnOutput, Fn, Stack, StackProps } from 'aws-cdk-lib';
 import { OpenIdConnectProvider, Role, WebIdentityPrincipal } from 'aws-cdk-lib/aws-iam';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
@@ -36,9 +36,9 @@ export class CoreStack extends Stack {
     // Creates a hosted zone for us to later add DNS records when we deploy the API and webapp
     this.hostedZone = new HostedZone(this, 'HostedZone', { zoneName: props.domain });
 
-    // Will verify the email address in SES
-    new VerifySesEmailAddress(this, 'SesEmailVerificatoion', {
-      emailAddress: props.email,
+    new VerifySesDomain(this, 'SesDomainVerification', {
+      domainName: props.email.split('@')[1],
+      hostedZoneId: this.hostedZone.hostedZoneId,
     });
 
     // Creates a new role that will be assumed by GitHub actions.

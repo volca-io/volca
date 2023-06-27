@@ -6,18 +6,18 @@ export default [
       await knex('users').del();
       await knex('users').insert([
         {
-          first_name: 'Test',
-          last_name: 'Testsson',
+          firstName: 'Test',
+          lastName: 'Testsson',
           email: 'test@test.com',
-          password: '$2a$10$WoOkXRC6yXdT4csIBSO1suSYLjCD1C5m2CITTinKJL.yfKvkBHyjG',
-          hasActiveSubscription: true
+          cognitoSubject: 'dfa6ee84-e222-4c4b-a504-7952b741a315',
+          hasActiveSubscription: true,
         },
         {
-          first_name: 'Steven',
-          last_name: 'Hawking',
+          firstName: 'Steven',
+          lastName: 'Hawking',
           email: 'stephen@hawking.com',
-          password: '$2a$10$WoOkXRC6yXdT4csIBSO1suSYLjCD1C5m2CITTinKJL.yfKvkBHyjG',
-          hasActiveSubscription: true
+          cognitoSubject: 'ee3361e3-e6b3-4b6f-8b37-a46fee1312ea',
+          hasActiveSubscription: true,
         },
       ]);
     },

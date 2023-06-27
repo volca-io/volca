@@ -12,21 +12,17 @@ type EnvironmentConfig = {
 
 export const environments: EnvironmentConfig = {
   local: {
-    HOST: '127.0.0.1',
     PORT: '3000',
-    REACT_APP_API_URL: 'http://127.0.0.1:4000/',
-    REACT_APP_STRIPE_TEST_MODE: config.environments.local.environmentVariables.TEST_CARD_ENABLED,
+    REACT_APP_API_URL: 'http://localhost:4000/',
   },
   staging: {
     REACT_APP_API_URL: config.environments.staging.deploymentConfig?.subdomain
       ? `https://api.${config.environments.staging.deploymentConfig?.subdomain}.${config.domain}/`
       : `https://api.${config.domain}/`,
-    REACT_APP_STRIPE_TEST_MODE: config.environments.staging.environmentVariables.TEST_CARD_ENABLED,
   },
   production: {
     REACT_APP_API_URL: config.environments.production.deploymentConfig?.subdomain
       ? `https://api.${config.environments.production.deploymentConfig?.subdomain}.${config.domain}/`
       : `https://api.${config.domain}/`,
-    REACT_APP_STRIPE_TEST_MODE: config.environments.production.environmentVariables.TEST_CARD_ENABLED,
   },
 };

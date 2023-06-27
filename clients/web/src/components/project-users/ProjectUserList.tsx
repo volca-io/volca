@@ -17,7 +17,7 @@ const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users, delet
   return (
     <>
       <TableContainer w="100%" mt={6}>
-        <Table>
+        <Table variant="simple">
           <Thead>
             <Tr>
               <Th></Th>
@@ -31,9 +31,9 @@ const ProjectUserList: React.FC<ProjectUserListProps> = ({ project, users, delet
             {users.map((user) => (
               <Tr key={user.id}>
                 <Td pl={0}>
-                  <Avatar name={`${user.first_name} ${user.last_name}`} size="sm" />
+                  <Avatar name={`${user.firstName} ${user.lastName}`} src={user.picture} size="sm" />
                 </Td>
-                <Td>{`${user.first_name} ${user.last_name}`}</Td>
+                <Td>{`${user.firstName} ${user.lastName}`}</Td>
                 <Td>{user.email}</Td>
                 <Td>
                   <RolePicker project={project} user={user} />

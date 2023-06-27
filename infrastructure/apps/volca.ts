@@ -26,6 +26,7 @@ if (environment) {
     environment,
     env: aws,
     hostedZone: accountBootstrapStack.hostedZone,
+    fromEmail,
   });
 
   Tags.of(apiStack).add('name', name);

@@ -15,6 +15,7 @@
     "allowJs": true,
     "outDir": "dist",
     "moduleResolution": "node",
+    "module": "CommonJS",
     "lib": ["es6"],
     "target": "es6",
     "esModuleInterop": true,

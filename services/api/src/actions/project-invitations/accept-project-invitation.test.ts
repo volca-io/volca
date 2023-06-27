@@ -1,65 +1,70 @@
 import { setupServer } from '../../test-utils';
-import { authenticate } from '../../test-utils/authenticate';
+import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne, userTwo } from '../../test-utils/fixtures';
 
-describe('GET /project-invitations/:key', () => {
+describe('GET /project-invitations/:id', () => {
   const getRequest = setupServer();
-  let accessToken: string;
-  let secondUserAccessToken: string;
-
   let invitation: Record<string, unknown>;
+  let project: Record<string, unknown>;
 
   beforeAll(async () => {
-    accessToken = await authenticate(getRequest(), userOne);
-    secondUserAccessToken = await authenticate(getRequest(), userTwo);
-
     const projectResponse = await getRequest()
       .post('/projects')
-      .set({ Authorization: `Bearer ${accessToken}` })
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         name: 'Invitation test project!',
       });
     expect(projectResponse.status).toBe(200);
 
-    const createdProject = projectResponse.body.project;
+    project = projectResponse.body.project;
     const invitationResponse = await getRequest()
       .post('/project-invitations')
-      .set({ Authorization: `Bearer ${accessToken}` })
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
-        to_user_email: userTwo.email,
-        project_id: createdProject.id,
+        projectId: project.id,
       });
 
-    invitation = invitationResponse.body.project_invitation;
+    invitation = invitationResponse.body.projectInvitation;
   });
 
-  it('returns 400 if the key is incorrect', async () => {
+  it('returns 400 if the id is incorrect', async () => {
     const resp = await getRequest()
       .get(`/project-invitations/29904edc-352c-47d5-a57b-f378d55e02f9`)
-      .set({ Authorization: `Bearer ${secondUserAccessToken}` });
+      .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
 
     expect(resp.status).toBe(400);
   });
 
   it('returns 401 if no access token is present', async () => {
-    const resp = await getRequest().get(`/project-invitations/${invitation.key}`);
-
-    expect(resp.status).toBe(401);
-  });
-
-  it('returns 401 if the wrong user tries to accept the invitation', async () => {
-    const resp = await getRequest()
-      .get(`/project-invitations/${invitation.key}`)
-      .set({ Authorization: `Bearer ${accessToken}` });
+    const resp = await getRequest().get(`/project-invitations/${invitation.id}`);
 
     expect(resp.status).toBe(401);
   });
 
   it('can accept a project invitation', async () => {
     const resp = await getRequest()
-      .get(`/project-invitations/${invitation.key}`)
-      .set({ Authorization: `Bearer ${secondUserAccessToken}` });
+      .get(`/project-invitations/${invitation.id}`)
+      .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
 
     expect(resp.status).toBe(200);
+  });
+
+  it('can only use an invitation once', async () => {
+    const newInvitation = await getRequest()
+      .post('/project-invitations')
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
+      .send({
+        projectId: project.id,
+      });
+
+    await getRequest()
+      .get(`/project-invitations/${newInvitation.body.projectInvitation.id}`)
+      .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
+
+    const doubleResponse = await getRequest()
+      .get(`/project-invitations/${newInvitation.body.projectInvitation.id}`)
+      .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
+
+    expect(doubleResponse.status).toBe(400);
   });
 });

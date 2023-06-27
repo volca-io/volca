@@ -1,4 +1,4 @@
-import Knex from 'knex';
+import { Knex, knex } from 'knex';
 import { Model, knexSnakeCaseMappers } from 'objection';
 import { container } from 'tsyringe';
 import { EnvironmentVariables } from '../../utils/environment';
@@ -11,12 +11,12 @@ export const initialize = () => {
 
   logger.debug('Creating new knex client');
 
-  const knex = Knex({
-    client: 'postgres',
+  const config: Knex.Config = {
+    client: 'pg',
     useNullAsDefault: true,
     connection: {
       host: EnvironmentVariables.DB_HOST,
-      port: 5432,
+      port: parseInt(EnvironmentVariables.DB_PORT, 10),
       user: EnvironmentVariables.DB_USERNAME,
       password: EnvironmentVariables.DB_PASSWORD,
       database: 'postgres',
@@ -29,9 +29,11 @@ export const initialize = () => {
       seedSource: new SeedSource(),
     },
     ...knexSnakeCaseMappers(),
-  });
+  };
 
-  Model.knex(knex);
+  const db = knex(config);
 
-  return knex;
+  Model.knex(db);
+
+  return db;
 };

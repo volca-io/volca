@@ -5,21 +5,23 @@ import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
-import { ProjectInvitationService, ProjectService, UserService } from '../../services';
+import { ProjectInvitationService, ProjectService } from '../../services';
 import { User } from '../../entities';
 
+type CreateProjectInvitation = {
+  projectId: string;
+};
+
 export const schema: Schema = joi.object({
-  to_user_email: joi.string().required(),
-  project_id: joi.string().required(),
+  projectId: joi.string().required(),
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
   const projectInvitationService = container.resolve(ProjectInvitationService);
-  const userService = container.resolve(UserService);
   const projectService = container.resolve(ProjectService);
   const user = container.resolve<User>('AuthenticatedUser');
 
-  const { toUserEmail, projectId } = ctx.request.body;
+  const { projectId } = <CreateProjectInvitation>ctx.request.body;
 
   const project = await projectService.get(projectId);
 
@@ -31,19 +33,8 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  const toUser = await userService.findByEmail(toUserEmail);
-
-  if (!toUser) {
-    throw new ServiceError({
-      name: ErrorNames.USER_DOES_NOT_EXIST,
-      message: 'The user does not exist',
-      statusCode: StatusCodes.BAD_REQUEST,
-    });
-  }
-
   const projectInvitation = await projectInvitationService.create({
     fromUserId: user.id,
-    toUserId: toUser.id,
     projectId: project.id,
   });
 

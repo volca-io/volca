@@ -1,9 +1,8 @@
 import { Progress } from '@chakra-ui/react';
-import { useRecoilValue } from 'recoil';
-import { loadingState } from '../../state';
+import { useLoadingContext } from '../../providers';
 
 export const LoadingBar = ({ full }: { full: boolean }) => {
-  const loading = useRecoilValue(loadingState);
+  const { loading } = useLoadingContext();
 
   const props = loading ? {} : { display: 'none' };
 

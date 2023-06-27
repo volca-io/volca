@@ -1,7 +1,6 @@
 import { injectable } from 'tsyringe';
 
 import { EnvironmentVariables } from '../utils/environment';
-import { resetPasswordTemplate, verifyAccountTemplate } from '../email-templates';
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
 import { Logger } from '../utils/logger';
 
@@ -46,27 +45,5 @@ export class CommunicationsService {
     } catch (error: unknown) {
       this.logger.warn('Failed to send email', { error });
     }
-  }
-
-  public async sendVerificationEmail({ email, firstName, token }: SendVerificationEmailProperties): Promise<void> {
-    const url = new URL(`/verify`, EnvironmentVariables.APP_DOMAIN);
-    url.searchParams.append('verify-token', token);
-
-    return this.sendEmail({
-      email,
-      subject: verifyAccountTemplate.subject,
-      body: verifyAccountTemplate.generateBody({ firstName, url: url.toString() }),
-    });
-  }
-
-  public async sendPasswordResetEmail({ email, token }: SendPasswordResetEmailProperties): Promise<void> {
-    const url = new URL(`reset-password/verify`, EnvironmentVariables.APP_DOMAIN);
-    url.searchParams.append('reset-token', token);
-
-    this.sendEmail({
-      email,
-      subject: resetPasswordTemplate.subject,
-      body: resetPasswordTemplate.generateBody({ email, url: url.toString() }),
-    });
   }
 }

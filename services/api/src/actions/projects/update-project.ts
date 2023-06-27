@@ -7,6 +7,10 @@ import { ErrorNames } from '../../constants';
 import { StatusCodes } from 'http-status-codes';
 import { ProjectService } from '../../services';
 
+type UpdateProjectBody = {
+  name: string;
+};
+
 export const schema: Schema = joi.object({
   name: joi.string().required(),
 });
@@ -14,7 +18,7 @@ export const schema: Schema = joi.object({
 export const action = useApiAction(async (ctx: CustomContext) => {
   const projectService = container.resolve(ProjectService);
 
-  const { name } = ctx.request.body;
+  const { name } = <UpdateProjectBody>ctx.request.body;
   const { projectId: id } = ctx.params;
 
   const oldProject = await projectService.get(id);

@@ -16,7 +16,7 @@ export interface ApiGatewayProps {
   name: string;
   environment: Environment;
   hostedZone: IHostedZone;
-  subdomain?: string;
+  domain: string;
 }
 
 export class ApiGateway extends Construct {
@@ -27,9 +27,7 @@ export class ApiGateway extends Construct {
   constructor(scope: Construct, id: string, props: ApiGatewayProps) {
     super(scope, id);
 
-    this.domainName = props.subdomain
-      ? `api.${props.subdomain}.${props.hostedZone.zoneName}`
-      : `api.${props.hostedZone.zoneName}`;
+    this.domainName = `api.${props.domain}`;
 
     const api = new RestApi(this, `${props.name}-${props.environment}-api-gateway`, {
       deploy: true,

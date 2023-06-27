@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 import supertest, { SuperTest, Test } from 'supertest';
 import { createServer } from '../server';
 
-export function setupServer({ agent } = { agent: false }) {
+export function setupServer() {
   let databaseRef: Knex;
   let serverRef: Server;
   let request: SuperTest<Test>;
@@ -12,7 +12,7 @@ export function setupServer({ agent } = { agent: false }) {
     const { app, database } = createServer();
     databaseRef = database;
     serverRef = app.listen();
-    request = agent ? supertest.agent(serverRef) : supertest(serverRef);
+    request = supertest(serverRef);
   });
 
   afterAll((done) => {

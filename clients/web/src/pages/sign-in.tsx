@@ -1,54 +1,95 @@
-import { useEffect } from 'react';
-import { Text, Flex, Link, Heading, Box } from '@chakra-ui/react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-
-import { SignInForm } from '../components/forms';
-import { DefaultLayout } from '../layouts';
-import { useUserActions } from '../hooks';
+import { Flex, Heading, Box, IconButton, Text, Divider, useToast, Link } from '@chakra-ui/react';
+import { FaApple, FaFacebook, FaGoogle } from 'react-icons/fa';
+import { PasswordAuthenticationForm } from '../components/forms';
+import { LinkWithQuery } from '../components/generic/LinkWithQuery';
 import { SoftCard } from '../components/generic/SoftCard';
-import { currentUserState } from '../state';
+
+import { DefaultLayout } from '../layouts';
+import { useAppConfigContext, useAuthContext } from '../providers';
 
 export const SignInPage: React.FC = () => {
-  const { authnPassword, getRememberInfo } = useUserActions();
-  const user = useRecoilValue(currentUserState);
-  const navigate = useNavigate();
+  const { signInWithEmailAndPassword, signInWithGoogle, signInWithFacebook, signInWithApple } = useAuthContext();
+  const toast = useToast();
+  const { config } = useAppConfigContext();
 
-  useEffect(() => {
-    if (user) {
-      navigate('/');
+  const onSignIn = async ({ email, password }: { email: string; password: string }) => {
+    try {
+      await signInWithEmailAndPassword({ email, password });
+    } catch (err: any) {
+      toast({
+        title: 'Failed to sign in',
+        description: err.message,
+        status: 'error',
+      });
     }
-  }, [user, navigate]);
-
-  const onSubmit = async ({ email, password, remember }: { email: string; password: string; remember: boolean }) =>
-    await authnPassword(email, password, remember);
-
-  const { identifier, remember } = getRememberInfo();
+  };
 
   return (
     <DefaultLayout displayLogo>
-      <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center">
-        <Flex direction="column" justifyContent={{ base: 'flex-start ', md: 'center' }} flexGrow={1} maxW={600}>
-          <Box paddingY="8">
-            <Heading mb={2}>Sign in</Heading>
-            <Text fontSize="sm">
-              Don't have an account to sign in to?{' '}
-              <Link textDecoration="underline" textUnderlineOffset={1.5} to="/register" as={RouterLink}>
-                Register an account instead
-              </Link>
-            </Text>
-          </Box>
+      <Flex width="100%" alignSelf="center" flexGrow={1} justifyContent="center" alignItems="center">
+        <Box w={460}>
           <SoftCard>
-            <SignInForm defaultIdentifier={identifier} defaultRemember={remember} onSubmit={onSubmit} />
-            <Flex justifyContent="space-between" mt={5}>
-              <Text fontSize="sm">
-                <Link textDecoration="underline" textUnderlineOffset={1.5} to="/reset-password" as={RouterLink}>
-                  Forgot your password?
-                </Link>
-              </Text>
+            <Flex alignItems="center" flexDir="column">
+              {Object.values(config.identityProviders).some((val) => val) && (
+                <>
+                  <Heading mb={2} size="md" paddingBottom={4}>
+                    Continue with
+                  </Heading>
+
+                  <Flex flexDir="row" justifyContent="center" gap={4}>
+                    {config.identityProviders.apple && (
+                      <IconButton
+                        variant="outline"
+                        aria-label="Continue with Apple"
+                        icon={<FaApple />}
+                        onClick={signInWithApple}
+                        size="lg"
+                      />
+                    )}
+                    {config.identityProviders.facebook && (
+                      <IconButton
+                        variant="outline"
+                        aria-label="Continue with Facebook"
+                        icon={<FaFacebook />}
+                        onClick={signInWithFacebook}
+                        size="lg"
+                      />
+                    )}
+                    {config.identityProviders.google && (
+                      <IconButton
+                        variant="outline"
+                        aria-label="Coninue with Google"
+                        icon={<FaGoogle />}
+                        onClick={signInWithGoogle}
+                        size="lg"
+                      />
+                    )}
+                  </Flex>
+                  <Flex paddingTop={4} paddingBottom={4} flexDir="row" width="100%" alignItems="center">
+                    <Divider />
+                    <Text as="b" paddingStart={4} paddingEnd={4}>
+                      or
+                    </Text>
+                    <Divider />
+                  </Flex>
+                </>
+              )}
+
+              <Box w="100%">
+                <PasswordAuthenticationForm onSubmit={onSignIn} />
+              </Box>
+
+              <Box mt={5}>
+                <Text fontSize="sm">
+                  New to Volca?{' '}
+                  <Link textDecoration="underline" textUnderlineOffset={1.5} to="/sign-up" as={LinkWithQuery}>
+                    Create an account.
+                  </Link>
+                </Text>
+              </Box>
             </Flex>
           </SoftCard>
-        </Flex>
+        </Box>
       </Flex>
     </DefaultLayout>
   );

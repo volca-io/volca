@@ -21,10 +21,16 @@ export default [
     up: (knex: Knex) => {
       return knex.schema.createTable('users', (table) => {
         table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
-        table.string('email').unique().notNullable();
-        table.string('password').nullable();
+        table.string('email').notNullable();
         table.string('first_name').nullable();
         table.string('last_name').nullable();
+        table.string('stripe_id').nullable();
+        table.boolean('has_active_subscription').defaultTo(false);
+        table.boolean('free_trial_activated').defaultTo(false);
+        table.string('plan_id').nullable().defaultTo(null);
+        table.string('picture').nullable();
+        table.string('cognito_subject').notNullable().unique();
+        table.timestamps(true, true);
       });
     },
     down: (knex: Knex) => {
@@ -37,7 +43,15 @@ export default [
       return knex.schema.createTable('projects', (table) => {
         table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
         table.string('name').notNullable();
-        table.uuid('admin_id').notNullable().index().references('id').inTable('users');
+        table
+          .uuid('owner_id')
+          .notNullable()
+          .index()
+          .references('id')
+          .inTable('users')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table.timestamps(true, true);
       });
     },
     down: (knex: Knex) => {
@@ -49,11 +63,24 @@ export default [
     up: (knex: Knex) => {
       return knex.schema.createTable('project_invitations', (table) => {
         table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
-        table.uuid('project_id').notNullable().index().references('id').inTable('projects');
-        table.uuid('from_user_id').notNullable().index().references('id').inTable('users');
-        table.uuid('to_user_id').notNullable().index().references('id').inTable('users');
-        table.uuid('key').defaultTo(knex.raw('uuid_generate_v4()')).notNullable();
+        table
+          .uuid('project_id')
+          .notNullable()
+          .index()
+          .references('id')
+          .inTable('projects')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table
+          .uuid('from_user_id')
+          .notNullable()
+          .index()
+          .references('id')
+          .inTable('users')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
         table.timestamp('expires_at').notNullable();
+        table.timestamps(true, true);
       });
     },
     down: (knex: Knex) => {
@@ -81,99 +108,12 @@ export default [
           .inTable('users')
           .onUpdate('CASCADE')
           .onDelete('CASCADE');
+        table.string('role').defaultTo('MEMBER').notNullable();
+        table.timestamps(true, true);
       });
     },
     down: (knex: Knex) => {
       return knex.schema.dropTable('project_users');
-    },
-  },
-  {
-    name: '06_create_stripe_columns',
-    up: (knex: Knex) => {
-      return knex.schema.alterTable('users', (table) => {
-        table.string('stripe_id').nullable();
-        table.boolean('has_active_subscription').defaultTo(false);
-        table.boolean('free_trial_activated').defaultTo(false);
-      });
-    },
-    down: (knex: Knex) => {
-      return knex.schema.alterTable('users', (table) => {
-        table.dropColumn('stripe_id');
-        table.dropColumn('has_active_subscription');
-        table.dropColumn('free_trial_activated');
-      });
-    },
-  },
-  {
-    name: '06_create_refresh_tokens',
-    up: (knex: Knex) => {
-      return knex.schema.createTable('refresh_tokens', (table) => {
-        table.uuid('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
-        table.string('session_id').notNullable();
-        table.string('subject').notNullable();
-        table.string('token').unique().notNullable();
-        table.timestamp('expires_at').notNullable();
-        table.index('token', 'token_index');
-      });
-    },
-    down: (knex: Knex) => {
-      return knex.schema.dropTable('refresh_tokens');
-    },
-  },
-  {
-    name: '07_add_timestamps',
-    up: (knex: Knex) =>
-      Promise.all([
-        knex.schema.table('users', (table) => table.timestamps(true, true)),
-        knex.schema.table('projects', (table) => table.timestamps(true, true)),
-        knex.schema.table('project_users', (table) => table.timestamps(true, true)),
-        knex.schema.table('project_invitations', (table) => table.timestamps(true, true)),
-      ]),
-    down: async (knex: Knex) =>
-      Promise.all([
-        knex.schema.table('users', (table) => table.dropTimestamps()),
-        knex.schema.table('projects', (table) => table.dropTimestamps()),
-        knex.schema.table('project_users', (table) => table.dropTimestamps()),
-        knex.schema.table('project_invitations', (table) => table.dropTimestamps()),
-      ]),
-  },
-  {
-    name: '08_verifiable_user',
-    up: (knex: Knex) =>
-      knex.schema.table('users', (table) => {
-        table.timestamp('verified_at');
-      }),
-    down: async (knex: Knex) =>
-      knex.schema.table('users', (table) => {
-        table.dropColumn('verified_at');
-      }),
-  },
-  {
-    name: '09_plans',
-    up: (knex: Knex) =>
-      knex.schema.table('users', (table) => {
-        table.string('plan_id').nullable().defaultTo(null);
-      }),
-    down: async (knex: Knex) =>
-      knex.schema.table('users', (table) => {
-        table.dropColumn('plan_id');
-      }),
-  },
-  {
-    name: '10_roles',
-    up: async (knex: Knex) => {
-      await knex.schema.table('project_users', (table) => table.string('role').defaultTo('MEMBER').notNullable());
-      await knex.schema.table('projects', (table) => table.renameColumn('admin_id', 'owner_id'));
-      // Set the OWNER role for existing project owners
-      await knex('project_users')
-        .whereIn('project_id', function () {
-          this.select('id').from('projects').whereRaw('owner_id = project_users.user_id');
-        })
-        .update('role', 'OWNER');
-    },
-    down: async (knex: Knex) => {
-      await knex.schema.table('project_users', (table) => table.dropColumn('role'));
-      await knex.schema.table('projects', (table) => table.renameColumn('owner_id', 'admin_id'));
     },
   },
 ] as Array<Migration>;

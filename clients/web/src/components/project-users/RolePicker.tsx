@@ -1,9 +1,8 @@
 import { Select, InputGroup } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
 import { useProjectUserActions } from '../../hooks';
 import { usePrivileges } from '../../hooks/roles';
-import { currentUserState } from '../../state';
+import { useAuthContext } from '../../providers';
 import { Project, User } from '../../types';
 
 type FormValues = {
@@ -18,7 +17,7 @@ type RolePickerProps = {
 export const RolePicker: React.FC<RolePickerProps> = ({ user, project }) => {
   const privileges = usePrivileges();
   const { register, handleSubmit } = useForm<FormValues>();
-  const currentUser = useRecoilValue(currentUserState);
+  const { user: currentUser } = useAuthContext();
   const { updateProjectUser } = useProjectUserActions();
   return (
     <form onChange={handleSubmit((data) => updateProjectUser(project.id, user.id, data.role))}>

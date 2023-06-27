@@ -22,7 +22,7 @@ const serverlessConfiguration: AWS = {
   package: {
     individually: true,
   },
-  plugins: ['serverless-webpack', 'serverless-offline'],
+  plugins: ['serverless-webpack', 'serverless-offline', 'serverless-offline-watcher'],
   provider: {
     name: 'aws',
     iam:
@@ -63,22 +63,13 @@ const serverlessConfiguration: AWS = {
     webpack: {
       webpackConfig: 'webpack.config.js',
       excludeFiles: 'src/**/*.test.js',
-      includeModules: {
-        forceInclude: ['pg'],
-        forceExclude: [
-          'tedious',
-          'mysql',
-          'mysql2',
-          'better-sqlite3',
-          'oracledb',
-          'pg-query-stream',
-          'sqlite3',
-          'pg-native',
-          'better-sqlite3',
-          'mysql',
-        ],
-      },
     },
+    'serverless-offline-watcher': [
+      {
+        path: ['src/**/*'],
+        hook: ['offline:functionsUpdated'],
+      },
+    ],
   },
   functions: {
     api: {

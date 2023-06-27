@@ -1,3 +1,1 @@
-import { action as statusAction } from './status';
-
-export { statusAction };
+export { action as statusAction } from './status';

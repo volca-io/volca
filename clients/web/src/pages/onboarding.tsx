@@ -14,16 +14,15 @@ import {
   List,
   ListItem,
   ListIcon,
+  Box,
 } from '@chakra-ui/react';
 
 import { AuthenticatedLayout } from '../layouts';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { currentUserState } from '../state';
-import { PageHeading } from '../components/generic/PageHeading';
 import { useSubscriptionActions } from '../hooks';
 import { MdCheckCircle, MdRocketLaunch } from 'react-icons/md';
 import { Plan, User } from '../types';
+import { useAppConfigContext, useAuthContext } from '../providers';
 
 const plans = {
   BASIC: {
@@ -96,7 +95,7 @@ export const PricingCard = ({
         leftIcon={<MdRocketLaunch />}
         onClick={() => onActivate(plan.id)}
       >
-        {user.free_trial_activated ? 'Buy' : 'Start trial'}
+        {user.freeTrialActivated ? 'Buy' : 'Start trial'}
       </Button>
     </Card>
   );
@@ -104,7 +103,8 @@ export const PricingCard = ({
 
 export const SubscribePage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const user = useRecoilValue(currentUserState);
+  const { user } = useAuthContext();
+  const { config } = useAppConfigContext();
   const { activateSubscription, listPlans } = useSubscriptionActions();
   const [plans, setPlans] = useState<Plan[]>([]);
 
@@ -125,44 +125,40 @@ export const SubscribePage: React.FC = () => {
   };
 
   return (
-    <AuthenticatedLayout sidebar={false}>
-      <VStack spacing={2}>
-        {process.env.REACT_APP_STRIPE_TEST_MODE === '1' && (
-          <Alert status="info">
-            <AlertIcon />
-            <AlertTitle>Test payments enabled</AlertTitle>
-            <AlertDescription>
-              Test mode for payments is enabled and no real charges will be made. The checkout will be prefilled with a
-              test card that you can use for testing purposes.
-            </AlertDescription>
-          </Alert>
-        )}
-        {searchParams.get('status') === 'warning' && (
-          <Alert status="warning">
-            <AlertIcon />
-            <AlertTitle>Payment failed</AlertTitle>
-            <AlertDescription>Something went wrong while processing your payment. Please try again.</AlertDescription>
-          </Alert>
-        )}
-      </VStack>
-
-      <VStack spacing={8} w="100%" textAlign="center" mt={8}>
-        <PageHeading
-          title={
-            !user?.free_trial_activated
-              ? `Welcome to Volca${user ? `, ${user.first_name}` : ''}!`
-              : `Welcome back${user ? `, ${user.first_name}` : ''}!`
-          }
-          size="xl"
-        />
-        <Text>This is the onboarding page your customers will see after signing up.</Text>
-        <Text fontSize="3xl" color={'gray.500'}>
-          Start with a 7-day free trial. Cancel at any time.
-        </Text>
-        <Flex justifyContent={'center'} columnGap={6} flexDir={{ sm: 'column', lg: 'row' }}>
-          {user && plans.map((plan) => <PricingCard key={plan.id} plan={plan} onActivate={onActivate} user={user} />)}
-        </Flex>
-      </VStack>
-    </AuthenticatedLayout>
+    <>
+      {config.stripeTestCardEnabled && (
+        <Alert status="info">
+          <AlertIcon />
+          <AlertTitle>Test payments enabled</AlertTitle>
+          <AlertDescription>
+            Test mode for payments is enabled and no real charges will be made. The checkout will be prefilled with a
+            test card that you can use for testing purposes.
+          </AlertDescription>
+        </Alert>
+      )}
+      {searchParams.get('status') === 'warning' && (
+        <Alert status="warning">
+          <AlertIcon />
+          <AlertTitle>Payment failed</AlertTitle>
+          <AlertDescription>Something went wrong while processing your payment. Please try again.</AlertDescription>
+        </Alert>
+      )}
+      <AuthenticatedLayout sidebar={false}>
+        <VStack spacing={4} w="100%" textAlign="center">
+          <Box>
+            <Heading>
+              {!user?.freeTrialActivated
+                ? `Welcome to Volca${user ? `, ${user.firstName}` : ''}!`
+                : `Welcome back${user ? `, ${user.firstName}` : ''}!`}
+            </Heading>
+            <Text>This is the onboarding page your customers will see after signing up.</Text>
+          </Box>
+          <Text as="b">Start with a 7-day free trial. Cancel at any time.</Text>
+          <Flex justifyContent={'center'} columnGap={6} flexDir={{ sm: 'column', lg: 'row' }}>
+            {user && plans.map((plan) => <PricingCard key={plan.id} plan={plan} onActivate={onActivate} user={user} />)}
+          </Flex>
+        </VStack>
+      </AuthenticatedLayout>
+    </>
   );
 };

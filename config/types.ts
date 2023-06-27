@@ -1,3 +1,5 @@
+import { EnvironmentVariables } from '../services/api/src/utils/environment';
+
 interface AwsConfig {
   account: string;
   region:
@@ -50,9 +52,71 @@ export enum EnvironmentVariable {
   STRIPE_WEBHOOK_SECRET = 'STRIPE_WEBHOOK_SECRET',
   TEST_CARD_ENABLED = 'TEST_CARD_ENABLED',
   FREE_TRIAL_DAYS = 'FREE_TRIAL_DAYS',
+  AWS_COGNITO_USERPOOL_ID = 'AWS_COGNITO_USERPOOL_ID',
+  AWS_COGNITO_APP_CLIENT_ID = 'AWS_COGNITO_APP_CLIENT_ID',
 }
 
-export type EnvironmentVariables = Record<EnvironmentVariable, string>;
+type OptionalVariables = Extract<
+  EnvironmentVariable,
+  EnvironmentVariable.AWS_COGNITO_USERPOOL_ID | EnvironmentVariable.AWS_COGNITO_APP_CLIENT_ID
+>;
+
+type RequiredVariables = Exclude<EnvironmentVariable, OptionalVariables>;
+
+export type EnvironmentVariables = Record<RequiredVariables, string> & Partial<Record<OptionalVariables, string>>;
+
+export type AuthenticationConfig = {
+  identityProviders?: {
+    facebook?:
+      | {
+          clientId: string;
+          clientSecret: string;
+          clientSecretSsmPath?: never;
+        }
+      | {
+          clientId: string;
+          clientSecret?: never;
+          clientSecretSsmPath: string;
+        }
+      | Record<string, never>;
+    google?:
+      | {
+          clientId: string;
+          clientSecret: string;
+          clientSecretSsmPath?: never;
+        }
+      | {
+          clientId: string;
+          clientSecret?: never;
+          clientSecretSsmPath: string;
+        }
+      | Record<string, never>;
+    apple?:
+      | {
+          clientId: string;
+          teamId: string;
+          keyId: string;
+          privateKey: string;
+          privateKeySsmPath?: never;
+        }
+      | {
+          clientId: string;
+          teamId: string;
+          keyId: string;
+          privateKey?: never;
+          privateKeySsmPath: string;
+        }
+      | Record<string, never>;
+  };
+  loginDomain?: string;
+  allowLocalhost?: boolean;
+  mockUser?: {
+    sub: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+};
 
 export enum PlanId {
   BASIC = 'BASIC',
@@ -68,6 +132,7 @@ type Plan = {
 export interface EnvironmentConfig {
   environmentVariables: EnvironmentVariables;
   plans: Plan[];
+  authentication: AuthenticationConfig;
   deploymentConfig?: {
     subdomain?: string;
     publicDatabase: boolean;

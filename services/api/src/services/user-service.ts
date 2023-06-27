@@ -4,20 +4,17 @@ import { injectable } from 'tsyringe';
 import { User } from '../entities';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
-import { Security } from '../lib/security/security';
-import { CommunicationsService } from './communications-service';
 
-type RegisterUserProperties = {
-  firstName: string;
-  lastName: string;
+type ProvisionUserProperties = {
+  sub: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
-  password: string;
+  picture?: string;
 };
 
 @injectable()
 export class UserService {
-  public constructor(private security: Security, private comsService: CommunicationsService) {}
-
   public async findById(id: string): Promise<User | undefined> {
     return User.query().findById(id);
   }
@@ -26,32 +23,28 @@ export class UserService {
     return User.query().where({ email: email.toLowerCase() }).first();
   }
 
+  public async findByCognitoSubject(cognitoSubject: string): Promise<User | undefined> {
+    return User.query().where({ cognitoSubject }).first();
+  }
+
   public async findByStripeId(stripeId: string): Promise<User | undefined> {
     return User.query().where({ stripeId }).first();
   }
 
-  public async register({ firstName, lastName, email, password }: RegisterUserProperties): Promise<User> {
-    const existingUser = await this.findByEmail(email);
-    if (existingUser) {
-      throw new ServiceError({
-        name: ErrorNames.USER_ALREADY_EXISTS,
-        message: 'User already exists',
-        statusCode: StatusCodes.CONFLICT,
-        debug: 'A user with this username already exists',
-      });
-    }
+  public async provision({ sub, firstName, lastName, email, picture }: ProvisionUserProperties): Promise<User> {
+    const existingUser = await this.findByCognitoSubject(sub);
 
-    const hashedPassword = this.security.hashPassword(password);
+    if (existingUser) return existingUser;
 
-    const user = await User.query().insert({
-      firstName,
-      lastName,
-      email: email.toLowerCase(),
-      password: hashedPassword,
-    });
-
-    const token = this.security.createToken({ payload: { sub: email }, expiresIn: 60 * 60 * 24 });
-    await this.comsService.sendVerificationEmail({ email, firstName, token });
+    const user = await User.query()
+      .insert({
+        cognitoSubject: sub,
+        firstName,
+        lastName,
+        email: email.toLowerCase(),
+        picture,
+      })
+      .returning('*');
 
     return user;
   }

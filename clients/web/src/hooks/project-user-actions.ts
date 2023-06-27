@@ -1,6 +1,4 @@
 import { useCallback } from 'react';
-
-import { apiClient } from '../lib/api-client';
 import { ProjectInvitation, User } from '../types';
 import { useApiActions } from './api-actions';
 
@@ -9,7 +7,7 @@ type GetProjectUsersResponse = {
 };
 
 type CreateProjectInvitationResponse = {
-  project_invitation: ProjectInvitation;
+  projectInvitation: ProjectInvitation;
 };
 
 export const useProjectUserActions = () => {
@@ -17,44 +15,41 @@ export const useProjectUserActions = () => {
 
   const getProjectUsers = async (projectId: string) =>
     await executeApiAction<User[]>({
-      action: async () => (await apiClient.get(`projects/${projectId}/users`).json<GetProjectUsersResponse>()).users,
+      action: async ({ client }) =>
+        (
+          await client.get(`projects/${projectId}/users`).json<GetProjectUsersResponse>()
+        ).users,
       errorMessage: 'Failed to load users',
     });
 
-  const createProjectInvitation = async ({ toUserEmail, projectId }: { toUserEmail: string; projectId: string }) =>
+  const createProjectInvitation = async ({ projectId }: { projectId: string }) =>
     await executeApiAction<ProjectInvitation>({
-      action: async () =>
+      action: async ({ client }) =>
         (
-          await apiClient
-            .post('project-invitations', { json: { project_id: projectId, to_user_email: toUserEmail } })
-            .json<CreateProjectInvitationResponse>()
-        ).project_invitation,
-      successMessage: '',
+          await client.post('project-invitations', { json: { projectId } }).json<CreateProjectInvitationResponse>()
+        ).projectInvitation,
       errorMessage: 'Failed to create project invitation',
-    });
-
-  const acceptProjectInvitation = async (key: string) =>
-    await executeApiAction<void>({
-      action: () => apiClient.get(`project-invitations/${key}`).json(),
-      errorMessage: 'Something went wrong, make sure your invitation is still valid',
     });
 
   const deleteProjectUser = async (projectId: string, userId: string) =>
     await executeApiAction<void>({
-      action: () => apiClient.delete(`projects/${projectId}/users/${userId}`),
+      action: async ({ client }) => {
+        await client.delete(`projects/${projectId}/users/${userId}`);
+      },
       errorMessage: 'Failed to delete user',
     });
 
   const updateProjectUser = async (projectId: string, userId: string, role: string) =>
     await executeApiAction<void>({
-      action: () => apiClient.put(`projects/${projectId}/users/${userId}`, { json: { role } }),
+      action: async ({ client }) => {
+        await client.put(`projects/${projectId}/users/${userId}`, { json: { role } });
+      },
       errorMessage: 'Failed to set role',
       successMessage: 'Role updated',
     });
 
   return {
     getProjectUsers: useCallback(getProjectUsers, [executeApiAction]),
-    acceptProjectInvitation: useCallback(acceptProjectInvitation, [executeApiAction]),
     createProjectInvitation: useCallback(createProjectInvitation, [executeApiAction]),
     deleteProjectUser: useCallback(deleteProjectUser, [executeApiAction]),
     updateProjectUser: useCallback(updateProjectUser, [executeApiAction]),

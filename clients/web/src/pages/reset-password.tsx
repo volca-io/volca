@@ -2,14 +2,16 @@ import { Text, Flex, Box, Heading, Link } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { DefaultLayout } from '../layouts';
-import { useUserActions } from '../hooks';
 import { SoftCard } from '../components/generic/SoftCard';
-import { ResetPasswordForm } from '../components/forms/ResetPassword';
+import { ResetPasswordForm } from '../components/forms/ResetPasswordForm';
+import { useAuthContext } from '../providers';
 
 export const ResetPasswordPage: React.FC = () => {
-  const { resetPassword } = useUserActions();
+  const { resetPassword } = useAuthContext();
 
-  const onSubmit = async ({ email }: { email: string }) => resetPassword(email);
+  const onSubmit = async ({ email }: { email: string }) => {
+    await resetPassword({ email });
+  };
 
   return (
     <DefaultLayout displayLogo>

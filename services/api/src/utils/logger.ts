@@ -46,7 +46,7 @@ const createLogger = ({ level, format, defaultMeta = {}, silent = false }: Loggi
   return winston.createLogger({
     level,
     format: getLoggingFormat(format),
-    defaultMeta: defaultMeta,
+    defaultMeta,
     transports: [new winston.transports.Console()],
     silent,
   });

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { currentUserState, selectedProjectSelector } from '../state';
+import { useProjectsContext } from '../providers';
 import { SubscriptionRoute } from './SubscriptionRoute';
 
 interface ProjectRouteProps {
@@ -9,8 +8,7 @@ interface ProjectRouteProps {
 }
 
 export const ProjectRoute: React.FC<ProjectRouteProps> = ({ children }) => {
-  const [projects] = useRecoilState(currentUserState);
-  const [selectedProject] = useRecoilState(selectedProjectSelector);
+  const { selectedProject } = useProjectsContext();
 
   const navigate = useNavigate();
 
@@ -18,7 +16,8 @@ export const ProjectRoute: React.FC<ProjectRouteProps> = ({ children }) => {
     if (!selectedProject) {
       navigate('/');
     }
-  }, [navigate, projects, selectedProject]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProject]);
 
   return <SubscriptionRoute>{children}</SubscriptionRoute>;
 };

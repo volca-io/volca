@@ -7,6 +7,10 @@ import { useApiAction } from '../utils/api-action';
 import { CommunicationsService } from '../../services';
 import { User } from '../../entities';
 
+type SendMessageBody = {
+  message: string;
+};
+
 export const schema: Schema = joi.object({
   message: joi.string().required(),
 });
@@ -16,7 +20,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   const user = container.resolve<User>('AuthenticatedUser');
   const email = EnvironmentVariables.FROM_EMAIL;
 
-  const { message } = ctx.request.body;
+  const { message } = <SendMessageBody>ctx.request.body;
 
   await commsService.sendEmail({
     email,

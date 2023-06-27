@@ -2,12 +2,12 @@ import { FormControl, FormLabel, Input, Button, FormErrorMessage, VStack } from 
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn';
-import { useRecoilValue } from 'recoil';
 
-import { loadingState } from '../../state';
 import { PasswordStrengthIndicator } from '../PasswordStrength';
+import { useLoadingContext } from '../../providers';
 
 interface FormProps {
+  code: string;
   password: string;
   confirmPassword: string;
 }
@@ -18,7 +18,7 @@ interface ResetPasswordFormProps {
 
 export const VerifyResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }) => {
   const [strengthCheck, setStrengthCheck] = useState<null | ZXCVBNResult>(null);
-  const loading = useRecoilValue(loadingState);
+  const { loading } = useLoadingContext();
   const {
     register,
     handleSubmit,
@@ -32,15 +32,22 @@ export const VerifyResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSu
     setStrengthCheck(result);
   }, [password]);
 
-  const _onSubmit = ({ password }: FormProps) => {
-    onSubmit({
-      password: password.toLowerCase(),
-    });
-  };
-
   return (
-    <form onSubmit={handleSubmit(_onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <VStack spacing={4} alignItems="flex-start">
+        <FormControl isInvalid={!!errors.code}>
+          <FormLabel htmlFor="code" fontSize="sm">
+            Verification code
+          </FormLabel>
+          <Input
+            id="code"
+            fontSize="sm"
+            {...register('code', {
+              required: 'Enter your verification code',
+            })}
+          />
+          {errors.code && <FormErrorMessage>{errors.code.message}</FormErrorMessage>}
+        </FormControl>
         <FormControl isInvalid={!!errors.password}>
           <FormLabel htmlFor="lastName" fontSize="sm">
             New password

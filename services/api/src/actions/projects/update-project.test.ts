@@ -1,18 +1,15 @@
-import { authenticate } from '../../test-utils/authenticate';
+import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne } from '../../test-utils/fixtures';
 import { setupServer } from '../../test-utils/setup-server';
 
 describe('PUT /projects', () => {
   const getRequest = setupServer();
-  let accessToken: string;
   let createdProject: Record<string, unknown>;
 
   beforeAll(async () => {
-    accessToken = await authenticate(getRequest(), userOne);
-
     const firstProject = await getRequest()
       .post('/projects')
-      .set({ Authorization: `Bearer ${accessToken}` })
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         name: 'First project!',
       });
@@ -24,7 +21,7 @@ describe('PUT /projects', () => {
   it('can update a project', async () => {
     const response = await getRequest()
       .put(`/projects/${createdProject.id}`)
-      .set({ Authorization: `Bearer ${accessToken}` })
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         name: 'Updated project',
       });
@@ -35,11 +32,11 @@ describe('PUT /projects', () => {
     expect(project).toMatchObject({
       id: expect.any(String),
       name: 'Updated project',
-      owner_id: expect.any(String),
+      ownerId: expect.any(String),
       owner: expect.any(Object),
       users: expect.any(Array),
-      created_at: expect.any(String),
-      updated_at: expect.any(String),
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
     });
   });
 

@@ -5,23 +5,8 @@ import body from 'koa-bodyparser';
 import { statusAction } from './actions/status';
 
 /* volca-exclude-start os */
-import {
-  authnPasswordAction,
-  authnPasswordSchema,
-  resetPasswordAction,
-  resetPasswordSchema,
-  verifyResetPasswordAction,
-  verifyResetPasswordSchema,
-  verifyUserAction,
-  verifyUserSchema,
-  refreshAction,
-  registerAction,
-  registerSchema,
-  signOutAction,
-  resendUserVerificationAction,
-} from './actions/authn';
-
-import { getMeAction } from './actions/users';
+import { appConfigAction } from './actions/metadata';
+import { provisionUserAction, provisionUserSchema } from './actions/users';
 import {
   createProjectInvitationAction,
   createProjectInvitationSchema,
@@ -124,24 +109,10 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
     schemaValidationMiddleware(createProjectInvitationSchema),
     createProjectInvitationAction
   );
-  router.get('/project-invitations/:key', authenticationMiddleware, acceptProjectInvitationAction);
+  router.get('/project-invitations/:id', authenticationMiddleware, acceptProjectInvitationAction);
 
   // Users
-  router.get('/me', authenticationMiddleware, getMeAction);
-
-  // Authentication
-  router.post('/authn/password', schemaValidationMiddleware(authnPasswordSchema), authnPasswordAction);
-  router.post('/authn/reset-password', schemaValidationMiddleware(resetPasswordSchema), resetPasswordAction);
-  router.post(
-    '/authn/reset-password/verify',
-    schemaValidationMiddleware(verifyResetPasswordSchema),
-    verifyResetPasswordAction
-  );
-  router.post('/authn/verify-user', schemaValidationMiddleware(verifyUserSchema), verifyUserAction);
-  router.post('/authn/resend-verification', authenticationMiddleware, resendUserVerificationAction);
-  router.post('/authn/sign-out', signOutAction);
-  router.post('/authn/register', schemaValidationMiddleware(registerSchema), registerAction);
-  router.post('/authn/refresh', refreshAction);
+  router.post('/users/provision', schemaValidationMiddleware(provisionUserSchema), provisionUserAction);
 
   // Communications
   router.post(
@@ -161,6 +132,10 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
   router.post('/stripe/billing-portal-sessions', authenticationMiddleware, createStripeBillingPortalSessionAction);
   router.post('/stripe/webhook', receiveStripeWebhook);
   router.get('/stripe/plans', listPlans);
+
+  // Metadata
+
+  router.get('/metadata/app-config', appConfigAction);
 
   /* volca-exclude-end os */
 

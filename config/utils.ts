@@ -1,7 +1,8 @@
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 import { EnvironmentVariable } from './types';
 
-dotenv.config({ path: '../../.env' });
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export const getEnvVar = (envVar: string, defaultValue?: string): string => {
   const variable = process.env[envVar] || defaultValue;

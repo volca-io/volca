@@ -5,7 +5,6 @@ import serverless from 'serverless-http';
 
 import { createServer } from '../server';
 
-
 // We need to keep a reference to the database connection outside the lambda handler to
 // not create a new connection on each request
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

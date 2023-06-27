@@ -26,14 +26,13 @@ import {
 } from '@chakra-ui/react';
 import { MdHomeFilled, MdSettings, MdMenu, MdKeyboardArrowDown, MdGroups } from 'react-icons/md';
 import { IconType } from 'react-icons';
-import { useRecoilValue } from 'recoil';
-import { selectedProjectSelector, currentUserState } from '../../state';
 import { MdOutlineSync } from 'react-icons/md';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 import { SignOutButton } from '../authentication/SignOutButton';
 import { ThemeSwitcher } from './theme-switcher';
 import { SupportButton } from '../generic/SupportButton';
+import { useProjectsContext, useAuthContext } from '../../providers';
 
 interface LinkItemProps {
   name: string;
@@ -75,7 +74,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const selectedProject = useRecoilValue(selectedProjectSelector);
+  const { selectedProject } = useProjectsContext();
   const navigate = useNavigate();
 
   const LinkItems: Array<LinkItemProps> = [
@@ -178,7 +177,8 @@ interface MobileProps extends FlexProps {
 
 const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
   const navigate = useNavigate();
-  const user = useRecoilValue(currentUserState);
+  const { user } = useAuthContext();
+
   return (
     <Flex
       ml={{ base: 0, md: full ? 'full' : 60 }}
@@ -212,9 +212,9 @@ const MobileNav = ({ onOpen, full = false, ...rest }: MobileProps) => {
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
               <HStack>
-                <Avatar size="sm" {...(user && { name: `${user.first_name} ${user.last_name}` })} />
+                <Avatar size="sm" {...(user && { name: `${user.firstName} ${user.lastName}`, src: user.picture })} />
                 <VStack display={{ base: 'none', md: 'flex' }} alignItems="flex-start" spacing="1px" ml="2">
-                  <Text fontSize="sm">{user && `${user.first_name} ${user.last_name}`}</Text>
+                  <Text fontSize="sm">{user && `${user.firstName} ${user.lastName}`}</Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
                   <MdKeyboardArrowDown />

@@ -7,17 +7,21 @@ import { Role, ProjectUserService } from '../../services';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
+type UpdateProjectUserBody = {
+  role: Role;
+};
+
 export const schema: Schema = joi.object({
   role: joi
     .string()
     .valid(...Object.keys(Role))
-    .optional(),
+    .required(),
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
   const projectUserService = container.resolve(ProjectUserService);
 
-  const { role } = ctx.request.body;
+  const { role } = <UpdateProjectUserBody>ctx.request.body;
   const { projectId, userId } = ctx.params;
 
   const projectUser = await projectUserService.get(userId, projectId);

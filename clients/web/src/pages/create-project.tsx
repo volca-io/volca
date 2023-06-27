@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Button, Text, Box } from '@chakra-ui/react';
+import { Input, Button, Text } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 
 import { AuthenticatedLayout } from '../layouts';
@@ -27,7 +27,6 @@ export const CreateProjectPage: React.FC = () => {
   return (
     <AuthenticatedLayout sidebar={false}>
       <PageHeading title="Create Project" icon={MdAdd} />
-      <Box mt={8} />
       <SoftCard>
         <Text fontSize="lg" mb={4}>
           Let's start with a name for your project.

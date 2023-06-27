@@ -25,6 +25,7 @@ interface WebappStackProps extends StackProps {
 export class WebappStack extends Stack {
   public distribution: CloudFrontWebDistribution;
   public bucket: Bucket;
+  public domain: string;
 
   constructor(scope: Construct, id: string, props: WebappStackProps) {
     super(scope, id, props);
@@ -38,7 +39,7 @@ export class WebappStack extends Stack {
 
     const { subdomain } = deploymentConfig;
 
-    const domainName = subdomain ? `app.${subdomain}.${props.hostedZone.zoneName}` : `app.${props.hostedZone.zoneName}`;
+    this.domain = subdomain ? `app.${subdomain}.${props.hostedZone.zoneName}` : `app.${props.hostedZone.zoneName}`;
 
     // Creates a new bucket that we will upload our React app to
     this.bucket = new Bucket(this, 'WebappHostingBucket', {
@@ -57,8 +58,8 @@ export class WebappStack extends Stack {
     // and access the webapp with our own domain name
     let certificate: DnsValidatedCertificate | null = null;
     certificate = new DnsValidatedCertificate(this, 'Certificate', {
-      domainName,
-      subjectAlternativeNames: [`www.${domainName}`],
+      domainName: this.domain,
+      subjectAlternativeNames: [`www.${this.domain}`],
       validation: CertificateValidation.fromDns(props.hostedZone),
       region: 'us-east-1',
       hostedZone: props.hostedZone,
@@ -70,7 +71,7 @@ export class WebappStack extends Stack {
       viewerCertificate:
         props.hostedZone && certificate
           ? ViewerCertificate.fromAcmCertificate(certificate, {
-              aliases: [domainName, `www.${domainName}`],
+              aliases: [this.domain, `www.${this.domain}`],
               securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
               sslMethod: SSLMethod.SNI,
             })
@@ -98,7 +99,7 @@ export class WebappStack extends Stack {
     new ARecord(this, 'WebappARecord', {
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
       zone: props.hostedZone,
-      recordName: domainName,
+      recordName: this.domain,
     });
 
     // Creates some stack outputs that we can read when deploying to know where to upload the webapp
@@ -107,7 +108,7 @@ export class WebappStack extends Stack {
 
     new StringParameter(this, 'AppDomainParameter', {
       parameterName: `/${props.name}/${props.environment}/APP_DOMAIN`,
-      stringValue: `https://${domainName}`,
+      stringValue: `https://${this.domain}`,
     });
   }
 }

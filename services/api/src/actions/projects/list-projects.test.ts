@@ -1,18 +1,15 @@
-import { authenticate } from '../../test-utils/authenticate';
+import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne } from '../../test-utils/fixtures';
 import { setupServer } from '../../test-utils/setup-server';
 
 describe('GET /projects', () => {
   const getRequest = setupServer();
-  let accessToken: string;
   const createdProjects: Array<Record<string, unknown>> = [];
 
   beforeAll(async () => {
-    accessToken = await authenticate(getRequest(), userOne);
-
     const firstProject = await getRequest()
       .post('/projects')
-      .set({ Authorization: `Bearer ${accessToken}` })
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         name: 'First project!',
       });
@@ -22,7 +19,7 @@ describe('GET /projects', () => {
 
     const secondProject = await getRequest()
       .post('/projects')
-      .set({ Authorization: `Bearer ${accessToken}` })
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         name: 'Second project!',
       });
@@ -33,13 +30,13 @@ describe('GET /projects', () => {
 
   it('can fetch a list of projects', async () => {
     const response = await getRequest()
-    .get('/projects')
-    .set({ Authorization: `Bearer ${accessToken}` });
+      .get('/projects')
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` });
 
     expect(response.status).toBe(200);
 
-    const { projects } = response.body
-    expect(projects.length).toBeGreaterThan(0)
+    const { projects } = response.body;
+    expect(projects.length).toBeGreaterThan(0);
   });
 
   it('returns 401 if user is unauthenticated', async () => {

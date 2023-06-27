@@ -1,4 +1,4 @@
-import type { JestConfigWithTsJest } from 'ts-jest'
+import type { JestConfigWithTsJest } from 'ts-jest';
 
 const config: JestConfigWithTsJest = {
   preset: 'ts-jest',
@@ -6,9 +6,8 @@ const config: JestConfigWithTsJest = {
   testRegex: '.*.test.ts',
   testTimeout: 10000,
   setupFilesAfterEnv: ['./.jest/jest.setup.ts'],
-  extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '#node-web-compat': './node-web-compat-node.js',
   },
   transform: {
     // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
@@ -16,7 +15,7 @@ const config: JestConfigWithTsJest = {
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        useESM: true,
+        useESM: false,
       },
     ],
   },

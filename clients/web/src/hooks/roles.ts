@@ -1,5 +1,4 @@
-import { useRecoilValue } from 'recoil';
-import { currentUserState, selectedProjectSelector } from '../state';
+import { useAuthContext, useProjectsContext } from '../providers';
 
 export enum Entity {
   PROJECTS = 'PROJECTS',
@@ -47,9 +46,10 @@ const privileges: Privileges = {
 };
 
 const useCurrentRole = () => {
-  const selectedProject = useRecoilValue(selectedProjectSelector);
-  const currentUser = useRecoilValue(currentUserState);
-  return selectedProject?.users?.find((u) => u.id === currentUser?.id)?.role as Role;
+  const { user } = useAuthContext();
+  const { selectedProject } = useProjectsContext();
+
+  return selectedProject?.users?.find((u) => u.id === user?.id)?.role as Role;
 };
 
 export const usePrivileges = () => {

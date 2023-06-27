@@ -1,6 +1,6 @@
 const path = require('path');
 const slsw = require('serverless-webpack');
-const { IgnorePlugin } = require('webpack');
+const { IgnorePlugin, ContextReplacementPlugin } = require('webpack');
 const { isLocal } = slsw.lib.webpack;
 
 module.exports = {
@@ -25,6 +25,7 @@ module.exports = {
     'pg-query-stream',
     'sqlite3',
     'pg-native',
+    'pg-cloudflare',
     'better-sqlite3',
   ],
 
@@ -50,4 +51,9 @@ module.exports = {
       },
     ],
   },
+
+  plugins: [
+    new ContextReplacementPlugin(/knex/),
+    new ContextReplacementPlugin(/aws-crt/),
+]
 };

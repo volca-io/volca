@@ -38,7 +38,7 @@ export class StripeService {
 
   constructor(private userService: UserService) {
     this.stripe = new Stripe(EnvironmentVariables.STRIPE_KEY, {
-      apiVersion: '2020-08-27',
+      apiVersion: '2022-11-15',
     });
   }
 

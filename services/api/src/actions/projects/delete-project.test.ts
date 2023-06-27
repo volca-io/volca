@@ -1,18 +1,15 @@
-import { authenticate } from '../../test-utils/authenticate';
+import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne } from '../../test-utils/fixtures';
 import { setupServer } from '../../test-utils/setup-server';
 
 describe('DELETE /projects/:id', () => {
   const getRequest = setupServer();
-  let accessToken: string;
   let createdProject: Record<string, unknown>;
 
   beforeAll(async () => {
-    accessToken = await authenticate(getRequest(), userOne);
-
     const response = await getRequest()
       .post('/projects')
-      .set({ Authorization: `Bearer ${accessToken}` })
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         name: 'My new project!',
       });
@@ -25,13 +22,13 @@ describe('DELETE /projects/:id', () => {
   it('can delete by id', async () => {
     const deleteResponse = await getRequest()
       .delete(`/projects/${createdProject.id}`)
-      .set({ Authorization: `Bearer ${accessToken}` });
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` });
 
     expect(deleteResponse.status).toBe(200);
 
     const getResponse = await getRequest()
       .get(`/projects/${createdProject.id}`)
-      .set({ Authorization: `Bearer ${accessToken}` });
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` });
 
     expect(getResponse.status).toBe(404);
   });

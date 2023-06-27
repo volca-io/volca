@@ -1,13 +1,13 @@
 import { jest } from '@jest/globals';
 import { MockInstance } from 'jest-mock';
 import { CommunicationsService } from '../../services';
-import { authenticate } from '../../test-utils/authenticate';
+import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne } from '../../test-utils/fixtures';
 import { setupServer } from '../../test-utils/setup-server';
+import { config } from '../../utils/environment';
 
 describe('POST /communications/support', () => {
   const getRequest = setupServer();
-  let accessToken: string;
   let comsSpy: MockInstance<
     ({
       email,
@@ -26,14 +26,10 @@ describe('POST /communications/support', () => {
     comsSpy = jest.spyOn(CommunicationsService.prototype, 'sendEmail').mockResolvedValue();
   });
 
-  beforeAll(async () => {
-    accessToken = await authenticate(getRequest(), userOne);
-  });
-
   it('returns 400 if no message is specified', async () => {
     const response = await getRequest()
       .post('/communications/support')
-      .set({ Authorization: `Bearer ${accessToken}` });
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` });
 
     expect(response.status).toBe(400);
   });
@@ -49,14 +45,14 @@ describe('POST /communications/support', () => {
   it('can successfully send a message', async () => {
     const response = await getRequest()
       .post('/communications/support')
-      .set({ Authorization: `Bearer ${accessToken}` })
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         message: 'I need help!',
       });
 
     expect(response.status).toBe(200);
     expect(comsSpy).toHaveBeenCalledWith({
-      email: process.env.FROM_EMAIL,
+      email: config.fromEmail,
       subject: `Support request from ${userOne.firstName} ${userOne.lastName}`,
       body: 'I need help!',
       replyTo: userOne.email,

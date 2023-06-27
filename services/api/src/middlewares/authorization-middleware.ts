@@ -8,18 +8,19 @@ import { ErrorNames } from '../constants';
 import { Role, ProjectService, ProjectUserService } from '../services';
 import { User } from '../entities';
 
+type RequestBody = {
+  projectId?: string;
+};
+
 export const authorizationMiddleware = (allowedRoles: Role[]) => async (ctx: CustomContext, next: Koa.Next) => {
   const user = container.resolve<User>('AuthenticatedUser');
   const projectService = container.resolve(ProjectService);
   const projectUserService = container.resolve(ProjectUserService);
 
+  const requestBody = <RequestBody>ctx.request.body;
+
   // Validate all project IDs in the request body or request parameters
-  const projectIds = [
-    ctx.request.body.project_id,
-    ctx.request.body.projectId,
-    ctx.params.projectId,
-    ctx.params.project_id,
-  ].filter(Boolean);
+  const projectIds = [requestBody.projectId, ctx.params.projectId].filter(Boolean) as string[];
 
   for (const projectId of projectIds) {
     const project = await projectService.get(projectId);

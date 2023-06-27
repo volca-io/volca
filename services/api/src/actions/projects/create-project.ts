@@ -9,6 +9,10 @@ import { User } from '../../entities';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
+type CreateProjectBody = {
+  name: string;
+};
+
 export const schema: Schema = joi.object({
   name: joi.string().required(),
 });
@@ -25,7 +29,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  const { name } = ctx.request.body;
+  const { name } = <CreateProjectBody>ctx.request.body;
 
   const project = await projectService.create({ ownerId: user.id, name });
 

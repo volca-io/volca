@@ -1,12 +1,11 @@
 import { Text, SimpleGrid, VStack } from '@chakra-ui/react';
 import { MdDashboard } from 'react-icons/md';
-import { useRecoilValue } from 'recoil';
 
 import { PageHeading } from '../components/generic/PageHeading';
 import { SoftCard } from '../components/generic/SoftCard';
 import { StatCard, StatProps } from '../components/generic/StatCard';
 import { AuthenticatedLayout } from '../layouts';
-import { currentUserState } from '../state';
+import { useAuthContext } from '../providers';
 
 const stats: StatProps[] = [
   {
@@ -36,14 +35,14 @@ const stats: StatProps[] = [
 ];
 
 export const DashboardPage: React.FC = () => {
-  const user = useRecoilValue(currentUserState);
+  const { user } = useAuthContext();
 
   return (
     <AuthenticatedLayout>
       <VStack spacing={6} align="flex-start">
         <SoftCard w="100%">
           <PageHeading title="Dashboard" icon={MdDashboard} />
-          <Text mt={6}>{`Welcome, ${user?.first_name} 👋`}</Text>
+          <Text mt={6}>{`Welcome, ${user?.firstName} 👋`}</Text>
         </SoftCard>
         <SimpleGrid pt={2} minChildWidth="200px" width="100%" spacingX="40px" spacingY="20px">
           {stats.map((stat, index) => (
