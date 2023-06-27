@@ -6,6 +6,7 @@ import { ServiceError } from '../../errors/service-error';
 import { AuthenticationService, UserService } from '../../services';
 import { CustomContext } from '../../types';
 import { useApiAction } from '../utils/api-action';
+import { config } from '../../utils/environment';
 
 type ProvisionBody = {
   idToken: string;
@@ -44,8 +45,8 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   const user = {
     sub: sub.toString(),
-    firstName: givenName?.toString(),
-    lastName: familyName?.toString(),
+    firstName: givenName?.toString() || config.name,
+    lastName: familyName?.toString() || 'User',
     email: email.toString(),
     picture: primaryIdentity ? parsePicture(primaryIdentity.providerName, picture?.toString()) : null,
   };

@@ -5,15 +5,20 @@ import { LoadingBar } from '../components/generic/LoadingBar';
 
 interface DefaultLayoutProps {
   displayLogo?: boolean;
+  displayLoadingBar?: boolean;
   children: React.ReactNode;
 }
 
-export const DefaultLayout: React.FC<DefaultLayoutProps> = ({ displayLogo = false, children }) => {
+export const DefaultLayout: React.FC<DefaultLayoutProps> = ({
+  displayLogo = false,
+  displayLoadingBar = true,
+  children,
+}) => {
   const logoSource = useColorModeValue('/logo-dark.svg', '/logo-light.svg');
 
   return (
     <Box>
-      <LoadingBar full />
+      {displayLoadingBar && <LoadingBar full />}
       <Flex
         flexDirection="column"
         height="100vh"

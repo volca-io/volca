@@ -14,7 +14,7 @@ export const ErrorPage: React.FC<ErrorPageProps> = ({
   reloadEnabled = true,
 }: ErrorPageProps) => {
   return (
-    <DefaultLayout displayLogo>
+    <DefaultLayout displayLogo displayLoadingBar={false}>
       <Flex height="100vh" justifyContent="center">
         <Flex justifyContent="center" alignItems="center" flexDir="column">
           <WarningTwoIcon boxSize={100}></WarningTwoIcon>
