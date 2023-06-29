@@ -10,7 +10,7 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront';
 
 import { Construct } from 'constructs';
-import { CertificateValidation, DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { config } from '../../app.config';
@@ -20,6 +20,7 @@ interface WebappStackProps extends StackProps {
   name: string;
   environment: Environment;
   hostedZone: IHostedZone;
+  webappCertificate: Certificate;
 }
 
 export class WebappStack extends Stack {
@@ -54,23 +55,11 @@ export class WebappStack extends Stack {
     const oai = new OriginAccessIdentity(this, 'WebappCloudFrontOriginAccessIdentity');
     this.bucket.grantRead(oai.grantPrincipal);
 
-    // Creates a new certificate for our domain name so we can add it to CloudFront
-    // and access the webapp with our own domain name
-    let certificate: DnsValidatedCertificate | null = null;
-    certificate = new DnsValidatedCertificate(this, 'Certificate', {
-      domainName: this.domain,
-      subjectAlternativeNames: [`www.${this.domain}`],
-      validation: CertificateValidation.fromDns(props.hostedZone),
-      region: 'us-east-1',
-      hostedZone: props.hostedZone,
-      cleanupRoute53Records: true,
-    });
-
     // Creates a new CloudFront distribution that we will use to access our webapp
     this.distribution = new CloudFrontWebDistribution(this, 'WebappDistribution', {
       viewerCertificate:
-        props.hostedZone && certificate
-          ? ViewerCertificate.fromAcmCertificate(certificate, {
+        props.hostedZone && props.webappCertificate
+          ? ViewerCertificate.fromAcmCertificate(props.webappCertificate, {
               aliases: [this.domain, `www.${this.domain}`],
               securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
               sslMethod: SSLMethod.SNI,

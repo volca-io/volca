@@ -9,7 +9,7 @@ import {
 } from 'aws-cdk-lib/aws-apigateway';
 import { ARecord, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { Environment } from '../../config/types';
-import { CertificateValidation, DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { CertificateValidation, Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 
 export interface ApiGatewayProps {
@@ -52,11 +52,9 @@ export class ApiGateway extends Construct {
       }
     );
 
-    const certificate = new DnsValidatedCertificate(this, 'Certificate', {
+    const certificate = new Certificate(this, 'Certificate', {
       domainName: this.domainName,
       validation: CertificateValidation.fromDns(props.hostedZone),
-      hostedZone: props.hostedZone,
-      cleanupRoute53Records: true,
     });
 
     const apiGatewayDomainName = new DomainName(this, 'DomainName', {

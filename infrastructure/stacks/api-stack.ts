@@ -1,6 +1,6 @@
 import { Stack, StackProps, CfnOutput, SecretValue } from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { SubnetType, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { SubnetType, SecurityGroup, Vpc, IpAddresses } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { IHostedZone } from 'aws-cdk-lib/aws-route53';
 
@@ -8,12 +8,14 @@ import { config } from '../../app.config';
 import { ApiGateway, ApiLambdaExecutionRole, Database } from '../constructs';
 import { Environment } from '../../config/types';
 import { Cognito } from '../constructs/cognito';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 interface ApiStackProps extends StackProps {
   name: string;
   environment: Environment;
   hostedZone: IHostedZone;
   fromEmail: string;
+  cognitoCertificate: Certificate;
 }
 
 export class ApiStack extends Stack {
@@ -38,7 +40,7 @@ export class ApiStack extends Stack {
 
     // Creates a VPC that the api lambda functions will run in
     const vpc = new Vpc(this, 'ApplicationVpc', {
-      cidr: '10.0.0.0/16',
+      ipAddresses: IpAddresses.cidr('10.0.0.0/16'),
       maxAzs: 3,
       natGateways: publicDatabase ? 0 : 1,
       vpcName: `${props.name}-${props.environment}-vpc`,
@@ -99,6 +101,7 @@ export class ApiStack extends Stack {
       hostedZone: props.hostedZone,
       domain: fullDomain,
       authenticationConfig: authentication,
+      certificate: props.cognitoCertificate,
     });
 
     // Creates a new SSM parameter that the lambdas will use to know where the database is located

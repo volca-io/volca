@@ -17,8 +17,8 @@ import {
 } from 'aws-cdk-lib/aws-cognito';
 
 import { AuthenticationConfig, Environment } from '../../config/types';
-import { CertificateValidation, DnsValidatedCertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 interface CognitoProps {
   name: string;
@@ -26,6 +26,7 @@ interface CognitoProps {
   fromEmail: string;
   hostedZone: IHostedZone;
   domain: string;
+  certificate: Certificate;
   authenticationConfig: AuthenticationConfig;
 }
 
@@ -74,26 +75,15 @@ export class Cognito extends Construct {
       }),
     });
 
-    const domainName = `login.${props.domain}`;
-
-    const certificate = new DnsValidatedCertificate(this, 'CognitoCertificate', {
-      domainName,
-      subjectAlternativeNames: [`www.${domainName}`],
-      validation: CertificateValidation.fromDns(props.hostedZone),
-      region: 'us-east-1',
-      hostedZone: props.hostedZone,
-      cleanupRoute53Records: true,
-    });
-
     const domain = this.userPool.addDomain('CognitoDomain', {
       customDomain: {
-        domainName,
-        certificate,
+        domainName: `login.${props.domain}`,
+        certificate: props.certificate,
       },
     });
 
     new CnameRecord(this, 'CognitoCustomDomainCloudFrontCname', {
-      recordName: domainName,
+      recordName: `login.${props.domain}`,
       zone: props.hostedZone,
       domainName: domain.cloudFrontDomainName,
     });
