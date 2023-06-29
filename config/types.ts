@@ -1,5 +1,3 @@
-import { EnvironmentVariables } from '../services/api/src/utils/environment';
-
 interface AwsConfig {
   account: string;
   region:
