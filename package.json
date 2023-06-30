@@ -25,8 +25,8 @@
     "@types/prettier": "2.7.3",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
-    "aws-cdk": "^2.83.1",
-    "aws-cdk-lib": "^2.83.1",
+    "aws-cdk": "^2.86.0",
+    "aws-cdk-lib": "^2.86.0",
     "aws-crt": "^1.15.18",
     "commander": "^11.0.0",
     "constructs": "^10.2.52",
@@ -52,5 +52,5 @@
     "serverless-webpack@^5.8.0": "patch:serverless-webpack@npm:5.8.0#.yarn/patches/serverless-webpack-npm-5.8.0-8563ff4c80.patch",
     "fork-ts-checker-webpack-plugin@^6.5.0": "^6.5.3"
   },
-  "version": "1.14.0"
+  "version": "1.18.0"
 }

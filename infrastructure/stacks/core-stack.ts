@@ -1,7 +1,8 @@
 import { VerifySesDomain } from '@seeebiii/ses-verify-identities';
 import { CfnOutput, Fn, Stack, StackProps } from 'aws-cdk-lib';
-import { OpenIdConnectProvider, Role, WebIdentityPrincipal } from 'aws-cdk-lib/aws-iam';
+import { IOpenIdConnectProvider, OpenIdConnectProvider, Role, WebIdentityPrincipal } from 'aws-cdk-lib/aws-iam';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
+import { config } from '../../app.config';
 
 import { Construct } from 'constructs';
 import { DeploymentPolicy } from '../constructs';
@@ -15,7 +16,7 @@ interface CoreStackProps extends StackProps {
 }
 
 export class CoreStack extends Stack {
-  public provider: OpenIdConnectProvider;
+  public provider: IOpenIdConnectProvider;
   public hostedZone: HostedZone;
 
   constructor(scope: Construct, id: string, props: CoreStackProps) {
@@ -27,11 +28,13 @@ export class CoreStack extends Stack {
 
     // Creates a new OIDC provider for the account that allows GitHub actions to connect to the account
     // and get short lived tokens
-    this.provider = new OpenIdConnectProvider(this, 'GithubOidcProvider', {
-      url: 'https://token.actions.githubusercontent.com',
-      clientIds: ['sts.amazonaws.com'],
-      thumbprints: ['6938fd4d98bab03faadb97b34396831e3780aea1'],
-    });
+    this.provider = config.aws.oidcProviderArn
+      ? OpenIdConnectProvider.fromOpenIdConnectProviderArn(this, 'GithubOidcProviderImport', config.aws.oidcProviderArn)
+      : new OpenIdConnectProvider(this, 'GithubOidcProvider', {
+          url: 'https://token.actions.githubusercontent.com',
+          clientIds: ['sts.amazonaws.com'],
+          thumbprints: ['6938fd4d98bab03faadb97b34396831e3780aea1'],
+        });
 
     // Creates a hosted zone for us to later add DNS records when we deploy the API and webapp
     this.hostedZone = new HostedZone(this, 'HostedZone', { zoneName: props.domain });

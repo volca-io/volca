@@ -11,15 +11,15 @@ import {
 
 import { Construct } from 'constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { config } from '../../app.config';
 import { Environment } from '../../config/types';
 
 interface WebappStackProps extends StackProps {
+  domain: string;
   name: string;
   environment: Environment;
-  hostedZone: IHostedZone;
   webappCertificate: Certificate;
 }
 
@@ -40,7 +40,7 @@ export class WebappStack extends Stack {
 
     const { subdomain } = deploymentConfig;
 
-    this.domain = subdomain ? `app.${subdomain}.${props.hostedZone.zoneName}` : `app.${props.hostedZone.zoneName}`;
+    this.domain = subdomain ? `app.${subdomain}.${props.domain}` : `app.${props.domain}`;
 
     // Creates a new bucket that we will upload our React app to
     this.bucket = new Bucket(this, 'WebappHostingBucket', {
@@ -57,14 +57,11 @@ export class WebappStack extends Stack {
 
     // Creates a new CloudFront distribution that we will use to access our webapp
     this.distribution = new CloudFrontWebDistribution(this, 'WebappDistribution', {
-      viewerCertificate:
-        props.hostedZone && props.webappCertificate
-          ? ViewerCertificate.fromAcmCertificate(props.webappCertificate, {
-              aliases: [this.domain, `www.${this.domain}`],
-              securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
-              sslMethod: SSLMethod.SNI,
-            })
-          : undefined,
+      viewerCertificate: ViewerCertificate.fromAcmCertificate(props.webappCertificate, {
+        aliases: [this.domain, `www.${this.domain}`],
+        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
+        sslMethod: SSLMethod.SNI,
+      }),
       originConfigs: [
         {
           s3OriginSource: {
@@ -84,10 +81,12 @@ export class WebappStack extends Stack {
       ],
     });
 
+    const hostedZone = HostedZone.fromLookup(this, 'Zone', { domainName: props.domain });
+
     // Create a new A record for our domain that will route requests from app.<your-domain> to the react app
     new ARecord(this, 'WebappARecord', {
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
-      zone: props.hostedZone,
+      zone: hostedZone,
       recordName: this.domain,
     });
 

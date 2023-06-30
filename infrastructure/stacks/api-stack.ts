@@ -2,9 +2,8 @@ import { Stack, StackProps, CfnOutput, SecretValue } from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { SubnetType, SecurityGroup, Vpc, IpAddresses } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
-import { IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
-
+import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { config } from '../../app.config';
 import { ApiGateway, ApiLambdaExecutionRole, Database } from '../constructs';
 import { Environment } from '../../config/types';
@@ -12,9 +11,9 @@ import { Cognito } from '../constructs/cognito';
 import { S3Assets } from '../constructs/s3-assets';
 
 interface ApiStackProps extends StackProps {
+  domain: string;
   name: string;
   environment: Environment;
-  hostedZone: IHostedZone;
   fromEmail: string;
   cognitoCertificate: Certificate;
 }
@@ -37,7 +36,7 @@ export class ApiStack extends Stack {
     const { publicDatabase, subdomain } = deploymentConfig;
     const { DB_USERNAME: dbUsername } = environmentVariables;
 
-    const fullDomain = subdomain ? `${subdomain}.${props.hostedZone.zoneName}` : props.hostedZone.zoneName;
+    const fullDomain = subdomain ? `${subdomain}.${props.domain}` : props.domain;
 
     // Creates a VPC that the api lambda functions will run in
     const vpc = new Vpc(this, 'ApplicationVpc', {
@@ -77,12 +76,14 @@ export class ApiStack extends Stack {
       apiSecurityGroup,
     });
 
+    const hostedZone = HostedZone.fromLookup(this, 'Zone', { domainName: props.domain });
+
     // Creates a new API gateway that will proxy requests to our API lambdas
     const api = new ApiGateway(this, 'ApiGateway', {
       name: props.name,
       environment: props.environment,
       domain: fullDomain,
-      hostedZone: props.hostedZone,
+      hostedZone,
     });
 
     // This role will be attached to the API lambdas and control what they are allowed to do in the AWS account
@@ -99,7 +100,7 @@ export class ApiStack extends Stack {
       name: props.name,
       environment: props.environment,
       fromEmail: props.fromEmail,
-      hostedZone: props.hostedZone,
+      hostedZone,
       domain: fullDomain,
       authenticationConfig: authentication,
       certificate: props.cognitoCertificate,
@@ -113,8 +114,10 @@ export class ApiStack extends Stack {
 
       new StringParameter(this, 'S3AssetsBucket', {
         parameterName: `/${props.name}/${props.environment}/AWS_S3_ASSETS_BUCKET`,
-        stringValue: s3Assets.bucket.bucketArn,
+        stringValue: s3Assets.bucket.bucketName,
       });
+
+      new CfnOutput(this, 'S3AssetsBucketOutput', { value: s3Assets.bucket.bucketName });
     }
 
     // Creates a new SSM parameter that the lambdas will use to know where the database is located

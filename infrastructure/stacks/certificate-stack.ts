@@ -1,11 +1,14 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
-import { IHostedZone } from 'aws-cdk-lib/aws-route53';
+import { HostedZone } from 'aws-cdk-lib/aws-route53';
 
 import { Construct } from 'constructs';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
+import { config } from '../../app.config';
+import { Environment } from '../../config/types';
 
 interface CertificateStackProps extends StackProps {
-  hostedZone: IHostedZone;
+  domain: string;
+  environment: Environment;
   subdomain?: string;
 }
 
@@ -16,22 +19,30 @@ export class CertificateStack extends Stack {
   constructor(scope: Construct, id: string, props: CertificateStackProps) {
     super(scope, id, props);
 
-    const cognitoDomainName = props.subdomain
-      ? `login.${props.subdomain}.${props.hostedZone.zoneName}`
-      : `login.${props.hostedZone.zoneName}`;
+    const { deploymentConfig } = config.environments[props.environment];
+    if (!deploymentConfig) {
+      throw new Error(
+        'Can not deploy an environment without a deployment config. Please add one to your environment in app.config.ts'
+      );
+    }
+
+    const { subdomain } = deploymentConfig;
+    const fullDomain = subdomain ? `${subdomain}.${props.domain}` : props.domain;
+
+    const hostedZone = HostedZone.fromLookup(this, 'Zone', { domainName: props.domain });
+
+    const cognitoDomainName = `login.${fullDomain}`;
     this.cognitoCertificate = new Certificate(this, 'CognitoCertificate', {
       domainName: cognitoDomainName,
       subjectAlternativeNames: [`www.${cognitoDomainName}`],
-      validation: CertificateValidation.fromDns(props.hostedZone),
+      validation: CertificateValidation.fromDns(hostedZone),
     });
 
-    const webappDomainName = props.subdomain
-      ? `app.${props.subdomain}.${props.hostedZone.zoneName}`
-      : `app.${props.hostedZone.zoneName}`;
+    const webappDomainName = `app.${fullDomain}`;
     this.webappCertificate = new Certificate(this, 'WebappCertificate', {
       domainName: webappDomainName,
       subjectAlternativeNames: [`www.${webappDomainName}`],
-      validation: CertificateValidation.fromDns(props.hostedZone),
+      validation: CertificateValidation.fromDns(hostedZone),
     });
   }
 }

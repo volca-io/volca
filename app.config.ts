@@ -25,7 +25,7 @@ const environments: Environments = {
       //   facebook: {},
       //   apple: {},
       // },
-      // loginDomain: 'login.staging.my-app.io',
+      // loginDomain: 'login.staging.${coreConfig.domain}',
 
       // Specifying a mock user in the config will bypass AWS Cognito and let you run the app locally
       // To use proper authentication, you can deploy your infrastructure to aws and specify a login domain
@@ -34,7 +34,7 @@ const environments: Environments = {
         sub: 'c8a03b26-970d-463d-a256-feb0dbb51574',
         firstName: 'John',
         lastName: 'Doe',
-        email: 'john.doe@volca.io',
+        email: `john.doe@${coreConfig.domain}`,
       },
     },
     storage: {
@@ -79,19 +79,19 @@ const environments: Environments = {
         google: {
           clientId: 'google-app-client-id',
           // Replace this value with the path after you have uploaded the secret to SSM
-          clientSecretSsmPath: '/app/environment/AWS_COGNITO_GOOGLE_CLIENT_SECRET',
+          clientSecretSsmPath: `/${coreConfig.name}/staging/AWS_COGNITO_GOOGLE_CLIENT_SECRET`,
         },
         facebook: {
           clientId: 'facebook-app-client-id',
           // Replace this value with the path after you have uploaded the secret to SSM
-          clientSecretSsmPath: '/app/environment/AWS_COGNITO_FACEBOOK_CLIENT_SECRET',
+          clientSecretSsmPath: `/${coreConfig.name}/staging/AWS_COGNITO_FACEBOOK_CLIENT_SECRET`,
         },
         apple: {
           clientId: 'apple-app-client-id',
           teamId: 'apple-team-id',
           keyId: 'apple-key-id',
           // Replace this value with the path after you have uploaded the secret to SSM
-          privateKeySsmPath: '/app/environment/AWS_COGNITO_APPLE_PRIVATE_KEY',
+          privateKeySsmPath: `/${coreConfig.name}/staging/AWS_COGNITO_APPLE_PRIVATE_KEY`,
         },
       },
       allowLocalhost: true,
@@ -111,21 +111,21 @@ const environments: Environments = {
     ],
     environmentVariables: {
       ...DEFAULT_ENVIRONMENT_VARIABLES,
-      APP_DOMAIN: '${ssm:/my-app/staging/APP_DOMAIN}',
-      DB_HOST: '${ssm:/my-app/staging/DB_HOST}',
-      DB_PASSWORD: '${ssm:/my-app/staging/DB_PASSWORD}',
+      APP_DOMAIN: `\${ssm:/${coreConfig.domain}/staging/APP_DOMAIN}`,
+      DB_HOST: `\${ssm:/${coreConfig.domain}staging/DB_HOST}`,
+      DB_PASSWORD: `\${ssm:/${coreConfig.domain}/staging/DB_PASSWORD}`,
       DB_USERNAME: 'app',
       ENVIRONMENT: 'staging',
       FROM_EMAIL: coreConfig.fromEmail,
       LOG_LEVEL: 'info',
       REGION: coreConfig.aws.region,
-      SIGNING_KEY: '${ssm:/my-app/staging/SIGNING_KEY}',
-      STRIPE_KEY: '${ssm:/my-app/staging/STRIPE_KEY}',
-      STRIPE_WEBHOOK_SECRET: '${ssm:/my-app/staging/STRIPE_WEBHOOK_SECRET}',
+      SIGNING_KEY: `\${ssm:/${coreConfig.domain}/staging/SIGNING_KEY}`,
+      STRIPE_KEY: `\${ssm:/${coreConfig.domain}/staging/STRIPE_KEY}`,
+      STRIPE_WEBHOOK_SECRET: `\${ssm:/${coreConfig.domain}/staging/STRIPE_WEBHOOK_SECRET}`,
       TEST_CARD_ENABLED: '1',
-      AWS_COGNITO_USER_POOL_ID: '${ssm:/my-app/staging/AWS_COGNITO_USER_POOL_ID',
-      AWS_COGNITO_APP_CLIENT_ID: '${ssm:/my-app/staging/AWS_COGNITO_APP_CLIENT_ID',
-      AWS_COGNITO_IDENTITY_POOL_ID: '${ssm:/volca/staging/AWS_COGNITO_IDENTITY_POOL_ID}',
+      AWS_COGNITO_USER_POOL_ID: `\${ssm:/${coreConfig.domain}/staging/AWS_COGNITO_USER_POOL_ID`,
+      AWS_COGNITO_APP_CLIENT_ID: `\${ssm:/${coreConfig.domain}/staging/AWS_COGNITO_APP_CLIENT_ID`,
+      AWS_COGNITO_IDENTITY_POOL_ID: `\${ssm:/${coreConfig.domain}/staging/AWS_COGNITO_IDENTITY_POOL_ID}`,
     },
     // Optional, get your dsn from senty.io for error tracking
     // sentry: {
@@ -169,21 +169,21 @@ const environments: Environments = {
     ],
     environmentVariables: {
       ...DEFAULT_ENVIRONMENT_VARIABLES,
-      APP_DOMAIN: '${ssm:/my-app/production/APP_DOMAIN}',
-      DB_PASSWORD: '${ssm:/volca/production/DB_PASSWORD}',
+      APP_DOMAIN: `\${ssm:/${coreConfig.domain}/production/APP_DOMAIN}`,
+      DB_PASSWORD: `\${ssm:/${coreConfig.domain}/production/DB_PASSWORD}`,
       DB_USERNAME: 'postgres',
-      DB_HOST: '${ssm:/volca/production/DB_HOST}',
+      DB_HOST: `\${ssm:/${coreConfig.domain}/production/DB_HOST}`,
       ENVIRONMENT: 'production',
       FROM_EMAIL: coreConfig.fromEmail,
       LOG_LEVEL: 'info',
       REGION: coreConfig.aws.region,
-      SIGNING_KEY: '${ssm:/volca/production/SIGNING_KEY}',
-      STRIPE_KEY: '${ssm:/volca/production/STRIPE_KEY}',
-      STRIPE_WEBHOOK_SECRET: '${ssm:/volca/production/STRIPE_WEBHOOK_SECRET}',
+      SIGNING_KEY: `\${ssm:/${coreConfig.domain}/production/SIGNING_KEY}`,
+      STRIPE_KEY: `\${ssm:/${coreConfig.domain}/production/STRIPE_KEY}`,
+      STRIPE_WEBHOOK_SECRET: `\${ssm:/${coreConfig.domain}/production/STRIPE_WEBHOOK_SECRET}`,
       TEST_CARD_ENABLED: '1',
-      AWS_COGNITO_USER_POOL_ID: '${ssm:/volca/production/AWS_COGNITO_USER_POOL_ID}',
-      AWS_COGNITO_APP_CLIENT_ID: '${ssm:/volca/production/AWS_COGNITO_APP_CLIENT_ID}',
-      AWS_COGNITO_IDENTITY_POOL_ID: '${ssm:/volca/production/AWS_COGNITO_IDENTITY_POOL_ID}',
+      AWS_COGNITO_USER_POOL_ID: `\${ssm:/${coreConfig.domain}/production/AWS_COGNITO_USER_POOL_ID}`,
+      AWS_COGNITO_APP_CLIENT_ID: `\${ssm:/${coreConfig.domain}/production/AWS_COGNITO_APP_CLIENT_ID}`,
+      AWS_COGNITO_IDENTITY_POOL_ID: `\${ssm:/${coreConfig.domain}/production/AWS_COGNITO_IDENTITY_POOL_ID}`,
     },
     // Optional, get your dsn from senty.io for error tracking
     // sentry: {
