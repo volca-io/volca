@@ -5,6 +5,7 @@ import { Role } from '../services';
 export class User extends Model {
   id!: string;
   cognitoSubject!: string;
+  cognitoIdentityId!: string;
   firstName!: string;
   lastName!: string;
   stripeId?: string;

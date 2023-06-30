@@ -7,6 +7,7 @@ import { ErrorNames } from '../constants';
 
 type ProvisionUserProperties = {
   sub: string;
+  identityId: string;
   firstName?: string;
   lastName?: string;
   email: string;
@@ -31,7 +32,14 @@ export class UserService {
     return User.query().where({ stripeId }).first();
   }
 
-  public async provision({ sub, firstName, lastName, email, picture }: ProvisionUserProperties): Promise<User> {
+  public async provision({
+    sub,
+    identityId,
+    firstName,
+    lastName,
+    email,
+    picture,
+  }: ProvisionUserProperties): Promise<User> {
     const existingUser = await this.findByCognitoSubject(sub);
 
     if (existingUser) return existingUser;
@@ -39,6 +47,7 @@ export class UserService {
     const user = await User.query()
       .insert({
         cognitoSubject: sub,
+        cognitoIdentityId: identityId,
         firstName,
         lastName,
         email: email.toLowerCase(),

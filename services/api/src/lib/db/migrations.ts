@@ -116,4 +116,17 @@ export default [
       return knex.schema.dropTable('project_users');
     },
   },
+  {
+    name: '06_add_identity_id_to_users',
+    up: (knex: Knex) => {
+      return knex.schema.alterTable('users', (table) => {
+        table.string('cognito_identity_id').notNullable().unique();
+      });
+    },
+    down: (knex: Knex) => {
+      return knex.schema.alterTable('users', (table) => {
+        table.dropColumn('cognito_identity_id');
+      });
+    },
+  },
 ] as Array<Migration>;

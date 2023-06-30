@@ -6,6 +6,7 @@ import { EnvironmentConfig, EnvironmentVariables } from '../utils/environment';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 import { CognitoAccessTokenPayload, CognitoIdTokenPayload } from 'aws-jwt-verify/jwt-model';
+import { CognitoIdentityClient, GetIdCommand } from '@aws-sdk/client-cognito-identity';
 
 export type AccessTokenCookieSettings = {
   secure: boolean;
@@ -37,7 +38,7 @@ export class AuthenticationService {
       };
     }
 
-    const userPoolId = EnvironmentVariables.AWS_COGNITO_USERPOOL_ID;
+    const userPoolId = EnvironmentVariables.AWS_COGNITO_USER_POOL_ID;
     const clientId = EnvironmentVariables.AWS_COGNITO_APP_CLIENT_ID;
 
     if (!userPoolId) {
@@ -90,5 +91,34 @@ export class AuthenticationService {
         statusCode: StatusCodes.UNAUTHORIZED,
       });
     }
+  }
+
+  public async getIdentityId({ token }: { token: string }): Promise<string> {
+    if (EnvironmentConfig.authentication.mockUser) {
+      return EnvironmentConfig.authentication.mockUser.sub;
+    }
+
+    const client = new CognitoIdentityClient({ region: EnvironmentVariables.REGION });
+
+    const { IdentityId } = await client.send(
+      new GetIdCommand({
+        IdentityPoolId: EnvironmentVariables.AWS_COGNITO_IDENTITY_POOL_ID,
+        Logins: {
+          [`cognito-idp.${EnvironmentVariables.REGION}.amazonaws.com/${EnvironmentVariables.AWS_COGNITO_USER_POOL_ID}`]:
+            token,
+        },
+      })
+    );
+
+    if (!IdentityId) {
+      throw new ServiceError({
+        name: ErrorNames.INTERNAL_SERVER_ERROR,
+        message: 'Authentication failed',
+        debug: 'Got undefined identity id for user',
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      });
+    }
+
+    return IdentityId;
   }
 }

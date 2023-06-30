@@ -50,13 +50,19 @@ export enum EnvironmentVariable {
   STRIPE_WEBHOOK_SECRET = 'STRIPE_WEBHOOK_SECRET',
   TEST_CARD_ENABLED = 'TEST_CARD_ENABLED',
   FREE_TRIAL_DAYS = 'FREE_TRIAL_DAYS',
-  AWS_COGNITO_USERPOOL_ID = 'AWS_COGNITO_USERPOOL_ID',
+  AWS_COGNITO_USER_POOL_ID = 'AWS_COGNITO_USER_POOL_ID',
   AWS_COGNITO_APP_CLIENT_ID = 'AWS_COGNITO_APP_CLIENT_ID',
+  AWS_COGNITO_IDENTITY_POOL_ID = 'AWS_COGNITO_IDENTITY_POOL_ID',
+  AWS_S3_ASSETS_BUCKET = 'AWS_S3_ASSETS_BUCKET',
 }
 
 type OptionalVariables = Extract<
   EnvironmentVariable,
-  EnvironmentVariable.AWS_COGNITO_USERPOOL_ID | EnvironmentVariable.AWS_COGNITO_APP_CLIENT_ID
+  | EnvironmentVariable.AWS_COGNITO_USER_POOL_ID
+  | EnvironmentVariable.AWS_COGNITO_APP_CLIENT_ID
+  | EnvironmentVariable.AWS_COGNITO_IDENTITY_POOL_ID
+  | EnvironmentVariable.AWS_COGNITO_APP_CLIENT_ID
+  | EnvironmentVariable.AWS_S3_ASSETS_BUCKET
 >;
 
 type RequiredVariables = Exclude<EnvironmentVariable, OptionalVariables>;
@@ -116,6 +122,10 @@ export type AuthenticationConfig = {
   };
 };
 
+export type StorageConfig = {
+  enabled: boolean;
+};
+
 export enum PlanId {
   BASIC = 'BASIC',
   PLUS = 'PLUS',
@@ -131,6 +141,7 @@ export interface EnvironmentConfig {
   environmentVariables: EnvironmentVariables;
   plans: Plan[];
   authentication: AuthenticationConfig;
+  storage: StorageConfig;
   deploymentConfig?: {
     subdomain?: string;
     publicDatabase: boolean;

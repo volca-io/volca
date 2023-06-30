@@ -37,6 +37,9 @@ const environments: Environments = {
         email: 'john.doe@volca.io',
       },
     },
+    storage: {
+      enabled: true,
+    },
     plans: [
       {
         id: PlanId.BASIC,
@@ -57,6 +60,7 @@ const environments: Environments = {
       DB_PASSWORD: getEnvVar('PASSWORD', 'postgres'),
       DB_USERNAME: getEnvVar('DB_USERNAME', 'postgres'),
       ENVIRONMENT: 'local',
+      REGION: coreConfig.aws.region,
       FROM_EMAIL: getEnvVar('FROM_EMAIL', 'noreply@example.com'),
       LOG_LEVEL: getEnvVar('LOG_LEVEL', 'debug'),
       SIGNING_KEY: getEnvVar('SIGNING_KEY', 'signing-key'),
@@ -65,7 +69,7 @@ const environments: Environments = {
       TEST_CARD_ENABLED: getEnvVar('TEST_CARD_ENABLED', '1'),
 
       // Set this values when using cognito as authentication
-      // AWS_COGNITO_USERPOOL_ID: 'userpool-id',
+      // AWS_COGNITO_USER_POOL_ID: 'userpool-id',
       // AWS_COGNITO_APP_CLIENT_ID: 'app-client-id',
     },
   },
@@ -92,6 +96,9 @@ const environments: Environments = {
       },
       allowLocalhost: true,
     },
+    storage: {
+      enabled: true,
+    },
     deploymentConfig: {
       subdomain: 'staging',
       publicDatabase: true,
@@ -116,8 +123,9 @@ const environments: Environments = {
       STRIPE_KEY: '${ssm:/my-app/staging/STRIPE_KEY}',
       STRIPE_WEBHOOK_SECRET: '${ssm:/my-app/staging/STRIPE_WEBHOOK_SECRET}',
       TEST_CARD_ENABLED: '1',
-      AWS_COGNITO_USERPOOL_ID: '${ssm:/my-app/staging/AWS_COGNITO_USERPOOL_ID',
+      AWS_COGNITO_USER_POOL_ID: '${ssm:/my-app/staging/AWS_COGNITO_USER_POOL_ID',
       AWS_COGNITO_APP_CLIENT_ID: '${ssm:/my-app/staging/AWS_COGNITO_APP_CLIENT_ID',
+      AWS_COGNITO_IDENTITY_POOL_ID: '${ssm:/volca/staging/AWS_COGNITO_IDENTITY_POOL_ID}',
     },
     // Optional, get your dsn from senty.io for error tracking
     // sentry: {
@@ -147,6 +155,9 @@ const environments: Environments = {
         },
       },
     },
+    storage: {
+      enabled: true,
+    },
     deploymentConfig: {
       publicDatabase: true,
     },
@@ -170,8 +181,9 @@ const environments: Environments = {
       STRIPE_KEY: '${ssm:/volca/production/STRIPE_KEY}',
       STRIPE_WEBHOOK_SECRET: '${ssm:/volca/production/STRIPE_WEBHOOK_SECRET}',
       TEST_CARD_ENABLED: '1',
-      AWS_COGNITO_USERPOOL_ID: '${ssm:/volca/production/AWS_COGNITO_USERPOOL_ID}',
+      AWS_COGNITO_USER_POOL_ID: '${ssm:/volca/production/AWS_COGNITO_USER_POOL_ID}',
       AWS_COGNITO_APP_CLIENT_ID: '${ssm:/volca/production/AWS_COGNITO_APP_CLIENT_ID}',
+      AWS_COGNITO_IDENTITY_POOL_ID: '${ssm:/volca/production/AWS_COGNITO_IDENTITY_POOL_ID}',
     },
     // Optional, get your dsn from senty.io for error tracking
     // sentry: {

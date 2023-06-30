@@ -109,7 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       Amplify.configure({
         Auth: {
           userPoolId: config.awsCognitoUserpoolId,
-          region: config.aws_region,
+          region: config.awsRegion,
           userPoolWebClientId: config.awsCognitoAppClientId,
           oauth: {
             domain: config.awsCognitoLoginDomain,

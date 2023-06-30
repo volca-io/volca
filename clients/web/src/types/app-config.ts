@@ -1,9 +1,11 @@
 export type AppConfig = {
   stripeTestCardEnabled: boolean;
-  aws_region: string;
+  awsRegion: string;
   awsCognitoLoginDomain?: string;
   awsCognitoUserpoolId?: string;
+  awsCognitoIdentityPoolId?: string;
   awsCognitoAppClientId?: string;
+  awsS3AssetsBucket?: string;
   identityProviders: {
     facebook: boolean;
     apple: boolean;

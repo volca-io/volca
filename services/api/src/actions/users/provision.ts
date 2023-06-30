@@ -33,6 +33,8 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   const authService = container.resolve(AuthenticationService);
   const tokenPayload = await authService.verifyIdToken({ token: idToken });
+  const identityId = await authService.getIdentityId({ token: idToken });
+
   const { given_name: givenName, family_name: familyName, email, picture, sub, identities } = tokenPayload;
   if (!email || !sub) {
     throw new ServiceError({
@@ -46,6 +48,7 @@ export const action = useApiAction(async (ctx: CustomContext) => {
 
   const user = {
     sub: sub.toString(),
+    identityId,
     firstName: givenName?.toString() || _.upperFirst(config.name),
     lastName: familyName?.toString() || 'User',
     email: email.toString(),

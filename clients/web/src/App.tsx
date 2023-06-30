@@ -1,7 +1,7 @@
-import React from 'react';
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
+import { Amplify } from 'aws-amplify';
 import {
   CreateProjectPage,
   DashboardPage,
@@ -18,10 +18,38 @@ import {
 import { theme } from './theme';
 import { ResetPasswordPage } from './pages/reset-password';
 import { VerifyResetPasswordPage } from './pages/verify-reset-password';
-import { ProjectsProvider, LoadingProvider, AuthProvider, AppConfigProvider } from './providers';
+import { ProjectsProvider, LoadingProvider, AuthProvider, AppConfigProvider, useAppConfigContext } from './providers';
 import { ConfirmAccountPage } from './pages/confirm-account';
 import { ErrorPage } from './pages/error-page';
 import { AuthenticatedRoute, ProjectRoute, SubscriptionRoute, SignInRoute } from './routing';
+import { FilesPage } from './pages/files';
+
+const ConfigureAmplify = () => {
+  const { config } = useAppConfigContext();
+
+  Amplify.configure({
+    Auth: {
+      userPoolId: config.awsCognitoUserpoolId,
+      identityPoolId: config.awsCognitoIdentityPoolId,
+      region: config.awsRegion,
+      userPoolWebClientId: config.awsCognitoAppClientId,
+      oauth: {
+        domain: config.awsCognitoLoginDomain,
+        redirectSignIn: `${window.location.protocol}//${window.location.host}`,
+        redirectSignOut: `${window.location.protocol}//${window.location.host}`,
+        responseType: 'code',
+      },
+    },
+    Storage: {
+      AWSS3: {
+        bucket: config.awsS3AssetsBucket,
+        region: config.awsRegion,
+      },
+    },
+  });
+
+  return null;
+};
 
 export const App = () => (
   <Router>
@@ -29,6 +57,7 @@ export const App = () => (
       <ErrorBoundary fallback={<ErrorPage />}>
         <LoadingProvider>
           <AppConfigProvider>
+            <ConfigureAmplify />
             <AuthProvider>
               <ProjectsProvider>
                 <ColorModeScript initialColorMode={theme.config.initialColorMode} type="localStorage" />
@@ -54,6 +83,14 @@ export const App = () => (
                     element={
                       <ProjectRoute>
                         <DashboardPage />
+                      </ProjectRoute>
+                    }
+                  />
+                  <Route
+                    path="/projects/:id/files"
+                    element={
+                      <ProjectRoute>
+                        <FilesPage />
                       </ProjectRoute>
                     }
                   />

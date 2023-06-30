@@ -3,12 +3,13 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { SubnetType, SecurityGroup, Vpc, IpAddresses } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { IHostedZone } from 'aws-cdk-lib/aws-route53';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 import { config } from '../../app.config';
 import { ApiGateway, ApiLambdaExecutionRole, Database } from '../constructs';
 import { Environment } from '../../config/types';
 import { Cognito } from '../constructs/cognito';
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { S3Assets } from '../constructs/s3-assets';
 
 interface ApiStackProps extends StackProps {
   name: string;
@@ -26,7 +27,7 @@ export class ApiStack extends Stack {
       throw new Error('Environment was not set when trying to deploy account bootstrap stack');
     }
 
-    const { deploymentConfig, environmentVariables, authentication } = config.environments[props.environment];
+    const { deploymentConfig, environmentVariables, authentication, storage } = config.environments[props.environment];
     if (!deploymentConfig) {
       throw new Error(
         'Can not deploy an environment without a deployment config. Please add one to your environment in app.config.ts'
@@ -104,6 +105,18 @@ export class ApiStack extends Stack {
       certificate: props.cognitoCertificate,
     });
 
+    if (storage.enabled) {
+      const s3Assets = new S3Assets(this, 'S3Assets', {
+        authenticatedRole: cognito.authenticatedRole,
+        domain: fullDomain,
+      });
+
+      new StringParameter(this, 'S3AssetsBucket', {
+        parameterName: `/${props.name}/${props.environment}/AWS_S3_ASSETS_BUCKET`,
+        stringValue: s3Assets.bucket.bucketArn,
+      });
+    }
+
     // Creates a new SSM parameter that the lambdas will use to know where the database is located
     new StringParameter(this, 'DbHost', {
       parameterName: `/${props.name}/${props.environment}/DB_HOST`,
@@ -112,12 +125,16 @@ export class ApiStack extends Stack {
 
     // Creates new SSM parameters so that the lambdas can reference the cognito user pool
     new StringParameter(this, 'CognitoUserPoolID', {
-      parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_USERPOOL_ID`,
+      parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_USER_POOL_ID`,
       stringValue: cognito.userPool.userPoolId,
     });
     new StringParameter(this, 'CognitoUserPoolAppClientID', {
       parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_APP_CLIENT_ID`,
       stringValue: cognito.userPoolAppClient.userPoolClientId,
+    });
+    new StringParameter(this, 'CognitoIdentityPoolId', {
+      parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_IDENTITY_POOL_ID`,
+      stringValue: cognito.identityPool.ref,
     });
 
     // Stack outputs that can be imported by the serverless framework

@@ -9,5 +9,6 @@ export type User = {
   planId: string;
   createdAt: Date;
   updatedAt: Date;
+  cognitoIdentityId: string;
   role?: string;
 };

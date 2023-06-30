@@ -15,7 +15,6 @@ export const DEFAULT_ENVIRONMENT_VARIABLES = {
   [EnvironmentVariable.DB_HOST]: 'localhost',
   [EnvironmentVariable.DB_PORT]: '5432',
   [EnvironmentVariable.IS_TEST]: '0',
-  [EnvironmentVariable.REGION]: 'local',
   [EnvironmentVariable.SKIP_TOKEN_VERIFICATION]: '0',
   [EnvironmentVariable.TEST_CARD_ENABLED]: '0',
   [EnvironmentVariable.LOGGING_ENABLED]: '1',

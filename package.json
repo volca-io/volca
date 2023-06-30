@@ -6,7 +6,6 @@
     "clients/*"
   ],
   "scripts": {
-    "configure": "./scripts/configure.ts",
     "setup:aws": "yarn cdk bootstrap --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess && yarn setup:parameters && cdk deploy --stacks core-stack",
     "setup:parameters": "./scripts/create-ssm-parameters.ts -e staging && ./scripts/create-ssm-parameters.ts -e production",
     "start": "yarn workspaces foreach --exclude @volca/root -vpi run start:dev",
@@ -53,5 +52,5 @@
     "serverless-webpack@^5.8.0": "patch:serverless-webpack@npm:5.8.0#.yarn/patches/serverless-webpack-npm-5.8.0-8563ff4c80.patch",
     "fork-ts-checker-webpack-plugin@^6.5.0": "^6.5.3"
   },
-  "version": "1.12.0"
+  "version": "1.14.0"
 }

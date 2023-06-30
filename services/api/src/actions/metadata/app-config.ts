@@ -20,8 +20,10 @@ export const action = useApiAction(async () => {
         (EnvironmentConfig.deploymentConfig?.subdomain
           ? `login.${EnvironmentConfig.deploymentConfig?.subdomain}.${config.domain}`
           : `login.${config.domain}`),
-      awsCognitoUserpoolId: EnvironmentVariables.AWS_COGNITO_USERPOOL_ID,
+      awsCognitoUserpoolId: EnvironmentVariables.AWS_COGNITO_USER_POOL_ID,
+      awsCognitoIdentityPoolId: EnvironmentVariables.AWS_COGNITO_IDENTITY_POOL_ID,
       awsCognitoAppClientId: EnvironmentVariables.AWS_COGNITO_APP_CLIENT_ID,
+      awsS3AssetBucket: EnvironmentVariables.AWS_S3_ASSETS_BUCKET,
       identityProviders: {
         facebook: !!EnvironmentConfig.authentication.identityProviders?.facebook,
         google: !!EnvironmentConfig.authentication.identityProviders?.google,

@@ -24,7 +24,7 @@ import {
   Image,
   Spacer,
 } from '@chakra-ui/react';
-import { MdHomeFilled, MdSettings, MdMenu, MdKeyboardArrowDown, MdGroups } from 'react-icons/md';
+import { MdHomeFilled, MdSettings, MdMenu, MdKeyboardArrowDown, MdGroups, MdCloudUpload } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { MdOutlineSync } from 'react-icons/md';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
@@ -82,6 +82,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       name: 'Dashboard',
       onClick: () => navigate(selectedProject ? `/projects/${selectedProject.id}/dashboard` : '/'),
       icon: MdHomeFilled,
+    },
+    {
+      name: 'Files',
+      onClick: () => navigate(selectedProject ? `/projects/${selectedProject.id}/files` : '/'),
+      icon: MdCloudUpload,
     },
     {
       name: 'Users',

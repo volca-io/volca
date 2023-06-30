@@ -1,4 +1,4 @@
-import { Duration } from 'aws-cdk-lib';
+import { Duration, Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ARecord, CnameRecord, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import {
@@ -14,10 +14,12 @@ import {
   UserPoolIdentityProviderApple,
   IUserPool,
   UserPoolClient,
+  CfnIdentityPool,
 } from 'aws-cdk-lib/aws-cognito';
 
 import { AuthenticationConfig, Environment } from '../../config/types';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import CognitoAuthRole from './cognito-auth-role';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 interface CognitoProps {
@@ -33,6 +35,8 @@ interface CognitoProps {
 export class Cognito extends Construct {
   public userPool: IUserPool;
   public userPoolAppClient: UserPoolClient;
+  public identityPool: CfnIdentityPool;
+  public authenticatedRole: CognitoAuthRole;
 
   constructor(scope: Construct, id: string, props: CognitoProps) {
     super(scope, id);
@@ -112,6 +116,7 @@ export class Cognito extends Construct {
           ? [`https://${appDomain}`, 'http://localhost:3000']
           : [`https://${appDomain}`],
       },
+      generateSecret: false,
     });
 
     if (props.authenticationConfig.identityProviders?.google) {
@@ -191,5 +196,23 @@ export class Cognito extends Construct {
     domain.signInUrl(this.userPoolAppClient, {
       redirectUri: `https://${appDomain}`,
     });
+
+    const identityPoolProvider = `cognito-idp.${Stack.of(this).region}.amazonaws.com/${this.userPool.userPoolId}`;
+
+    this.identityPool = new CfnIdentityPool(this, 'IdentityPool', {
+      allowUnauthenticatedIdentities: false,
+      cognitoIdentityProviders: [
+        {
+          clientId: this.userPoolAppClient.userPoolClientId,
+          providerName: identityPoolProvider,
+        },
+      ],
+    });
+
+    const cognitoAuthRole = new CognitoAuthRole(this, 'CognitoAuthRole', {
+      identityPool: this.identityPool,
+    });
+
+    this.authenticatedRole = cognitoAuthRole;
   }
 }
