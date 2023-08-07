@@ -56,11 +56,11 @@ export const SettingsPage: React.FC = () => {
               </Box>
 
               {user?.hasActiveSubscription ? (
-                <Button rightIcon={<MdAddShoppingCart />} onClick={() => navigate('/onboarding')}>
+                <Button rightIcon={<MdAddShoppingCart />} onClick={manageSubscriptions}>
                   Manage
                 </Button>
               ) : (
-                <Button leftIcon={<MdOutlineOpenInNew />} onClick={manageSubscriptions}>
+                <Button leftIcon={<MdOutlineOpenInNew />} onClick={() => navigate('/onboarding')}>
                   Manage
                 </Button>
               )}
