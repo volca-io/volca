@@ -61,7 +61,7 @@ export const SettingsPage: React.FC = () => {
                 </Button>
               ) : (
                 <Button leftIcon={<MdOutlineOpenInNew />} onClick={() => navigate('/onboarding')}>
-                  Manage
+                  Subscribe
                 </Button>
               )}
             </Flex>
