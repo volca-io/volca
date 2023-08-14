@@ -112,7 +112,7 @@ const environments: Environments = {
     environmentVariables: {
       ...DEFAULT_ENVIRONMENT_VARIABLES,
       APP_DOMAIN: `\${ssm:/${coreConfig.name}/staging/APP_DOMAIN}`,
-      DB_HOST: `\${ssm:/${coreConfig.name}staging/DB_HOST}`,
+      DB_HOST: `\${ssm:/${coreConfig.name}/staging/DB_HOST}`,
       DB_PASSWORD: `\${ssm:/${coreConfig.name}/staging/DB_PASSWORD}`,
       DB_USERNAME: 'app',
       ENVIRONMENT: 'staging',
@@ -139,19 +139,19 @@ const environments: Environments = {
         google: {
           clientId: 'google-app-client-id',
           // Replace this value with the path after you have uploaded the secret to SSM
-          clientSecretSsmPath: '/app/environment/AWS_COGNITO_GOOGLE_CLIENT_SECRET',
+          clientSecretSsmPath: `/${coreConfig.name}/production/AWS_COGNITO_GOOGLE_CLIENT_SECRET`,
         },
         facebook: {
           clientId: 'facebook-app-client-id',
           // Replace this value with the path after you have uploaded the secret to SSM
-          clientSecretSsmPath: '/app/environment/AWS_COGNITO_FACEBOOK_CLIENT_SECRET',
+          clientSecretSsmPath: `/${coreConfig.name}/production/AWS_COGNITO_FACEBOOK_CLIENT_SECRET`,
         },
         apple: {
           clientId: 'apple-app-client-id',
           teamId: 'apple-team-id',
           keyId: 'apple-key-id',
           // Replace this value with the path after you have uploaded the secret to SSM
-          privateKeySsmPath: '/app/environment/AWS_COGNITO_APPLE_PRIVATE_KEY',
+          privateKeySsmPath: `/${coreConfig.name}/production/AWS_COGNITO_APPLE_PRIVATE_KEY`,
         },
       },
     },
