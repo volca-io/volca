@@ -11016,7 +11016,7 @@ __metadata:
     jsonwebtoken: ^9.0.0
     knex: ^2.4.2
     koa: ^2.14.2
-    koa-bodyparser: ^4.4.0
+    koa-bodyparser: ^4.4.1
     koa-mount: ^4.0.0
     objection: ^3.0.1
     pg: 8.10.0
@@ -20044,13 +20044,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa-bodyparser@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "koa-bodyparser@npm:4.4.0"
+"koa-bodyparser@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "koa-bodyparser@npm:4.4.1"
   dependencies:
     co-body: ^6.0.0
     copy-to: ^2.0.1
-  checksum: 9bdc6b1b95eca8cdff1124ef14d570cafff049bc29e5fa72185d6174b6f3284f5faea82c06d14670cb3994bfcb0bdd5550661b1d91e35a6f1c483286b8e58223
+    type-is: ^1.6.18
+  checksum: 2b839acc53d6c86558a5faf750ea42527ab0a9f90228abfd559fdae388be1c4789a9c36b178b33883d83701d4d9a5c3e3b55fbadd950a2d9fab32ec4d1e67a75
   languageName: node
   linkType: hard
 
@@ -26416,7 +26417,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-is@npm:^1.6.16, type-is@npm:~1.6.18":
+"type-is@npm:^1.6.16, type-is@npm:^1.6.18, type-is@npm:~1.6.18":
   version: 1.6.18
   resolution: "type-is@npm:1.6.18"
   dependencies:
