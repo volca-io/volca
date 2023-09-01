@@ -60,7 +60,7 @@ export class StripeService {
     const getStripeCustomerId = async () => {
       if (!user.stripeId) {
         const { id: stripeId } = await this.stripe.customers.create({ email: user.email });
-        this.userService.update(user.id, { stripeId });
+        await this.userService.update(user.id, { stripeId });
         return stripeId;
       }
 
