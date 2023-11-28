@@ -27,7 +27,7 @@ export class Database extends Construct {
   constructor(scope: Construct, id: string, props: DatabaseProps) {
     super(scope, id);
 
-    const engine = DatabaseInstanceEngine.postgres({ version: PostgresEngineVersion.VER_14_2 });
+    const engine = DatabaseInstanceEngine.postgres({ version: PostgresEngineVersion.VER_15_3 });
     const instanceType = InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO);
     const subnetGroup = new SubnetGroup(this, 'ApiDatabaseSubnetGroup', {
       vpc: props.vpc,

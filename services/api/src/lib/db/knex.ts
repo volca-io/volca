@@ -21,6 +21,7 @@ export const initialize = () => {
       password: EnvironmentVariables.DB_PASSWORD,
       database: 'postgres',
       pool: { min: 1, max: 1, idleTimeoutMillis: 1000 },
+      ssl: EnvironmentVariables.ENVIRONMENT !== 'local',
     },
     migrations: {
       migrationSource: new MigrationSource(),
@@ -28,6 +29,7 @@ export const initialize = () => {
     seeds: {
       seedSource: new SeedSource(),
     },
+
     ...knexSnakeCaseMappers(),
   };
 

@@ -8,7 +8,17 @@ jobs:
   ## Deploy to staging
   ################################
 
+  deploy-certificates-staging:
+    permissions:
+      id-token: write
+      contents: read
+    name: deploy certificates staging
+    uses: ./.github/workflows/deploy-certificates.yml
+    with:
+      environment: staging
+
   deploy-api-staging:
+    needs: deploy-certificates-staging
     permissions:
       id-token: write
       contents: read
@@ -18,6 +28,7 @@ jobs:
       environment: staging
 
   deploy-webapp-staging:
+    needs: deploy-certificates-staging
     permissions:
       id-token: write
       contents: read
@@ -30,12 +41,24 @@ jobs:
   ## Deploy to production
   ################################
 
+  deploy-certificates-production:
+    permissions:
+      id-token: write
+      contents: read
+    name: deploy certificates production
+    uses: ./.github/workflows/deploy-certificates.yml
+    needs:
+      - deploy-api-staging
+      - deploy-webapp-staging
+    with:
+      environment: production
+
   deploy-api-production:
     permissions:
       id-token: write
       contents: read
     name: deploy api production
-    needs: deploy-api-staging
+    needs: deploy-certificates-production
     uses: ./.github/workflows/deploy-api.yml
     with:
       environment: production
@@ -45,7 +68,7 @@ jobs:
       id-token: write
       contents: read
     name: deploy webapp production
-    needs: deploy-webapp-staging
+    needs: deploy-certificates-production
     uses: ./.github/workflows/deploy-webapp.yml
     with:
       environment: production
