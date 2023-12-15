@@ -4,7 +4,7 @@ import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { config } from '../../app.config';
-import { Environment } from '../../config/types';
+import { Environment } from '../../types/types';
 
 interface CertificateStackProps extends StackProps {
   domain: string;
@@ -14,7 +14,7 @@ interface CertificateStackProps extends StackProps {
 
 export class CertificateStack extends Stack {
   public cognitoCertificate: Certificate;
-  public webappCertificate: Certificate;
+  public dashboardCertificate: Certificate;
 
   constructor(scope: Construct, id: string, props: CertificateStackProps) {
     super(scope, id, props);
@@ -38,10 +38,10 @@ export class CertificateStack extends Stack {
       validation: CertificateValidation.fromDns(hostedZone),
     });
 
-    const webappDomainName = `app.${fullDomain}`;
-    this.webappCertificate = new Certificate(this, 'WebappCertificate', {
-      domainName: webappDomainName,
-      subjectAlternativeNames: [`www.${webappDomainName}`],
+    const dashboardDomainName = `app.${fullDomain}`;
+    this.dashboardCertificate = new Certificate(this, 'DashboardCertificate', {
+      domainName: dashboardDomainName,
+      subjectAlternativeNames: [`www.${dashboardDomainName}`],
       validation: CertificateValidation.fromDns(hostedZone),
     });
   }

@@ -1,18 +1,22 @@
 import Koa from 'koa';
+import * as Sentry from '@sentry/node';
+import { StatusCodes } from 'http-status-codes';
 import { CustomContext } from '../types';
-import { container } from 'tsyringe';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
-import { StatusCodes } from 'http-status-codes';
-import * as Sentry from '@sentry/node';
-import { AuthenticationService, UserService } from '../services';
-import { User } from '../entities';
 import { EnvironmentConfig } from '../utils/environment';
 
 export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Next) => {
-  const header = ctx.header.authorization;
+  const {
+    request: {
+      header: { authorization },
+    },
+    dependencies: {
+      services: { authenticationService, userService },
+    },
+  } = ctx;
 
-  if (!header) {
+  if (!authorization) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
       message: 'Request is missing authorization header',
@@ -21,7 +25,7 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
     });
   }
 
-  if (!header.startsWith('Bearer ')) {
+  if (!authorization.startsWith('Bearer ')) {
     throw new ServiceError({
       name: ErrorNames.AUTHORIZATION_FAILED,
       message: 'Invalid token type, authorization header should start with "Bearer ..."',
@@ -30,13 +34,11 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
     });
   }
 
-  const token = header.replace('Bearer ', '');
-  const authService = container.resolve(AuthenticationService);
+  const token = authorization.replace('Bearer ', '');
 
-  const tokenPayload = await authService.verifyAccessToken({ token });
+  const tokenPayload = await authenticationService.verifyAccessToken({ token });
   const subject = tokenPayload.sub;
 
-  const userService = container.resolve(UserService);
   const user = await userService.findByCognitoSubject(subject);
 
   if (!user) {
@@ -52,9 +54,7 @@ export const authenticationMiddleware = async (ctx: CustomContext, next: Koa.Nex
     Sentry.setUser({ id: user.id, email: user.email });
   }
 
-  container.register<User>('AuthenticatedUser', {
-    useValue: user,
-  });
+  ctx.user = user;
 
   await next();
 };

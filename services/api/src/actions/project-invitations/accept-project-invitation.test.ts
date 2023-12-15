@@ -2,7 +2,7 @@ import { setupServer } from '../../test-utils';
 import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne, userTwo } from '../../test-utils/fixtures';
 
-describe('GET /project-invitations/:id', () => {
+describe('GET /projects/:id/invitations/:id', () => {
   const getRequest = setupServer();
   let invitation: Record<string, unknown>;
   let project: Record<string, unknown>;
@@ -18,7 +18,7 @@ describe('GET /project-invitations/:id', () => {
 
     project = projectResponse.body.project;
     const invitationResponse = await getRequest()
-      .post('/project-invitations')
+      .post(`/projects/${project.id}/invitations`)
       .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         projectId: project.id,
@@ -29,21 +29,21 @@ describe('GET /project-invitations/:id', () => {
 
   it('returns 400 if the id is incorrect', async () => {
     const resp = await getRequest()
-      .get(`/project-invitations/29904edc-352c-47d5-a57b-f378d55e02f9`)
+      .get(`/invitations/29904edc-352c-47d5-a57b-f378d55e02f9`)
       .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
 
     expect(resp.status).toBe(400);
   });
 
   it('returns 401 if no access token is present', async () => {
-    const resp = await getRequest().get(`/project-invitations/${invitation.id}`);
+    const resp = await getRequest().get(`/invitations/${invitation.id}`);
 
     expect(resp.status).toBe(401);
   });
 
   it('can accept a project invitation', async () => {
     const resp = await getRequest()
-      .get(`/project-invitations/${invitation.id}`)
+      .get(`/invitations/${invitation.id}`)
       .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
 
     expect(resp.status).toBe(200);
@@ -51,18 +51,18 @@ describe('GET /project-invitations/:id', () => {
 
   it('can only use an invitation once', async () => {
     const newInvitation = await getRequest()
-      .post('/project-invitations')
+      .post(`/projects/${project.id}/invitations`)
       .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
       .send({
         projectId: project.id,
       });
 
     await getRequest()
-      .get(`/project-invitations/${newInvitation.body.projectInvitation.id}`)
+      .get(`/invitations/${newInvitation.body.projectInvitation.id}`)
       .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
 
     const doubleResponse = await getRequest()
-      .get(`/project-invitations/${newInvitation.body.projectInvitation.id}`)
+      .get(`/invitations/${newInvitation.body.projectInvitation.id}`)
       .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
 
     expect(doubleResponse.status).toBe(400);

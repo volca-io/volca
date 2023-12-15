@@ -32,8 +32,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    name: deploy webapp staging
-    uses: ./.github/workflows/deploy-webapp.yml
+    name: deploy dashboard staging
+    uses: ./.github/workflows/deploy-dashboard.yml
     with:
       environment: staging
 
@@ -63,12 +63,12 @@ jobs:
     with:
       environment: production
 
-  deploy-webapp-production:
+  deploy-dashboard-production:
     permissions:
       id-token: write
       contents: read
-    name: deploy webapp production
+    name: deploy dashboard production
+    uses: ./.github/workflows/deploy-dashboard.yml
     needs: deploy-certificates-production
-    uses: ./.github/workflows/deploy-webapp.yml
     with:
       environment: production

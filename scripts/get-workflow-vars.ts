@@ -1,6 +1,6 @@
 #!/usr/bin/env -S npx tsx
 import { program } from 'commander';
-import { Environment } from '../config/types';
+import { Environment } from '../types/types';
 import { config } from '../app.config';
 
 program.requiredOption('-e, --environment <environment>');

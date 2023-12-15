@@ -1,14 +1,7 @@
 import { Construct } from 'constructs';
-import {
-  BasePathMapping,
-  DomainName,
-  MockIntegration,
-  PassthroughBehavior,
-  RestApi,
-  SecurityPolicy,
-} from 'aws-cdk-lib/aws-apigateway';
+import { BasePathMapping, DomainName, RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
 import { ARecord, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
-import { Environment } from '../../config/types';
+import { Environment } from '../../types/types';
 import { CertificateValidation, Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 
@@ -20,9 +13,8 @@ export interface ApiGatewayProps {
 }
 
 export class ApiGateway extends Construct {
-  public restApiId: string;
-  public rootResourceId: string;
   public domainName: string;
+  public rootResource;
 
   constructor(scope: Construct, id: string, props: ApiGatewayProps) {
     super(scope, id);
@@ -35,22 +27,6 @@ export class ApiGateway extends Construct {
         stageName: props.environment,
       },
     });
-
-    const ping = api.root.addResource('ping');
-
-    ping.addMethod(
-      'GET',
-      new MockIntegration({
-        integrationResponses: [{ statusCode: '200' }],
-        passthroughBehavior: PassthroughBehavior.NEVER,
-        requestTemplates: {
-          'application/json': '{ "statusCode": 200 }',
-        },
-      }),
-      {
-        methodResponses: [{ statusCode: '200' }],
-      }
-    );
 
     const certificate = new Certificate(this, 'Certificate', {
       domainName: this.domainName,
@@ -75,7 +51,6 @@ export class ApiGateway extends Construct {
       target: RecordTarget.fromAlias(new ApiGatewayDomain(apiGatewayDomainName)),
     });
 
-    this.restApiId = api.restApiId;
-    this.rootResourceId = api.restApiRootResourceId;
+    this.rootResource = api.root;
   }
 }

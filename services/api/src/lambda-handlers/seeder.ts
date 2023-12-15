@@ -1,12 +1,8 @@
-import 'reflect-metadata';
-import { container } from 'tsyringe';
-
 import { Logger } from '../utils/logger';
 import { initialize } from '../lib/db/knex';
 
 export const handler = async () => {
-  const logger = container.resolve(Logger);
-
+  const logger = new Logger();
   logger.info(`Running seeder`);
 
   const knex = initialize();

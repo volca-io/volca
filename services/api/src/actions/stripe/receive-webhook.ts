@@ -1,16 +1,17 @@
 import { CustomContext } from '../../types';
-import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 import { StatusCodes } from 'http-status-codes';
-import { StripeService, UserService } from '../../services';
 import { EnvironmentConfig } from '../../utils/environment';
 import Stripe from 'stripe';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const stripeService = container.resolve(StripeService);
-  const userService = container.resolve(UserService);
+  const {
+    dependencies: {
+      services: { stripeService, userService },
+    },
+  } = ctx;
 
   const {
     request: { rawBody },

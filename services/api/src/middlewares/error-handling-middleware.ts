@@ -1,24 +1,28 @@
 import Koa from 'koa';
-import { container } from 'tsyringe';
 import * as Sentry from '@sentry/node';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
-import { Logger } from '../utils/logger';
 import { EnvironmentConfig } from '../utils/environment';
+import { CustomContext } from '../types';
 
-const logError = (ctx: Koa.Context, error: unknown) => {
+const logError = (ctx: CustomContext, error: unknown) => {
   if (EnvironmentConfig.sentry) {
     Sentry.withScope((scope) => {
       scope.addEventProcessor((event) => {
-        return Sentry.addRequestDataToEvent(event, ctx.request);
+        return Sentry.addRequestDataToEvent(event, ctx.request as unknown as Sentry.PolymorphicRequest);
       });
       Sentry.captureException(error);
     });
   }
 };
 
-export const errorHandlingMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
-  const logger = container.resolve(Logger);
+export const errorHandlingMiddleware = async (ctx: CustomContext, next: Koa.Next) => {
+  const {
+    dependencies: {
+      utils: { logger },
+    },
+  } = ctx;
+
   try {
     await next();
   } catch (error: unknown) {

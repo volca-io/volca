@@ -1,14 +1,16 @@
-import { container } from 'tsyringe';
+import { StatusCodes } from 'http-status-codes';
 import { useApiAction } from '../utils/api-action';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
-import { StatusCodes } from 'http-status-codes';
-import { StripeService } from '../../services';
-import { User } from '../../entities';
+import { CustomContext } from '../../types';
 
-export const action = useApiAction(async () => {
-  const stripeService = container.resolve(StripeService);
-  const user = container.resolve<User>('AuthenticatedUser');
+export const action = useApiAction(async (ctx: CustomContext) => {
+  const {
+    user,
+    dependencies: {
+      services: { stripeService },
+    },
+  } = ctx;
 
   if (!user.stripeId) {
     throw new ServiceError({

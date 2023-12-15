@@ -11,11 +11,11 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: yarn
           cache-dependency-path: yarn.lock
-      - name: Install Dependencies
-        run: yarn install --immutable
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/yarn-nm-install
       - name: eslint
         uses: reviewdog/action-eslint@v1
         with:
@@ -31,11 +31,11 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: yarn
           cache-dependency-path: yarn.lock
-      - name: Install Dependencies
-        run: yarn install --immutable
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/yarn-nm-install
       - name: tsc
         run: |
           yarn check:types

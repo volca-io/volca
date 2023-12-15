@@ -1,14 +1,12 @@
 import { Knex, knex } from 'knex';
 import { Model, knexSnakeCaseMappers } from 'objection';
-import { container } from 'tsyringe';
 import { EnvironmentVariables } from '../../utils/environment';
 import { Logger } from '../../utils/logger';
 import { MigrationSource } from './migration-source';
 import { SeedSource } from './seed-source';
 
 export const initialize = () => {
-  const logger = container.resolve(Logger);
-
+  const logger = new Logger();
   logger.debug('Creating new knex client');
 
   const config: Knex.Config = {

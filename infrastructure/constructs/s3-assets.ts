@@ -23,12 +23,13 @@ export class S3Assets extends Construct {
       enforceSSL: true,
       versioned: false,
       removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
       cors: [
         {
           maxAge: 3000,
           allowedOrigins: [`https://${appDomain}`, 'http://localhost:3000'],
           allowedHeaders: ['*'],
-          allowedMethods: [HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE, HttpMethods.DELETE],
+          allowedMethods: [HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE],
           exposedHeaders: ['x-amz-server-side-encryption', 'x-amz-request-id', 'x-amz-id-2', 'ETag'],
         },
       ],

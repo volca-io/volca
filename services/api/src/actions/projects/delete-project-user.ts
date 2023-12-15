@@ -1,17 +1,17 @@
-import { container } from 'tsyringe';
 import { StatusCodes } from 'http-status-codes';
 
 import { CustomContext } from '../../types';
 import { useApiAction } from '../utils/api-action';
-import { ProjectUserService, UserService } from '../../services';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const projectUserService = container.resolve(ProjectUserService);
-  const userService = container.resolve(UserService);
-
-  const { projectId, userId } = ctx.params;
+  const {
+    dependencies: {
+      services: { userService, projectUserService },
+    },
+    params: { projectId, userId },
+  } = ctx;
 
   const toUser = await userService.findById(userId);
 

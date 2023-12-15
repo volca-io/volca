@@ -1,6 +1,4 @@
 import { StatusCodes } from 'http-status-codes';
-import { injectable } from 'tsyringe';
-
 import { Project, ProjectUser } from '../entities';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
@@ -26,7 +24,6 @@ type ProjectRole = {
   id: Role;
 };
 
-@injectable()
 export class ProjectService {
   public async get(id: string): Promise<Project | undefined> {
     return Project.query().findById(id).withGraphFetched('owner').withGraphFetched('users');

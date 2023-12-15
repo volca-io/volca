@@ -18,9 +18,8 @@ jobs:
           node-version: '18'
           cache: yarn
           cache-dependency-path: yarn.lock
-      - name: Yarn Install
-        run: |
-          yarn install --immutable
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/yarn-nm-install
       - name: Read workflow vars
         run: |
           yarn dlx -q tsx ./scripts/get-workflow-vars.ts --environment ${{ inputs.environment }} >> $GITHUB_ENV

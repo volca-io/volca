@@ -1,6 +1,4 @@
 import { StatusCodes } from 'http-status-codes';
-import { injectable } from 'tsyringe';
-
 import { User } from '../entities';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
@@ -14,7 +12,6 @@ type ProvisionUserProperties = {
   picture?: string;
 };
 
-@injectable()
 export class UserService {
   public async findById(id: string): Promise<User | undefined> {
     return User.query().findById(id);

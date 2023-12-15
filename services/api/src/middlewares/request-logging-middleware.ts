@@ -1,12 +1,13 @@
 import Koa from 'koa';
-import { Logger } from '../utils/logger';
-import { container } from 'tsyringe';
 import { RouterContext } from '@koa/router';
 
 export const requestLoggingMiddleware = async (ctx: RouterContext, next: Koa.Next) => {
-  const logger = container.resolve(Logger);
+  const {
+    dependencies: {
+      utils: { logger },
+    },
+  } = ctx;
 
-  // TODO - Clean body to not disclose sensitive values
   logger.info('Started handling request', {
     path: ctx.path,
     method: ctx.method,

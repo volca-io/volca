@@ -1,4 +1,3 @@
-import { injectable } from 'tsyringe';
 import { Project, ProjectUser, User } from '../entities';
 import { Role } from './project-service';
 
@@ -7,7 +6,6 @@ type UpdateProjectUserInput = {
   role: Role;
 };
 
-@injectable()
 export class ProjectUserService {
   public async get(userId: string, projectId: string): Promise<ProjectUser | undefined> {
     return ProjectUser.query().where({ userId }).andWhere({ projectId }).first();

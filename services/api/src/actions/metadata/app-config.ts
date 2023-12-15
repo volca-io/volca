@@ -1,7 +1,6 @@
 import joi, { Schema } from 'joi';
 import jwt from 'jsonwebtoken';
 import { config, EnvironmentConfig, EnvironmentVariables } from '../../utils/environment';
-
 import { useApiAction } from '../utils/api-action';
 
 export const schema: Schema = joi.object({
@@ -11,7 +10,7 @@ export const schema: Schema = joi.object({
 export const action = useApiAction(async () => {
   return {
     body: {
-      stripeTestCardEnabled: EnvironmentVariables.TEST_CARD_ENABLED === '1',
+      stripeTestCardEnabled: EnvironmentConfig.testCardEnabled,
       awsRegion: config.aws.region,
       // Use the hardcoded login domain if there is one in the config, otherwise resolve it from the domain config.
       // This will allow us to sign in locally with Cognito deployed for staging
@@ -23,7 +22,7 @@ export const action = useApiAction(async () => {
       awsCognitoUserpoolId: EnvironmentVariables.AWS_COGNITO_USER_POOL_ID,
       awsCognitoIdentityPoolId: EnvironmentVariables.AWS_COGNITO_IDENTITY_POOL_ID,
       awsCognitoAppClientId: EnvironmentVariables.AWS_COGNITO_APP_CLIENT_ID,
-      awsS3AssetBucket: EnvironmentVariables.AWS_S3_ASSETS_BUCKET,
+      awsS3AssetsBucket: EnvironmentVariables.AWS_S3_ASSETS_BUCKET,
       identityProviders: {
         facebook: !!EnvironmentConfig.authentication.identityProviders?.facebook,
         google: !!EnvironmentConfig.authentication.identityProviders?.google,

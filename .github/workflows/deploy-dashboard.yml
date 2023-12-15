@@ -1,0 +1,33 @@
+name: deploy-dashboard
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code.
+        uses: actions/checkout@v3.5.3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/yarn-nm-install
+      - name: Read workflow vars
+        run: |
+          yarn dlx -q tsx ./scripts/get-workflow-vars.ts --environment ${{ inputs.environment }} >> $GITHUB_ENV
+      - name: Configure AWS credentials from ${{ inputs.environment }} account
+        uses: aws-actions/configure-aws-credentials@v2.2.0
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.APPLICATION_NAME }}-github-actions-deployment-role
+          aws-region: ${{ env.AWS_REGION }}
+      - name: CDK Deploy
+        run: |
+          yarn cdk deploy -c environment=${{ inputs.environment }} --exclusively ${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-dashboard-stack --require-approval never

@@ -16,7 +16,6 @@ import { RemovalPolicy, SecretValue } from 'aws-cdk-lib';
 export interface DatabaseProps {
   vpc: IVpc;
   public: boolean;
-  username: string;
   password: SecretValue;
   apiSecurityGroup: ISecurityGroup;
 }
@@ -56,7 +55,7 @@ export class Database extends Construct {
       engine,
       vpc: props.vpc,
       credentials: {
-        username: props.username,
+        username: 'postgres',
         password: props.password,
       },
       copyTagsToSnapshot: true,
@@ -65,6 +64,7 @@ export class Database extends Construct {
       publiclyAccessible: props.public,
       securityGroups: [rdsSecurityGroup],
       allocatedStorage: 20,
+      maxAllocatedStorage: 100,
     });
 
     this.endpointAddress = database.dbInstanceEndpointAddress;

@@ -1,6 +1,4 @@
-import { jest } from '@jest/globals';
-import { MockInstance } from 'jest-mock';
-import { CommunicationsService } from '../../services';
+import { CommunicationsService, SendEmailParams } from '../../services';
 import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne } from '../../test-utils/fixtures';
 import { setupServer } from '../../test-utils/setup-server';
@@ -8,19 +6,7 @@ import { config } from '../../utils/environment';
 
 describe('POST /communications/support', () => {
   const getRequest = setupServer();
-  let comsSpy: MockInstance<
-    ({
-      email,
-      subject,
-      body,
-      replyTo,
-    }: {
-      email: string;
-      subject: string;
-      body: string;
-      replyTo: string;
-    }) => Promise<void>
-  >;
+  let comsSpy: jest.SpyInstance<Promise<void>, [SendEmailParams], unknown>;
 
   beforeAll(() => {
     comsSpy = jest.spyOn(CommunicationsService.prototype, 'sendEmail').mockResolvedValue();

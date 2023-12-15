@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import 'reflect-metadata';
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import serverless from 'serverless-http';
-
+import { Knex } from 'knex';
+import Koa from 'koa';
 import { createServer } from '../server';
 
-// We need to keep a reference to the database connection outside the lambda handler to
-// not create a new connection on each request
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const { app, database } = createServer();
-const serverlessHandler = serverless(app);
+let serverRef: Koa;
+let databaseRef: Knex;
 
 export const handler = async (event: APIGatewayProxyEvent, context: Context) => {
   context.callbackWaitsForEmptyEventLoop = false;
+
+  if (!databaseRef || serverRef) {
+    const { database, server } = await createServer();
+    serverRef = server;
+    databaseRef = database;
+  }
+
+  const serverlessHandler = serverless(serverRef);
   return serverlessHandler(event, context);
 };

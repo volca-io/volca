@@ -1,15 +1,14 @@
 version: '3.4'
-
+name: 'volca-api'
 services:
   database:
-    container_name: postgres-database
-    command: postgres -c 'max_connections=300'
+    container_name: volca-api-database
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: volca
     restart: always
-    image: postgres:13.6
+    image: postgres:15.3
     volumes:
       - database:/var/lib/postgresql/data:Z
     ports:
@@ -17,14 +16,13 @@ services:
     profiles:
       - dev
   test-database:
-    container_name: postgres-test-database
-    command: postgres -c 'max_connections=300'
+    container_name: volca-api-test-database
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: volca-test
     restart: always
-    image: postgres:13.6
+    image: postgres:15.3
     ports:
       - '5432:5432'
     profiles:

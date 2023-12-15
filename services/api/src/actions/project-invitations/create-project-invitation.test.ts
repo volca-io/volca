@@ -2,7 +2,7 @@ import { setupServer } from '../../test-utils';
 import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne } from '../../test-utils/fixtures';
 
-describe('POST /project-invitations', () => {
+describe('POST /projects/:id/invitations', () => {
   const getRequest = setupServer();
   let createdProject: Record<string, unknown>;
 
@@ -21,26 +21,14 @@ describe('POST /project-invitations', () => {
 
   it('can create a new project invitation', async () => {
     const resp = await getRequest()
-      .post('/project-invitations')
-      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
-      .send({
-        projectId: createdProject.id,
-      });
+      .post(`/projects/${createdProject.id}/invitations`)
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` });
 
     expect(resp.status).toBe(200);
   });
 
-  it('returns 400 if no project id is specified', async () => {
-    const resp = await getRequest()
-      .post('/project-invitations')
-      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
-      .send({});
-
-    expect(resp.status).toBe(400);
-  });
-
   it('returns 401 if user is not authenticated', async () => {
-    const resp = await getRequest().post('/project-invitations').send({
+    const resp = await getRequest().post(`/projects/${createdProject.id}/invitations`).send({
       projectId: createdProject.id,
     });
 

@@ -1,20 +1,24 @@
 import Koa from 'koa';
 import cors from '@koa/cors';
-import { Knex } from 'knex';
 import * as Sentry from '@sentry/node';
 import { createRouter } from './router';
-import { requestLoggingMiddleware, correlationIdMiddleware, errorHandlingMiddleware } from './middlewares';
-import { EnvironmentConfig, EnvironmentVariables } from './utils/environment';
+import {
+  requestLoggingMiddleware,
+  correlationIdMiddleware,
+  errorHandlingMiddleware,
+  dependencyInjectionMiddleware,
+} from './middlewares';
+import { EnvironmentConfig, EnvironmentVariables, loadEnvironmentVariables } from './utils/environment';
 import { initialize } from './lib/db/knex';
+import { Knex } from 'knex';
 
-type CreateServerResponse = {
-  app: Koa;
-  database: Knex;
-};
+export const createServer = async (): Promise<{ server: Koa; database: Knex }> => {
+  await loadEnvironmentVariables();
 
-export const createServer = (): CreateServerResponse => {
   const app = new Koa();
   const router = createRouter();
+
+  app.use(dependencyInjectionMiddleware);
 
   if (EnvironmentConfig.sentry) {
     Sentry.init({
@@ -36,7 +40,5 @@ export const createServer = (): CreateServerResponse => {
 
   app.use(router.routes()).use(router.allowedMethods());
 
-  const database = initialize();
-
-  return { app, database };
+  return { server: app, database: initialize() };
 };

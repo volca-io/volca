@@ -1,11 +1,8 @@
 import joi, { Schema } from 'joi';
-import { container } from 'tsyringe';
 import { StatusCodes } from 'http-status-codes';
 
 import { CustomContext } from '../../types';
 import { useApiAction } from '../utils/api-action';
-import { ProjectService } from '../../services';
-import { User } from '../../entities';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
@@ -18,8 +15,12 @@ export const schema: Schema = joi.object({
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const projectService = container.resolve(ProjectService);
-  const user = container.resolve<User>('AuthenticatedUser');
+  const {
+    user,
+    dependencies: {
+      services: { projectService },
+    },
+  } = ctx;
 
   if (!user.hasActiveSubscription) {
     throw new ServiceError({

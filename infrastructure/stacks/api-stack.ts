@@ -1,14 +1,18 @@
-import { Stack, StackProps, CfnOutput, SecretValue } from 'aws-cdk-lib';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { Stack, StackProps, SecretValue, Duration } from 'aws-cdk-lib';
 import { SubnetType, SecurityGroup, Vpc, IpAddresses } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
+import * as path from 'path';
 import { config } from '../../app.config';
-import { ApiGateway, ApiLambdaExecutionRole, Database } from '../constructs';
-import { Environment } from '../../config/types';
+import { ApiGateway, ApiLambdaExecutionRole, Database, SsmVariableGroup } from '../constructs';
+import { Environment } from '../../types/types';
 import { Cognito } from '../constructs/cognito';
 import { S3Assets } from '../constructs/s3-assets';
+import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
+import { InvocationType, Trigger } from 'aws-cdk-lib/triggers';
 
 interface ApiStackProps extends StackProps {
   domain: string;
@@ -26,7 +30,7 @@ export class ApiStack extends Stack {
       throw new Error('Environment was not set when trying to deploy account bootstrap stack');
     }
 
-    const { deploymentConfig, environmentVariables, authentication, storage } = config.environments[props.environment];
+    const { deploymentConfig, authentication } = config.environments[props.environment];
     if (!deploymentConfig) {
       throw new Error(
         'Can not deploy an environment without a deployment config. Please add one to your environment in app.config.ts'
@@ -34,8 +38,6 @@ export class ApiStack extends Stack {
     }
 
     const { publicDatabase, subdomain } = deploymentConfig;
-    const { DB_USERNAME: dbUsername } = environmentVariables;
-
     const fullDomain = subdomain ? `${subdomain}.${props.domain}` : props.domain;
 
     // Creates a VPC that the api lambda functions will run in
@@ -71,8 +73,7 @@ export class ApiStack extends Stack {
     const database = new Database(this, 'RdsDatabase', {
       vpc,
       public: publicDatabase,
-      username: dbUsername,
-      password: SecretValue.ssmSecure(`/${props.name}/${props.environment}/DB_PASSWORD`),
+      password: SecretValue.ssmSecure(`/${props.name}/${props.environment}/api/DB_PASSWORD`),
       apiSecurityGroup,
     });
 
@@ -104,56 +105,103 @@ export class ApiStack extends Stack {
       domain: fullDomain,
       authenticationConfig: authentication,
       certificate: props.cognitoCertificate,
+      createRootDomainPlaceholder: true,
     });
 
-    if (storage.enabled) {
-      const s3Assets = new S3Assets(this, 'S3Assets', {
-        authenticatedRole: cognito.authenticatedRole,
-        domain: fullDomain,
-      });
-
-      new StringParameter(this, 'S3AssetsBucket', {
-        parameterName: `/${props.name}/${props.environment}/AWS_S3_ASSETS_BUCKET`,
-        stringValue: s3Assets.bucket.bucketName,
-      });
-
-      new CfnOutput(this, 'S3AssetsBucketOutput', { value: s3Assets.bucket.bucketName });
-    }
-
-    // Creates a new SSM parameter that the lambdas will use to know where the database is located
-    new StringParameter(this, 'DbHost', {
-      parameterName: `/${props.name}/${props.environment}/DB_HOST`,
-      stringValue: database.endpointAddress,
+    const s3Assets = new S3Assets(this, 'S3Assets', {
+      authenticatedRole: cognito.authenticatedRole,
+      domain: fullDomain,
     });
 
-    // Creates new SSM parameters so that the lambdas can reference the cognito user pool
-    new StringParameter(this, 'CognitoUserPoolID', {
-      parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_USER_POOL_ID`,
-      stringValue: cognito.userPool.userPoolId,
-    });
-    new StringParameter(this, 'CognitoUserPoolAppClientID', {
-      parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_APP_CLIENT_ID`,
-      stringValue: cognito.userPoolAppClient.userPoolClientId,
-    });
-    new StringParameter(this, 'CognitoIdentityPoolId', {
-      parameterName: `/${props.name}/${props.environment}/AWS_COGNITO_IDENTITY_POOL_ID`,
-      stringValue: cognito.identityPool.ref,
+    const envVars = new SsmVariableGroup(this, 'ApiEnvironmentVariables', {
+      pathPrefix: `/${props.name}/${props.environment}/api`,
+      variables: [
+        {
+          key: 'DB_USERNAME',
+          value: 'postgres',
+        },
+        {
+          key: 'DB_HOST',
+          value: database.endpointAddress,
+        },
+        {
+          key: 'DB_PORT',
+          value: '5432',
+        },
+        {
+          key: 'LOG_LEVEL',
+          value: 'info',
+        },
+        {
+          key: 'LOGGING_ENABLED',
+          value: '1',
+        },
+        {
+          key: 'APP_DOMAIN',
+          value: `https://app.${fullDomain}`,
+        },
+        {
+          key: 'AWS_COGNITO_USER_POOL_ID',
+          value: cognito.userPool.userPoolId,
+        },
+        {
+          key: 'AWS_COGNITO_APP_CLIENT_ID',
+          value: cognito.userPoolAppClient.userPoolClientId,
+        },
+        {
+          key: 'AWS_COGNITO_IDENTITY_POOL_ID',
+          value: cognito.identityPool.ref,
+        },
+        {
+          key: `AWS_S3_ASSETS_BUCKET`,
+          value: s3Assets.bucket.bucketName,
+        },
+      ],
     });
 
-    // Stack outputs that can be imported by the serverless framework
-    new CfnOutput(this, 'LambdaExecutionRole', { value: lambdaExecutionRole.roleArn });
-    new CfnOutput(this, 'ApiSecurityGroupOutput', { value: apiSecurityGroup.securityGroupId });
+    const lambdaOptions: Partial<NodejsFunctionProps> = {
+      runtime: Runtime.NODEJS_18_X,
+      handler: 'handler',
+      role: lambdaExecutionRole.role,
+      vpc: publicDatabase ? undefined : vpc,
+      securityGroups: publicDatabase ? undefined : [apiSecurityGroup],
+      vpcSubnets: publicDatabase ? undefined : { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
+      bundling: {
+        externalModules: ['sqlite3', 'better-sqlite3', 'mysql2', 'mysql', 'tedious', 'oracledb', 'pg-query-stream'],
+      },
+      environment: {
+        ENVIRONMENT: props.environment,
+        REGION: props.env.region,
+      },
+    };
 
-    new CfnOutput(this, 'PublicSubnets', { value: vpc.publicSubnets.map((subnet) => subnet.subnetId).join(', ') });
-    new CfnOutput(this, 'PrivateSubnets', {
-      value: vpc.privateSubnets.map((subnet) => subnet.subnetId).join(', '),
-    });
-    new CfnOutput(this, 'IsolatedSubnets', {
-      value: vpc.isolatedSubnets.map((subnet) => subnet.subnetId).join(', '),
+    const migrationFunction = new NodejsFunction(this, 'MigrationHandler', {
+      functionName: `${config.name}-${props.environment}-migration-handler`,
+      entry: path.resolve(__dirname, '../../services/api/src/lambda-handlers/migrate.ts'),
+      timeout: Duration.seconds(60),
+      memorySize: 512,
+      ...lambdaOptions,
     });
 
-    new CfnOutput(this, 'ApiGatewayID', { value: api.restApiId });
-    new CfnOutput(this, 'ApiGatewayRootResourceID', { value: api.rootResourceId });
-    new CfnOutput(this, 'ApiDomain', { value: api.domainName });
+    const migrationTrigger = new Trigger(this, 'MigrationTrigger', {
+      handler: migrationFunction,
+      invocationType: InvocationType.REQUEST_RESPONSE,
+    });
+
+    migrationTrigger.node.addDependency(envVars);
+
+    const apiHandler = new NodejsFunction(this, 'ApiHandler', {
+      functionName: `${config.name}-${props.environment}-api-handler`,
+      entry: path.resolve(__dirname, '../../services/api/src/lambda-handlers/api.ts'),
+      timeout: Duration.seconds(30),
+      memorySize: 1024,
+      ...lambdaOptions,
+    });
+
+    apiHandler.node.addDependency(migrationTrigger);
+
+    const lambdaIntegration = new LambdaIntegration(apiHandler);
+    const apiResource = api.rootResource.addResource('{proxy+}');
+    apiResource.addMethod('ANY', lambdaIntegration);
   }
 }

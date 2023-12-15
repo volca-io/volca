@@ -1,5 +1,4 @@
 import winston from 'winston';
-import { injectable } from 'tsyringe';
 import correlator from 'correlation-id';
 import { EnvironmentVariables } from './environment';
 
@@ -52,20 +51,21 @@ const createLogger = ({ level, format, defaultMeta = {}, silent = false }: Loggi
   });
 };
 
-@injectable()
 export class Logger {
   private logger;
 
   public constructor() {
-    const definedLevel = EnvironmentVariables.LOG_LEVEL || 'info';
-    const loggingEnabled = EnvironmentVariables.LOGGING_ENABLED === '1';
+    const logLevel = EnvironmentVariables.LOG_LEVEL;
+    const loggingEnabled = EnvironmentVariables.LOGGING_ENABLED;
+    const environment = EnvironmentVariables.ENVIRONMENT;
+    const definedLevel = logLevel || 'info';
 
     const level = LogLevel[definedLevel as keyof typeof LogLevel];
 
     this.logger = createLogger({
       level,
-      format: EnvironmentVariables.ENVIRONMENT === 'local' ? LoggingFormat.SIMPLE : LoggingFormat.JSON,
-      silent: !loggingEnabled,
+      format: environment === 'local' ? LoggingFormat.SIMPLE : LoggingFormat.JSON,
+      silent: loggingEnabled !== '1',
     });
   }
 

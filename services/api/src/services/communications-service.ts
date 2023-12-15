@@ -1,7 +1,5 @@
-import { injectable } from 'tsyringe';
-
-import { EnvironmentVariables } from '../utils/environment';
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
+import { config } from '../utils/environment';
 import { Logger } from '../utils/logger';
 
 export type SendVerificationEmailProperties = {
@@ -22,19 +20,18 @@ export type SendEmailParams = {
   replyTo?: string | null;
 };
 
-@injectable()
 export class CommunicationsService {
   private emailClient: SESv2Client;
 
   public constructor(private logger: Logger) {
-    this.emailClient = new SESv2Client({ region: EnvironmentVariables.REGION });
+    this.emailClient = new SESv2Client({ region: config.aws.region });
   }
 
   public async sendEmail({ email, subject, body, replyTo = null }: SendEmailParams): Promise<void> {
     this.logger.debug('Sending email', { email, subject, body });
 
     const command = new SendEmailCommand({
-      FromEmailAddress: EnvironmentVariables.FROM_EMAIL,
+      FromEmailAddress: config.fromEmail,
       Destination: { ToAddresses: [email] },
       Content: { Simple: { Subject: { Data: subject }, Body: { Text: { Data: body }, Html: { Data: body } } } },
       ...(replyTo ? { ReplyToAddresses: [replyTo] } : {}),

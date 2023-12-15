@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import { App, Tags } from 'aws-cdk-lib';
-import { Environment } from '../../config/types';
+import { Environment } from '../../types/types';
 import { config } from '../../app.config';
 import { CoreStack } from '../stacks/core-stack';
 import { ApiStack } from '../stacks/api-stack';
-import { WebappStack } from '../stacks/webapp-stack';
+import { DashboardStack } from '../stacks/dashboard-stack';
 import { CertificateStack } from '../stacks/certificate-stack';
 
 const app = new App();
@@ -47,15 +47,15 @@ if (environment) {
   Tags.of(apiStack).add('name', name);
   Tags.of(apiStack).add('environment', environment);
 
-  const webappStack = new WebappStack(app, `${name}-${environment}-webapp-stack`, {
+  const dashboardStack = new DashboardStack(app, `${name}-${environment}-dashboard-stack`, {
     domain,
     name,
     environment,
     env: aws,
-    webappCertificate: certificateStack.webappCertificate,
+    dashboardCertificate: certificateStack.dashboardCertificate,
     crossRegionReferences: true,
   });
 
-  Tags.of(webappStack).add('name', name);
-  Tags.of(webappStack).add('environment', environment);
+  Tags.of(dashboardStack).add('name', name);
+  Tags.of(dashboardStack).add('environment', environment);
 }

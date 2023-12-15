@@ -1,15 +1,17 @@
-import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
-import { ProjectService } from '../../services';
-import { User } from '../../entities';
+import { CustomContext } from '../../types';
 
-export const action = useApiAction(async () => {
-  const projectService = container.resolve(ProjectService);
-  const user = container.resolve<User>('AuthenticatedUser');
+export const action = useApiAction(async (ctx: CustomContext) => {
+  const {
+    user,
+    dependencies: {
+      services: { projectService },
+    },
+  } = ctx;
 
   const projects = await projectService.list(user.id);
 
   return {
-    body: { projects: projects.map(project => project.toJSON()) },
+    body: { projects: projects.map((project) => project.toJSON()) },
   };
 });

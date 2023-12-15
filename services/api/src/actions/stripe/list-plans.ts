@@ -1,9 +1,13 @@
-import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
-import { StripeService } from '../../services';
+import { CustomContext } from '../../types';
 
-export const action = useApiAction(async () => {
-  const stripeService = container.resolve(StripeService);
+export const action = useApiAction(async (ctx: CustomContext) => {
+  const {
+    dependencies: {
+      services: { stripeService },
+    },
+  } = ctx;
+
   return {
     body: {
       plans: stripeService.listPlans(),

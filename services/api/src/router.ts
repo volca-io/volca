@@ -7,11 +7,7 @@ import { statusAction } from './actions/status';
 /* volca-exclude-start os */
 import { appConfigAction } from './actions/metadata';
 import { provisionUserAction, provisionUserSchema } from './actions/users';
-import {
-  createProjectInvitationAction,
-  createProjectInvitationSchema,
-  acceptProjectInvitationAction,
-} from './actions/project-invitations';
+import { createProjectInvitationAction, acceptProjectInvitationAction } from './actions/project-invitations';
 import {
   createProjectAction,
   createProjectSchema,
@@ -103,13 +99,12 @@ export const createRouter = (): Router<Application.DefaultState, CustomContext> 
 
   // Project invitations
   router.post(
-    '/project-invitations',
+    '/projects/:projectId/invitations',
     authenticationMiddleware,
     authorizationMiddleware([Role.OWNER, Role.ADMIN]),
-    schemaValidationMiddleware(createProjectInvitationSchema),
     createProjectInvitationAction
   );
-  router.get('/project-invitations/:id', authenticationMiddleware, acceptProjectInvitationAction);
+  router.get('/invitations/:invitationId', authenticationMiddleware, acceptProjectInvitationAction);
 
   // Users
   router.post('/users/provision', schemaValidationMiddleware(provisionUserSchema), provisionUserAction);

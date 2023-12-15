@@ -22,14 +22,11 @@ describe('roles', () => {
         projectInvitation: { id },
       },
     } = await getRequest()
-      .post('/project-invitations')
-      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` })
-      .send({
-        projectId: createdProject.id,
-      });
+      .post(`/projects/${createdProject.id}/invitations`)
+      .set({ Authorization: `Bearer ${generateJwtToken(userOne)}` });
 
     await getRequest()
-      .get(`/project-invitations/${id}`)
+      .get(`/invitations/${id}`)
       .set({ Authorization: `Bearer ${generateJwtToken(userTwo)}` });
 
     projectId = createdProject.id;

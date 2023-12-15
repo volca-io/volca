@@ -1,10 +1,13 @@
-import { container } from 'tsyringe';
-
+import { CustomContext } from '../../types';
 import { useApiAction } from '../utils/api-action';
-import { StatusService } from '../../services';
 
-export const action = useApiAction(async () => {
-  const statusService = container.resolve(StatusService);
+export const action = useApiAction(async (ctx: CustomContext) => {
+  const {
+    dependencies: {
+      services: { statusService },
+    },
+  } = ctx;
+
   const body = await statusService.get();
 
   return {

@@ -1,15 +1,18 @@
 import { CustomContext } from '../../types';
-import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
-import { ProjectService } from '../../services';
 import { StatusCodes } from 'http-status-codes';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const projectService = container.resolve(ProjectService);
+  const {
+    dependencies: {
+      services: { projectService },
+    },
+    params: { projectId },
+  } = ctx;
 
-  const project = await projectService.get(ctx.params.projectId);
+  const project = await projectService.get(projectId);
 
   if (!project) {
     throw new ServiceError({

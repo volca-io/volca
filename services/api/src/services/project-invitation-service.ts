@@ -1,5 +1,4 @@
 import { StatusCodes } from 'http-status-codes';
-import { injectable } from 'tsyringe';
 import { ErrorNames } from '../constants';
 import { ProjectInvitation } from '../entities';
 import { ServiceError } from '../errors/service-error';
@@ -16,7 +15,6 @@ type ConsumeProjectInvitationInput = {
   userId: string;
 };
 
-@injectable()
 export class ProjectInvitationService {
   constructor(private projectUserService: ProjectUserService) {}
 

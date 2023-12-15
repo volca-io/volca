@@ -1,10 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import joi, { Schema } from 'joi';
-import { container } from 'tsyringe';
 import _ from 'lodash';
 import { ErrorNames } from '../../constants';
 import { ServiceError } from '../../errors/service-error';
-import { AuthenticationService, UserService } from '../../services';
 import { CustomContext } from '../../types';
 import { useApiAction } from '../utils/api-action';
 import { config } from '../../utils/environment';
@@ -29,11 +27,16 @@ const parsePicture = (provider: string, picture: string | undefined) => {
 };
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const { idToken } = <ProvisionBody>ctx.request.body;
+  const {
+    request: { body },
+    dependencies: {
+      services: { authenticationService, userService },
+    },
+  } = ctx;
+  const { idToken } = <ProvisionBody>body;
 
-  const authService = container.resolve(AuthenticationService);
-  const tokenPayload = await authService.verifyIdToken({ token: idToken });
-  const identityId = await authService.getIdentityId({ token: idToken });
+  const tokenPayload = await authenticationService.verifyIdToken({ token: idToken });
+  const identityId = await authenticationService.getIdentityId({ token: idToken });
 
   const { given_name: givenName, family_name: familyName, email, picture, sub, identities } = tokenPayload;
   if (!email || !sub) {
@@ -55,7 +58,6 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     picture: primaryIdentity ? parsePicture(primaryIdentity.providerName, picture?.toString()) : null,
   };
 
-  const userService = container.resolve(UserService);
   const me = await userService.provision(user);
 
   return {

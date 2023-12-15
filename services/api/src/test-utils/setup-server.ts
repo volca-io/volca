@@ -8,10 +8,10 @@ export function setupServer() {
   let serverRef: Server;
   let request: SuperTest<Test>;
 
-  beforeAll(() => {
-    const { app, database } = createServer();
+  beforeAll(async () => {
+    const { server, database } = await createServer();
+    serverRef = server.listen();
     databaseRef = database;
-    serverRef = app.listen();
     request = supertest(serverRef);
   });
 

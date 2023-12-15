@@ -1,8 +1,7 @@
-import { injectable } from 'tsyringe';
 import { StatusCodes } from 'http-status-codes';
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import jwt from 'jsonwebtoken';
-import { EnvironmentConfig, EnvironmentVariables } from '../utils/environment';
+import { EnvironmentConfig, EnvironmentVariables, config } from '../utils/environment';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 import { CognitoAccessTokenPayload, CognitoIdTokenPayload } from 'aws-jwt-verify/jwt-model';
@@ -27,7 +26,6 @@ export type SessionResponse = {
   expiresIn: number;
 };
 
-@injectable()
 export class AuthenticationService {
   private getVerifier(tokenUse: 'access' | 'id') {
     if (EnvironmentConfig.authentication.mockUser) {
@@ -97,15 +95,16 @@ export class AuthenticationService {
     if (EnvironmentConfig.authentication.mockUser) {
       return EnvironmentConfig.authentication.mockUser.sub;
     }
-
-    const client = new CognitoIdentityClient({ region: EnvironmentVariables.REGION });
+    const region = config.aws.region;
+    const client = new CognitoIdentityClient({ region });
+    const identityPoolId = EnvironmentVariables.AWS_COGNITO_IDENTITY_POOL_ID;
+    const userPoolId = EnvironmentVariables.AWS_COGNITO_USER_POOL_ID;
 
     const { IdentityId } = await client.send(
       new GetIdCommand({
-        IdentityPoolId: EnvironmentVariables.AWS_COGNITO_IDENTITY_POOL_ID,
+        IdentityPoolId: identityPoolId,
         Logins: {
-          [`cognito-idp.${EnvironmentVariables.REGION}.amazonaws.com/${EnvironmentVariables.AWS_COGNITO_USER_POOL_ID}`]:
-            token,
+          [`cognito-idp.${region}.amazonaws.com/${userPoolId}`]: token,
         },
       })
     );

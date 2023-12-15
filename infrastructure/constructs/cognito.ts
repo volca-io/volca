@@ -1,4 +1,4 @@
-import { Duration, Stack } from 'aws-cdk-lib';
+import { Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ARecord, CnameRecord, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import {
@@ -17,7 +17,7 @@ import {
   CfnIdentityPool,
 } from 'aws-cdk-lib/aws-cognito';
 
-import { AuthenticationConfig, Environment } from '../../config/types';
+import { AuthenticationConfig, Environment } from '../../types/types';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import CognitoAuthRole from './cognito-auth-role';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
@@ -30,6 +30,7 @@ interface CognitoProps {
   domain: string;
   certificate: Certificate;
   authenticationConfig: AuthenticationConfig;
+  createRootDomainPlaceholder: boolean;
 }
 
 export class Cognito extends Construct {
@@ -41,13 +42,16 @@ export class Cognito extends Construct {
   constructor(scope: Construct, id: string, props: CognitoProps) {
     super(scope, id);
 
-    new ARecord(this, 'CognitoRootDomainPlaceholder', {
-      recordName: props.domain,
-      target: RecordTarget.fromIpAddresses('8.8.8.8'),
-      zone: props.hostedZone,
-    });
+    if (props.createRootDomainPlaceholder) {
+      new ARecord(this, 'CognitoRootDomainPlaceholder', {
+        recordName: props.domain,
+        target: RecordTarget.fromIpAddresses('8.8.8.8'),
+        zone: props.hostedZone,
+      });
+    }
 
     this.userPool = new UserPool(this, 'UserPool', {
+      removalPolicy: RemovalPolicy.DESTROY,
       selfSignUpEnabled: true,
       userVerification: {
         emailSubject: `Your ${props.name} verification code`,
@@ -64,7 +68,7 @@ export class Cognito extends Construct {
       },
       mfa: Mfa.OFF,
       passwordPolicy: {
-        minLength: 12,
+        minLength: 8,
         requireLowercase: false,
         requireUppercase: false,
         requireDigits: false,
@@ -128,7 +132,7 @@ export class Cognito extends Construct {
 
       const googleIdp = new UserPoolIdentityProviderGoogle(this, 'GoogleIdentityProvider', {
         clientId,
-        clientSecret: StringParameter.valueForStringParameter(this, clientSecretSsmPath), // Note: This will expose the private key in cloudformation templates, but there is nosecure way of passing it
+        clientSecret: StringParameter.valueForStringParameter(this, clientSecretSsmPath),
         userPool: this.userPool,
         scopes: ['openid', 'email', 'profile'],
         attributeMapping: {

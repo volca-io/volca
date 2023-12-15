@@ -1,28 +1,20 @@
 import Koa from 'koa';
-import { container } from 'tsyringe';
 import { StatusCodes } from 'http-status-codes';
-
 import { CustomContext } from '../types';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
-import { Role, ProjectService, ProjectUserService } from '../services';
-import { User } from '../entities';
-
-type RequestBody = {
-  projectId?: string;
-};
+import { Role } from '../services';
 
 export const authorizationMiddleware = (allowedRoles: Role[]) => async (ctx: CustomContext, next: Koa.Next) => {
-  const user = container.resolve<User>('AuthenticatedUser');
-  const projectService = container.resolve(ProjectService);
-  const projectUserService = container.resolve(ProjectUserService);
+  const {
+    user,
+    dependencies: {
+      services: { projectService, projectUserService },
+    },
+    params: { projectId },
+  } = ctx;
 
-  const requestBody = <RequestBody>ctx.request.body;
-
-  // Validate all project IDs in the request body or request parameters
-  const projectIds = [requestBody.projectId, ctx.params.projectId].filter(Boolean) as string[];
-
-  for (const projectId of projectIds) {
+  if (projectId) {
     const project = await projectService.get(projectId);
     const projectUser = await projectUserService.get(user.id, projectId);
 
@@ -41,6 +33,8 @@ export const authorizationMiddleware = (allowedRoles: Role[]) => async (ctx: Cus
         statusCode: StatusCodes.FORBIDDEN,
       });
     }
+
+    ctx.project = project;
   }
 
   return next();

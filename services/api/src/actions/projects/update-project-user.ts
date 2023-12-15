@@ -1,9 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import joi, { Schema } from 'joi';
 import { CustomContext } from '../../types';
-import { container } from 'tsyringe';
 import { useApiAction } from '../utils/api-action';
-import { Role, ProjectUserService } from '../../services';
+import { Role } from '../../services';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
@@ -19,10 +18,15 @@ export const schema: Schema = joi.object({
 });
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const projectUserService = container.resolve(ProjectUserService);
+  const {
+    dependencies: {
+      services: { projectUserService },
+    },
+    params: { projectId, userId },
+    request: { body },
+  } = ctx;
 
-  const { role } = <UpdateProjectUserBody>ctx.request.body;
-  const { projectId, userId } = ctx.params;
+  const { role } = <UpdateProjectUserBody>body;
 
   const projectUser = await projectUserService.get(userId, projectId);
 

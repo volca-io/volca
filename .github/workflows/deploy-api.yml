@@ -15,12 +15,11 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: yarn
           cache-dependency-path: yarn.lock
-      - name: Yarn Install
-        run: |
-          yarn install --immutable
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/yarn-nm-install
       - name: Read workflow vars
         run: |
           yarn dlx -q tsx ./scripts/get-workflow-vars.ts --environment ${{ inputs.environment }} >> $GITHUB_ENV
@@ -32,29 +31,3 @@ jobs:
       - name: Deploy infrastructure
         run: |
           yarn cdk deploy -c environment=${{ inputs.environment }} --exclusively ${{ env.APPLICATION_NAME }}-${{ inputs.environment }}-api-stack --require-approval never
-      - name: Stack status
-        id: stack-status
-        working-directory: services/api
-        run: |
-          SERVERLESS_INFO=$(STAGE=${{ inputs.environment }} ./node_modules/.bin/sls info || echo "DOES_NOT_EXIST") 
-
-          if [[ "$SERVERLESS_INFO" == *"DOES_NOT_EXIST"* ]]; then
-            echo "EXISTS=0" >> $GITHUB_OUTPUT
-          else
-            echo "EXISTS=1" >> $GITHUB_OUTPUT
-          fi
-      - name: Pre-deploy migrations
-        working-directory: services/api
-        if: steps.stack-status.outputs.EXISTS == '1'
-        run: |
-          STAGE=${{ inputs.environment }} ./node_modules/.bin/sls deploy --function migrate
-          STAGE=${{ inputs.environment }} yarn migrate:latest:${{ inputs.environment}}
-      - name: Deploy service
-        working-directory: services/api
-        run: |
-          yarn deploy:${{ inputs.environment}}
-      - name: Post-deploy migrations
-        working-directory: services/api
-        if: steps.stack-status.outputs.EXISTS == '0'
-        run: |
-          STAGE=${{ inputs.environment }} yarn migrate:latest:${{ inputs.environment}}

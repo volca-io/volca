@@ -1,19 +1,19 @@
-import { container } from 'tsyringe';
 import { StatusCodes } from 'http-status-codes';
 
 import { CustomContext } from '../../types';
 import { useApiAction } from '../utils/api-action';
-import { ProjectService, ProjectUserService } from '../../services';
 import { ServiceError } from '../../errors/service-error';
 import { ErrorNames } from '../../constants';
 
 export const action = useApiAction(async (ctx: CustomContext) => {
-  const projectService = container.resolve(ProjectService);
-  const projectUserService = container.resolve(ProjectUserService);
+  const {
+    dependencies: {
+      services: { projectService, projectUserService },
+    },
+    params: { projectId },
+  } = ctx;
 
-  const { projectId: id } = ctx.params;
-
-  const projectUsers = await projectUserService.list(id);
+  const projectUsers = await projectUserService.list(projectId);
 
   if (projectUsers.length > 1) {
     throw new ServiceError({
@@ -23,5 +23,5 @@ export const action = useApiAction(async (ctx: CustomContext) => {
     });
   }
 
-  await projectService.delete(id);
+  await projectService.delete(projectId);
 });

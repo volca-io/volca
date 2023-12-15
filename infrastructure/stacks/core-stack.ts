@@ -36,7 +36,7 @@ export class CoreStack extends Stack {
           thumbprints: ['6938fd4d98bab03faadb97b34396831e3780aea1', '1c58a3a8518e8759bf075b76b750d4f2df264fcd'],
         });
 
-    // Creates a hosted zone for us to later add DNS records when we deploy the API and webapp
+    // Creates a hosted zone for us to later add DNS records when we deploy the API and dashboard
     this.hostedZone = new HostedZone(this, 'HostedZone', { zoneName: props.domain });
 
     new VerifySesDomain(this, 'SesDomainVerification', {

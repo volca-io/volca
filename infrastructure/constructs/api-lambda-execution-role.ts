@@ -1,6 +1,6 @@
 import { Construct } from 'constructs';
-import { Environment } from '../../config/types';
-import { Effect, ManagedPolicy, Policy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Effect, ManagedPolicy, Policy, PolicyStatement, Role, ServicePrincipal, IRole } from 'aws-cdk-lib/aws-iam';
+import { Environment } from '../../types/types';
 
 export interface ApiLambdaExecutionRoleProps {
   name: string;
@@ -11,7 +11,7 @@ export interface ApiLambdaExecutionRoleProps {
 }
 
 export class ApiLambdaExecutionRole extends Construct {
-  public roleArn: string;
+  public role: IRole;
 
   constructor(scope: Construct, id: string, props: ApiLambdaExecutionRoleProps) {
     super(scope, id);
@@ -40,6 +40,24 @@ export class ApiLambdaExecutionRole extends Construct {
             `arn:aws:logs:${props.region}:${props.account}:log-group:/aws/lambda/${props.name}-api-${props.environment}*:*:*`,
           ],
         }),
+        new PolicyStatement({
+          sid: 'VpcPermissions',
+          effect: Effect.ALLOW,
+          actions: [
+            'ec2:DescribeNetworkInterfaces',
+            'ec2:CreateNetworkInterface',
+            'ec2:DeleteNetworkInterface',
+            'ec2:DescribeInstances',
+            'ec2:AttachNetworkInterface',
+          ],
+          resources: ['*'],
+        }),
+        new PolicyStatement({
+          sid: 'SsmPermissions',
+          effect: Effect.ALLOW,
+          actions: ['ssm:GetParameter', 'ssm:GetParametersByPath'],
+          resources: [`arn:aws:ssm:${props.region}:${props.account}:parameter/${props.name}/${props.environment}/*`],
+        }),
       ],
     });
 
@@ -49,12 +67,10 @@ export class ApiLambdaExecutionRole extends Construct {
 
     lambdaExecutionRole.attachInlinePolicy(lambdaExecutionPolicy);
 
-    this.roleArn = lambdaExecutionRole.roleArn;
+    this.role = lambdaExecutionRole;
 
-    if (!props.publicDatabase) {
-      lambdaExecutionRole.addManagedPolicy(
-        ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaVPCAccessExecutionRole')
-      );
-    }
+    lambdaExecutionRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaVPCAccessExecutionRole')
+    );
   }
 }
