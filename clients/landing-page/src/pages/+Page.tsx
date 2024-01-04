@@ -33,7 +33,7 @@ const Page = () => {
             development and deployment speed.
           </Text>
           <Flex gap={4}>
-            <Link href="https://app.demo.volca.io">
+            <Link href="https://app.volca.io">
               <Button leftIcon={<MdRocket />}>Explore demo</Button>
             </Link>
             <Link href="/pricing/">

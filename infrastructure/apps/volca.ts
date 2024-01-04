@@ -35,6 +35,17 @@ if (environment) {
     crossRegionReferences: true,
   });
 
+  const landingPageStack = new LandingPageStack(app, `${name}-${environment}-landing-page-stack`, {
+    certificate: certificateStack.publicWebCertificate,
+    domain,
+    environment,
+    env: aws,
+    crossRegionReferences: true,
+  });
+
+  Tags.of(landingPageStack).add('name', name);
+  Tags.of(landingPageStack).add('environment', environment);
+
   const apiStack = new ApiStack(app, `${name}-${environment}-api-stack`, {
     domain,
     name,
@@ -44,6 +55,9 @@ if (environment) {
     cognitoCertificate: certificateStack.cognitoCertificate,
     crossRegionReferences: true,
   });
+
+  // Api stack needs the root domain from the landing page to create the Cognito login domain
+  apiStack.addDependency(landingPageStack);
 
   Tags.of(apiStack).add('name', name);
   Tags.of(apiStack).add('environment', environment);
@@ -59,12 +73,4 @@ if (environment) {
 
   Tags.of(dashboardStack).add('name', name);
   Tags.of(dashboardStack).add('environment', environment);
-
-  new LandingPageStack(app, `${name}-${environment}-landing-page-stack`, {
-    certificate: certificateStack.publicWebCertificate,
-    domain,
-    environment,
-    env: aws,
-    crossRegionReferences: true,
-  });
 }

@@ -88,7 +88,7 @@ export const Menu = () => {
           </MenuItem>
         </MenuList>
       </ChakraMenu>
-      <Button as={Link} href="https://volca.io/docs" variant="ghost">
+      <Button as={Link} href="https://docs.volca.io" variant="ghost">
         Docs
       </Button>
       <Button as={Link} href="/blog/" variant="ghost">
@@ -127,7 +127,7 @@ export const Menu = () => {
             </Flex>
 
             <Flex display={{ base: 'none', md: 'flex' }}>
-              <Link href="https://app.demo.volca.io">
+              <Link href="https://app.volca.io">
                 <Button leftIcon={<MdRocket />}>Explore demo</Button>
               </Link>
             </Flex>

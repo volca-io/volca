@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Stack, StackProps, RemovalPolicy, Duration } from 'aws-cdk-lib';
-import { Bucket, RedirectProtocol } from 'aws-cdk-lib/aws-s3';
+import { BlockPublicAccess, Bucket, ObjectOwnership, RedirectProtocol } from 'aws-cdk-lib/aws-s3';
 import {
   CloudFrontWebDistribution,
   ViewerCertificate,
@@ -61,6 +61,13 @@ export class LandingPageStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
       publicReadAccess: true,
+      blockPublicAccess: {
+        blockPublicAcls: false,
+        blockPublicPolicy: false,
+        ignorePublicAcls: false,
+        restrictPublicBuckets: false,
+      },
+      objectOwnership: ObjectOwnership.OBJECT_WRITER,
       websiteRoutingRules: redirects.map(({ from, to }) => ({
         condition: {
           keyPrefixEquals: from,

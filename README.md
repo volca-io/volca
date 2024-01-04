@@ -12,4 +12,4 @@ SaaS boilerplate with Node.js / TypeScript running on AWS.
 - **Yarn** and **Yarn Workspaces** for monorepo management
 - **CDK** for Infrastructure-as-Code
 
-Full documentation available at https://volca.io/docs/
+Full documentation available at https://docs.volca.io

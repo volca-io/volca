@@ -1018,7 +1018,7 @@ try {
             <CodeBlock language="tsx">yarn setup:aws</CodeBlock>
             <Text>
               Once the setup is complete you will have to point your domain to the name servers that got created. There
-              is more information in the <Link href="/docs/">Volca docs</Link> on how to do this. When you have pointed
+              is more information in the <Link href="https://docs.volca.io">Volca docs</Link> on how to do this. When you have pointed
               your domain to your new Volca environment, you can deploy all of the services to your environment with
               this command:
             </Text>
