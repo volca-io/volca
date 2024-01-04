@@ -72,8 +72,8 @@ const ConfigureAmplify = () => {
           userPoolWebClientId: config.awsCognitoAppClientId,
           oauth: {
             domain: config.awsCognitoLoginDomain,
-            redirectSignIn: `${window.location.protocol}//${window.location.host}`,
-            redirectSignOut: `${window.location.protocol}//${window.location.host}`,
+            redirectSignIn: `${window.location.protocol}//${window.location.host}/sign-in`,
+            redirectSignOut: `${window.location.protocol}//${window.location.host}/sign-in`,
             responseType: 'code',
           },
         },
