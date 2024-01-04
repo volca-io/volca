@@ -1,6 +1,9 @@
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ErrorBoundary } from '@sentry/react';
+import { Amplify } from 'aws-amplify';
+import * as Sentry from '@sentry/react';
 import { theme } from '@packages/theme';
 import {
   ListProjectsPage,
@@ -19,7 +22,6 @@ import {
 } from './pages';
 import { AuthProvider, AppConfigProvider, ProjectProvider, useAppConfigContext } from './providers';
 import { SubscribePage } from './pages/onboarding';
-import { ErrorBoundary } from '@sentry/react';
 import { ProfileSettingsPage } from './pages/settings/profile-settings';
 import { BillingSettingsPage } from './pages/settings/billing-settings';
 import { FilesPage } from './pages/project/files';
@@ -28,8 +30,15 @@ import { HasSubscriptionGuard } from './routing/guards/HasSubscriptionGuard';
 import { AuthenticatedLayout, ProjectLayout, SettingsLayout } from './layouts';
 import { IsAuthenticatedGuard } from './routing/guards/IsAuthenticatedGuard';
 import { HasSelectedProjectGuard } from './routing/guards/HasSelectedProjectGuard';
-import { Amplify } from 'aws-amplify';
 import { ApiError } from './hooks';
+
+
+if (import.meta.env.VITE_SENTRY_DSN) {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    environment: import.meta.env.VITE_ENVIRONMENT,
+  });
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {

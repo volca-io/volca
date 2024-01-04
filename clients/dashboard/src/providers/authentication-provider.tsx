@@ -140,12 +140,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           case 'signOut':
             setUser(null);
             break;
-          case 'customOAuthState':
+          case 'customOAuthState': {
             const customState = readCustomState(data);
             if (customState && customState.continue) {
               navigate(customState.continue);
             }
             break;
+          }
         }
       });
     }
@@ -157,7 +158,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
-    if (process.env.REACT_APP_SENTRY_DSN) {
+    if (import.meta.env.VITE_SENTRY_DSN) {
       if (user) {
         Sentry.setUser({ id: user.id, email: user.email });
       } else {
@@ -174,6 +175,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return key;
   };
 
+  const isRecord = (obj: unknown): obj is Record<string, unknown> => typeof obj === 'object';
+  const isError = (obj: unknown): obj is Error => obj instanceof Error;
+
   const readCustomState = (key: string) => {
     const customState = sessionStorage.getItem(key);
     sessionStorage.removeItem(key);
@@ -183,10 +187,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const openHostedUI = async () => {
     try {
       await Auth.federatedSignIn();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Failed to start login',
-        description: err.message,
+        description: err instanceof Error ? err.message : 'Unknown error',
         status: 'error',
       });
     }
@@ -195,8 +199,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithEmailAndPassword = async ({ email, password }: SignInProps) => {
     try {
       await Auth.signIn({ username: email, password });
-    } catch (err: any) {
-      if (err.code === 'UserNotConfirmedException') {
+    } catch (err: unknown) {
+      if (isRecord(err) && err.code === 'UserNotConfirmedException') {
         navigate(
           {
             pathname: '/sign-up/confirm',
@@ -209,9 +213,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         );
       }
+
       toast({
         title: 'Sign in failed',
-        description: err.message,
+        description: err instanceof Error ? err.message : 'Unknown error',
         status: 'error',
       });
     }
@@ -239,10 +244,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         );
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Sign up failed',
-        description: err.message,
+        description: isError(err) ? err.message : 'Unknown error',
         status: 'error',
       });
     }
@@ -267,10 +272,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           },
         }
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Failed to reset password',
-        description: err.message,
+        description: isError(err) ? err.message : 'Unknown error',
         status: 'error',
       });
     }
@@ -288,10 +293,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         pathname: '/sign-in',
         search: location.search,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Failed to reset password',
-        description: err.message,
+        description: isError(err) ? err.message : 'Unknown error',
         status: 'error',
       });
     }
@@ -304,49 +309,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const resendSignUp = async ({ email }: ResendSignUpProps) => {
     try {
       await Auth.resendSignUp(email);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Verification failed',
-        description: err.message,
+        description: isError(err) ? err.message : 'Unknown error',
         status: 'error',
       });
     }
   };
 
-  const signInWithGoogle = async (mode: 'signIn' | 'signUp') => {
+  const signInWithGoogle = async () => {
     try {
       await Auth.federatedSignIn({ provider: CognitoHostedUIIdentityProvider.Google, customState: storeCustomState() });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Sign in failed',
-        description: err.message,
+        description: isError(err) ? err.message : 'Unknown error',
         status: 'error',
       });
     }
   };
 
-  const signInWithFacebook = async (mode: 'signIn' | 'signUp') => {
+  const signInWithFacebook = async () => {
     try {
       await Auth.federatedSignIn({
         provider: CognitoHostedUIIdentityProvider.Facebook,
         customState: storeCustomState(),
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Sign in failed',
-        description: err.message,
+        description: isError(err) ? err.message : 'Unknown error',
         status: 'error',
       });
     }
   };
 
-  const signInWithApple = async (mode: 'signIn' | 'signUp') => {
+  const signInWithApple = async () => {
     try {
       await Auth.federatedSignIn({ provider: CognitoHostedUIIdentityProvider.Apple, customState: storeCustomState() });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Sign in failed',
-        description: err.message,
+        description: isError(err) ? err.message : 'Unknown error',
         status: 'error',
       });
     }
@@ -356,10 +361,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await Auth.signOut();
       queryClient.clear();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Sign out failed',
-        description: err.message,
+        description: isError(err) ? err.message : 'Unknown error',
         status: 'error',
       });
     }
@@ -387,6 +392,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuthContext = (): AuthenticationProviderProps => {
   const context = useContext(AuthContext);
 

@@ -1,6 +1,6 @@
 import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { MdChevronRight } from 'react-icons/md';
+import { MdChevronRight } from 'react-icons/md/index.js';
 
 export type FormValues = {
   name: string;

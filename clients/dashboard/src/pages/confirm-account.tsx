@@ -1,5 +1,5 @@
-import { Flex, Heading, Box, Text, Link, useToast, Card, CardBody, Spinner } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { Flex, Heading, Box, Text, Link, useToast, Card, CardBody, Spinner } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
 import { PinInputForm } from '../components/forms/PinInputForm';
 import { DefaultLayout } from '../layouts';
@@ -20,11 +20,11 @@ export const ConfirmAccountPage: React.FC = () => {
     setIsLoading(true);
     try {
       await confirmSignUp({ email, code });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsLoading(false);
       toast({
         title: 'Verification failed',
-        description: err.message,
+        description: err instanceof Error ? err.message : 'Unknown error',
         status: 'error',
       });
     }
@@ -38,10 +38,10 @@ export const ConfirmAccountPage: React.FC = () => {
         description: 'A new verification code has been sent',
         status: 'success',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: 'Failed to send verification code',
-        description: err.message,
+        description: err instanceof Error ? err.message : 'Unknown error',
         status: 'error',
       });
     } finally {

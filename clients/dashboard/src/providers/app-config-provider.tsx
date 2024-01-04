@@ -11,7 +11,7 @@ interface AppConfigProviderProps {
 
 const AppConfigContext = createContext<AppConfigProviderProps | null>(null);
 
-export const AppConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AppConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
     data: config,
     isLoading: isAppConfigLoading,
@@ -22,7 +22,7 @@ export const AppConfigProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     queryFn: () =>
       ky
         .get('metadata/app-config', {
-          prefixUrl: process.env.REACT_APP_API_URL,
+          prefixUrl: import.meta.env.VITE_API_URL,
           mode: 'cors',
         })
         .json<AppConfig>(),
@@ -47,7 +47,7 @@ export const AppConfigProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   );
 };
 
-export const useAppConfigContext = (): AppConfigProviderProps => {
+const useAppConfigContext = (): AppConfigProviderProps => {
   const context = useContext(AppConfigContext);
 
   if (!context) {
@@ -58,3 +58,6 @@ export const useAppConfigContext = (): AppConfigProviderProps => {
 
   return context;
 };
+
+// eslint-disable-next-line react-refresh/only-export-components
+export { AppConfigProvider, useAppConfigContext };

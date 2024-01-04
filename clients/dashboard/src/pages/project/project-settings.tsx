@@ -16,7 +16,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { MdDelete } from 'react-icons/md';
+import { MdDelete } from 'react-icons/md/index.js';
 import _ from 'lodash';
 
 import { Project } from '../../types';
@@ -46,7 +46,7 @@ export const ProjectSettingsPage: React.FC = () => {
     onError: () => {
       toast({ status: 'error', title: 'Failed to update project' });
     },
-    onSuccess: (data, { id }) => {
+    onSuccess: (_, { id }) => {
       toast({ status: 'success', title: 'Project saved' });
       queryClient.invalidateQueries(['projects', id]);
     },

@@ -1,7 +1,7 @@
 import { Text, Heading, Icon, Card, CardHeader, CardFooter, Badge, Flex } from '@chakra-ui/react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdAdd, MdGroup } from 'react-icons/md';
+import { MdAdd, MdGroup } from 'react-icons/md/index.js';
 
 import { Project } from '../types';
 import { useProjectContext } from '../providers';

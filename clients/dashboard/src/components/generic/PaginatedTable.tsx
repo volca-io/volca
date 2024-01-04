@@ -1,3 +1,4 @@
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -14,14 +15,13 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { ReactElement, useEffect, useRef, useState } from 'react';
-import { MdArrowBack, MdArrowForward, MdRefresh } from 'react-icons/md';
+import { MdArrowBack, MdArrowForward, MdRefresh } from 'react-icons/md/index.js';
 import _ from 'lodash';
 
 interface ColumnProps<T> {
   id: string;
   title?: string;
-  render: ({ row }: { row: T }) => any;
+  render: ({ row }: { row: T }) => React.ReactNode;
 }
 
 interface PaginatedTableProps<T> {
@@ -95,7 +95,7 @@ export const PaginatedTable = <T extends Record<string, unknown>>({
             {isLoading &&
               _.times(5, (num) => (
                 <Tr key={num}>
-                  {columns.map((val, index) => (
+                  {columns.map((_, index) => (
                     <Td key={index}>
                       <Skeleton height={5} />
                     </Td>

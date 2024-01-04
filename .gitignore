@@ -105,4 +105,4 @@ bundle
 bundle.zip
 bundle-os.zip
 bundle-customer.zip
-dist
+**/dist

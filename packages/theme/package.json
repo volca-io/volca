@@ -7,9 +7,6 @@
   "scripts": {
     "build": "tsc --build"
   },
-  "devDependencies": {
-    "typescript": "^5.1.3"
-  },
   "dependencies": {
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",

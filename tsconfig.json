@@ -1,12 +1,10 @@
 {
+  "include": ["app.config.ts", "types/types.ts"],
   "compilerOptions": {
+    "rootDir": "./",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "typeRoots": ["node_modules/@types"],
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "moduleResolution": "node",
-    "lib": ["es6"],
-    "target": "es6"
   }
 }

@@ -26,7 +26,7 @@ export const RolePicker: React.FC<RolePickerProps> = ({ user, project }) => {
   const { mutate } = useMutation({
     mutationFn: ({ projectId, userId, role }: { projectId: string; userId: string; role: string }) =>
       createApiAction(async ({ client }) => client.put(`projects/${projectId}/users/${userId}`, { json: { role } })),
-    onSuccess: (data, { userId }) => {
+    onSuccess: (_, { userId }) => {
       toast({ status: 'success', title: 'The users role has been updated' });
       queryClient.invalidateQueries(['projectUsers', userId]);
     },

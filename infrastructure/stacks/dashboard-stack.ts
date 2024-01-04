@@ -125,7 +125,7 @@ export class DashboardStack extends Stack {
     const cachedFileEndings = `.{css,js}`;
     new BucketDeployment(this, 'DeployCachedWebsite', {
       sources: [
-        Source.asset(`${this.path}/build`, {
+        Source.asset(`${this.path}/dist`, {
           exclude: ['**/*.*', '!**/*' + cachedFileEndings],
         }),
       ],
@@ -139,7 +139,7 @@ export class DashboardStack extends Stack {
     });
 
     new BucketDeployment(this, 'DeployNonCachedWebsite', {
-      sources: [Source.asset(`${this.path}/build`, { exclude: ['**/*' + cachedFileEndings] })],
+      sources: [Source.asset(`${this.path}/dist`, { exclude: ['**/*' + cachedFileEndings] })],
       destinationBucket: this.bucket,
       cacheControl: [CacheControl.noCache()],
       prune: false,

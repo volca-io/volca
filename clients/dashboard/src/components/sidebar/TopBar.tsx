@@ -14,7 +14,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { MdBusiness, MdKeyboardArrowDown, MdMenu, MdSettings } from 'react-icons/md';
+import { MdBusiness, MdKeyboardArrowDown, MdMenu, MdSettings } from 'react-icons/md/index.js';
 import { IconType } from 'react-icons';
 import { SignOutButton } from '../authentication/SignOutButton';
 import { PageHeading } from '../generic/PageHeading';

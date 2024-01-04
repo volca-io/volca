@@ -105,7 +105,7 @@ export class ApiStack extends Stack {
       domain: fullDomain,
       authenticationConfig: authentication,
       certificate: props.cognitoCertificate,
-      createRootDomainPlaceholder: true,
+      createRootDomainPlaceholder: false,
     });
 
     const s3Assets = new S3Assets(this, 'S3Assets', {

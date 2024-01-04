@@ -20,11 +20,11 @@ const run = async () => {
     await spinner('Stopping database...', () => $`docker compose down`);
 
     process.exit(res.exitCode || 0);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(chalk.red('Test suite failed'));
-    console.error(chalk.red('Error: \n') + err.stderr);
-    console.error(chalk.blue('Output: \n') + err.stdout);
-    process.exit(err.exitCode);
+    console.error(chalk.red('Error: \n') + (err instanceof ProcessOutput ? err.stderr : 'Unknown error'));
+    console.error(chalk.blue('Output: \n') + (err instanceof ProcessOutput ? err.stdout : ''));
+    process.exit(err instanceof ProcessOutput && err.exitCode ? err.exitCode : 1);
   }
 };
 

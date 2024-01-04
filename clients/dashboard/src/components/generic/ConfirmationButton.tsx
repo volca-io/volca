@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import {
   Button,
   Popover,
@@ -11,14 +12,13 @@ import {
   Portal,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ReactElement } from 'react';
 
 type ConfirmationButtonProps = {
   title: string;
   description: string;
   confirmationTitle?: string;
-  onConfirm: Function;
-  triggerElement: ReactElement<any>;
+  onConfirm: () => void;
+  triggerElement: ReactElement;
   isLoading?: boolean;
 };
 

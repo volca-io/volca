@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import ky, { NormalizedOptions } from 'ky';
-import { KyInstance } from 'ky/distribution/types/ky';
 import { Auth } from 'aws-amplify';
 import { useAppConfigContext } from '../providers';
 
@@ -10,13 +9,7 @@ type ApiErrorInterface = {
   status: number;
 };
 
-type ExecuteApiCallAction<T> = ({
-  client,
-  publicClient,
-}: {
-  client: KyInstance;
-  publicClient: KyInstance;
-}) => Promise<T>;
+type ExecuteApiCallAction<T> = ({ client, publicClient }: { client: typeof ky; publicClient: typeof ky }) => Promise<T>;
 
 export class ApiError extends Error implements ApiErrorInterface {
   public readonly name: string;
@@ -51,7 +44,7 @@ export const useApiActions = () => {
   const executeApiCall = useCallback(
     async <T>({ action }: { action: ExecuteApiCallAction<T> }): Promise<T> => {
       const publicClient = ky.create({
-        prefixUrl: process.env.REACT_APP_API_URL,
+        prefixUrl: import.meta.env.VITE_API_URL,
         credentials: 'include',
         mode: 'cors',
         retry: {
@@ -100,7 +93,7 @@ export const useApiActions = () => {
   };
 
   const isApiError = (error: Record<string, unknown>) =>
-    ['name', 'message'].every((item) => error.hasOwnProperty(item));
+    ['name', 'message'].every((item) => Object.keys(error).includes(item));
 
   return {
     createApiAction,

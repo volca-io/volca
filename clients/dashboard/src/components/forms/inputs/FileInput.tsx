@@ -1,7 +1,8 @@
+import React from 'react';
 import { Box, Flex, Link, Text } from '@chakra-ui/react';
 import { Storage } from 'aws-amplify';
 import { DragEventHandler, useRef, useState } from 'react';
-import { MdCloudUpload, MdFileCopy, MdWarning } from 'react-icons/md';
+import { MdCloudUpload, MdFileCopy, MdWarning } from 'react-icons/md/index.js';
 import { v4 as uuid } from 'uuid';
 
 type FileInputProps = {
@@ -46,7 +47,6 @@ const UploadInProgressContent = ({ progress }: { progress: number }) => (
 const UploadCompletedContent = ({
   handleClick,
   fileName,
-  onReset,
 }: {
   handleClick: () => void | undefined;
   fileName: string;
@@ -106,7 +106,7 @@ export const FileInput = ({ accept, description, level, onUpload }: FileInputPro
         const percentage = Math.round((progress.loaded / progress.total) * 100);
         setProgress(percentage);
       },
-      errorCallback: (err) => {
+      errorCallback: () => {
         setError('Failed to upload');
         setCurrentState(FileUploadState.ERROR);
       },

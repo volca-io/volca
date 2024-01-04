@@ -1,5 +1,5 @@
 {
-  "app": "yarn dlx ts-node --prefer-ts-exts infrastructure/apps/volca.ts",
+  "app": "yarn dlx tsx infrastructure/apps/volca.ts",
   "watch": {
     "include": ["**"],
     "exclude": [

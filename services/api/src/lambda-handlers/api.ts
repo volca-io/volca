@@ -4,11 +4,14 @@ import serverless from 'serverless-http';
 import { Knex } from 'knex';
 import Koa from 'koa';
 import { createServer } from '../server';
+import { loadEnvironmentVariables } from '../utils/environment';
 
 let serverRef: Koa;
 let databaseRef: Knex;
 
 export const handler = async (event: APIGatewayProxyEvent, context: Context) => {
+  await loadEnvironmentVariables();
+
   context.callbackWaitsForEmptyEventLoop = false;
 
   if (!databaseRef || serverRef) {

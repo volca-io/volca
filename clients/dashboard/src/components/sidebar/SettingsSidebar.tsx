@@ -1,4 +1,4 @@
-import { MdArrowBack, MdPerson, MdWallet } from 'react-icons/md';
+import { MdArrowBack, MdPerson, MdWallet } from 'react-icons/md/index.js';
 import { Sidebar } from './Sidebar';
 import { useProjectContext } from '../../providers';
 

@@ -1,18 +1,18 @@
 import { Logger } from '../utils/logger';
-import { initialize } from '../lib/db/knex';
+import { createServer } from '../server';
 
 export const handler = async () => {
+  const { database } = await createServer();
   const logger = new Logger();
   logger.info(`Running seeder`);
 
-  const knex = initialize();
   try {
-    const res = await knex.seed.run();
+    const res = await database.seed.run();
     logger.info(`Successfully ran seeds`, { seeds: res });
-    knex.destroy();
+    database.destroy();
   } catch (error: unknown) {
     logger.error('Failed to run seeder');
-    knex.destroy();
+    database.destroy();
     throw error;
   }
 };

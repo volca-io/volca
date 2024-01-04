@@ -14,7 +14,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import { MdDelete, MdPersonAdd } from 'react-icons/md';
+import { MdDelete, MdPersonAdd } from 'react-icons/md/index.js';
 
 import { ProjectInvitation, User } from '../../types';
 import { PaginatedTable } from '../../components/generic/PaginatedTable';
@@ -68,7 +68,7 @@ export const ProjectUsersPage: React.FC = () => {
   const { mutate: deleteUser, isLoading: deleteUserLoading } = useMutation({
     mutationFn: ({ projectId, userId }: { projectId: string; userId: string }) =>
       createApiAction(async ({ client }) => client.delete(`projects/${projectId}/users/${userId}`)),
-    onSuccess: (data, { userId }) => {
+    onSuccess: () => {
       toast({ status: 'success', title: 'The user has been deleted' });
       queryClient.invalidateQueries(['projectUsers']);
     },
@@ -145,7 +145,7 @@ export const ProjectUsersPage: React.FC = () => {
         totalRecords={data?.total || 0}
         isLoading={isLoading}
         pageSize={10}
-        onChangePage={async ({ page, size }) => {
+        onChangePage={async ({ page }) => {
           setPage(page);
         }}
         onRefresh={async () => {

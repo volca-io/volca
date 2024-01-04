@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Card, CardBody, Flex, Heading, Text, useToast } from '@chakra-ui/react';
-import { MdAddShoppingCart, MdOutlineOpenInNew } from 'react-icons/md';
+import { MdAddShoppingCart, MdOutlineOpenInNew } from 'react-icons/md/index.js';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../../providers';

@@ -18,7 +18,7 @@ import {
   Container,
 } from '@chakra-ui/react';
 import { useSearchParams } from 'react-router-dom';
-import { MdCheckCircle, MdRocketLaunch } from 'react-icons/md';
+import { MdCheckCircle, MdRocketLaunch } from 'react-icons/md/index.js';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Plan, PlanId, StripeSession, User } from '../types';
 import { useAppConfigContext, useAuthContext } from '../providers';

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S ts-node -P ../../tsconfig.json
+#!/usr/bin/env -S npx tsx
 
 import { spawnSync } from 'child_process';
 import { environments, Environment } from '../environment';

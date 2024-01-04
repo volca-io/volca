@@ -15,7 +15,7 @@ import {
   HStack,
   Tooltip,
 } from '@chakra-ui/react';
-import { MdContactSupport } from 'react-icons/md';
+import { MdContactSupport } from 'react-icons/md/index.js';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useApiActions } from '../hooks';

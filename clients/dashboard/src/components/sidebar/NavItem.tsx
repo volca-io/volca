@@ -8,7 +8,7 @@ export interface NavItemProps extends FlexProps {
   to: string;
 }
 
-export const NavItem = ({ name, icon, to, children, ...rest }: NavItemProps) => {
+export const NavItem = ({ name, icon, to, ...rest }: NavItemProps) => {
   const location = useLocation();
 
   const hoverStyle = {

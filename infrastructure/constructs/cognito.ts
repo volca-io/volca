@@ -114,11 +114,11 @@ export class Cognito extends Construct {
         },
         scopes: [OAuthScope.OPENID, OAuthScope.EMAIL, OAuthScope.PROFILE],
         callbackUrls: props.authenticationConfig.allowLocalhost
-          ? [`https://${appDomain}`, 'http://localhost:3000']
-          : [`https://${appDomain}`],
+          ? [`https://${appDomain}/sign-in`, 'http://localhost:3000/sign-in']
+          : [`https://${appDomain}/sign-in`],
         logoutUrls: props.authenticationConfig.allowLocalhost
-          ? [`https://${appDomain}`, 'http://localhost:3000']
-          : [`https://${appDomain}`],
+          ? [`https://${appDomain}/sign-in`, 'http://localhost:3000/sign-in']
+          : [`https://${appDomain}/sign-in`],
       },
       generateSecret: false,
     });

@@ -5,7 +5,7 @@ export const ToDoList = () => {
   const todos = [
     {
       title: 'Authentication',
-      description: 'Set up secure authentication with Social Sign In',
+      description: 'Set up secure authentication with social sign in',
       completed: true,
     },
     {
@@ -15,7 +15,7 @@ export const ToDoList = () => {
     },
     {
       title: 'Infrastructure',
-      description: 'Define insfrastructure and deploy the dashboard and API to AWS',
+      description: 'Configure your infrastructure and deploy your SaaS',
       completed: true,
     },
     {
@@ -25,12 +25,12 @@ export const ToDoList = () => {
     },
     {
       title: 'Landing page',
-      description: 'Create a SEO friendly landing page and deploy it.',
+      description: 'Create a lightning fast landing page and deploy it',
       completed: true,
     },
     {
-      title: 'Add features',
-      description: 'Add the features that make up your business.',
+      title: 'Build features',
+      description: 'Build the features that make your product unique',
       completed: false,
     },
   ];

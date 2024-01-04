@@ -37,6 +37,16 @@ jobs:
     with:
       environment: staging
 
+  deploy-landing-page-staging:
+    permissions:
+      id-token: write
+      contents: read
+    name: deploy landing page staging
+    needs: deploy-certificates-staging
+    uses: ./.github/workflows/deploy-landing-page.yml
+    with:
+      environment: staging
+
   ################################
   ## Deploy to production
   ################################
@@ -50,6 +60,7 @@ jobs:
     needs:
       - deploy-api-staging
       - deploy-webapp-staging
+      - deploy-landing-page-staging
     with:
       environment: production
 
@@ -70,5 +81,15 @@ jobs:
     name: deploy dashboard production
     uses: ./.github/workflows/deploy-dashboard.yml
     needs: deploy-certificates-production
+    with:
+      environment: production
+
+  deploy-landing-page-production:
+    permissions:
+      id-token: write
+      contents: read
+    name: deploy landing page production
+    needs: deploy-certificates-production
+    uses: ./.github/workflows/deploy-landing-page.yml
     with:
       environment: production

@@ -6,6 +6,7 @@ import { CoreStack } from '../stacks/core-stack';
 import { ApiStack } from '../stacks/api-stack';
 import { DashboardStack } from '../stacks/dashboard-stack';
 import { CertificateStack } from '../stacks/certificate-stack';
+import { LandingPageStack } from '../stacks/landing-page-stack';
 
 const app = new App();
 
@@ -58,4 +59,12 @@ if (environment) {
 
   Tags.of(dashboardStack).add('name', name);
   Tags.of(dashboardStack).add('environment', environment);
+
+  new LandingPageStack(app, `${name}-${environment}-landing-page-stack`, {
+    certificate: certificateStack.publicWebCertificate,
+    domain,
+    environment,
+    env: aws,
+    crossRegionReferences: true,
+  });
 }

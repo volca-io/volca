@@ -1,5 +1,5 @@
 import { Flex, Heading, Box, IconButton, Text, Divider, Link, Card, CardBody } from '@chakra-ui/react';
-import { FaApple, FaFacebook, FaGoogle } from 'react-icons/fa';
+import { FaApple, FaFacebook, FaGoogle } from 'react-icons/fa/index.js';
 import { PasswordAuthenticationForm } from '../components/forms';
 import { LinkWithQuery } from '../components/generic/LinkWithQuery';
 

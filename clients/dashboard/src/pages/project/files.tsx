@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { Storage } from 'aws-amplify';
-import { MdCloudDownload, MdOpenInNew } from 'react-icons/md';
+import { MdCloudDownload, MdOpenInNew } from 'react-icons/md/index.js';
 
 import { FileUploadForm } from '../../components/forms/FileUploadForm';
 import { useAuthContext } from '../../providers';

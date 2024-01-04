@@ -78,6 +78,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useProjectContext = (): ProjectProviderProps => {
   const context = useContext(ProjectContext);
 

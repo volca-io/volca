@@ -15,6 +15,7 @@ interface CertificateStackProps extends StackProps {
 export class CertificateStack extends Stack {
   public cognitoCertificate: Certificate;
   public dashboardCertificate: Certificate;
+  public publicWebCertificate: Certificate;
 
   constructor(scope: Construct, id: string, props: CertificateStackProps) {
     super(scope, id, props);
@@ -42,6 +43,12 @@ export class CertificateStack extends Stack {
     this.dashboardCertificate = new Certificate(this, 'DashboardCertificate', {
       domainName: dashboardDomainName,
       subjectAlternativeNames: [`www.${dashboardDomainName}`],
+      validation: CertificateValidation.fromDns(hostedZone),
+    });
+
+    this.publicWebCertificate = new Certificate(this, 'PublicWebCertificate', {
+      domainName: fullDomain,
+      subjectAlternativeNames: [`www.${fullDomain}`],
       validation: CertificateValidation.fromDns(hostedZone),
     });
   }

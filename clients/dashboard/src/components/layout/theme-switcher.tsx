@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useColorMode, useColorModeValue, IconButton, IconButtonProps } from '@chakra-ui/react';
-import { MdDarkMode, MdBrightness7 } from 'react-icons/md';
+import { MdDarkMode, MdBrightness7 } from 'react-icons/md/index.js';
 
 type ThemeSwitcherProps = Omit<IconButtonProps, 'aria-label'>;
 

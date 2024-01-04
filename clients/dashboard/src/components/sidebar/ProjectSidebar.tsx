@@ -1,4 +1,4 @@
-import { MdFileUpload, MdHomeFilled, MdGroups3, MdSettings } from 'react-icons/md';
+import { MdFileUpload, MdHomeFilled, MdGroups3, MdSettings } from 'react-icons/md/index.js';
 import { Sidebar } from './Sidebar';
 import { useProjectContext } from '../../providers';
 

@@ -12,6 +12,9 @@ const coreConfig: Omit<Config, 'environments'> = {
     account: '012345678901',
     region: 'us-east-1',
   },
+  crisp: {
+    websiteId: 'crisp-website-id',
+  },
 };
 
 const environments: Environments = {

@@ -1,6 +1,6 @@
 import { Flex, Heading, Box, IconButton, Text, Divider, Link, Card, CardBody } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { FaApple, FaFacebook, FaGoogle } from 'react-icons/fa';
+import { FaApple, FaFacebook, FaGoogle } from 'react-icons/fa/index.js';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { SignUpForm } from '../components/forms';
 import { DefaultLayout } from '../layouts';

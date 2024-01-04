@@ -117,6 +117,10 @@ type GithubConfig = {
   repository: string;
 };
 
+type CrispConfig = {
+  websiteId: string;
+};
+
 export enum Environment {
   LOCAL = 'local',
   STAGING = 'staging',
@@ -130,6 +134,7 @@ export type Environments = {
 export type Config = {
   name: string;
   github: GithubConfig;
+  crisp?: CrispConfig;
   aws: AwsConfig;
   domain: string;
   fromEmail: string;

@@ -75,7 +75,7 @@ export const DashboardPage: React.FC = () => {
         </GridItem>
         <GridItem colSpan={2}>
           <Card direction="row" overflow="hidden" minHeight="220px">
-            <Flex width="100%" backgroundImage="/volcano.jpg" backgroundSize="cover" backgroundPosition="center">
+            <Flex width="100%" backgroundImage="/volcano.webp" backgroundSize="cover" backgroundPosition="center">
               <Flex flexGrow={1} bgGradient="linear-gradient(270deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%)">
                 <CardBody color="white">
                   <Flex gap={4} flexDirection="column">

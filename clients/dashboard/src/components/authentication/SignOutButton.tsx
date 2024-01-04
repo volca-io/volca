@@ -1,7 +1,7 @@
 import { MenuItem } from '@chakra-ui/react';
 import React from 'react';
 import { useAuthContext } from '../../providers';
-import { MdLogout } from 'react-icons/md';
+import { MdLogout } from 'react-icons/md/index.js';
 
 interface SignOutButtonProps {
   children: React.ReactNode;
