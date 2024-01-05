@@ -121,6 +121,10 @@ type CrispConfig = {
   websiteId: string;
 };
 
+type GoogleAnalyticsConfig = {
+  measurementId: string;
+};
+
 export enum Environment {
   LOCAL = 'local',
   STAGING = 'staging',
@@ -135,6 +139,7 @@ export type Config = {
   name: string;
   github: GithubConfig;
   crisp?: CrispConfig;
+  googleAnalytics?: GoogleAnalyticsConfig;
   aws: AwsConfig;
   domain: string;
   fromEmail: string;

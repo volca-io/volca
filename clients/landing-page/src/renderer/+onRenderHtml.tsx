@@ -14,9 +14,22 @@ const render: OnRenderHtmlAsync = async (pageContext: PageContextServer) => {
     ? `<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="${config.crisp.websiteId}";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>`
     : '';
 
+  const analyticsTag = config.googleAnalytics
+    ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${config.googleAnalytics.measurementId}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', '${config.googleAnalytics.measurementId}');
+  </script>`
+    : '';
+
   const documentHtml = escapeInject`<!DOCTYPE html>
     <html lang="en">
       <head>
+      ${dangerouslySkipEscape(analyticsTag)}
+
         <meta charset="UTF-8" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
         

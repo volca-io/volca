@@ -12,8 +12,13 @@ const coreConfig: Omit<Config, 'environments'> = {
     account: '012345678901',
     region: 'us-east-1',
   },
+  // Add your website id from crisp.chat to enable the chat widget on your landing page and app
   crisp: {
     websiteId: 'crisp-website-id',
+  },
+  // Add your measurement id from google analytics to collect analytics data from your landing page
+  googleAnalytics: {
+    measurementId: 'measurement-id',
   },
 };
 
