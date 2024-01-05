@@ -5,7 +5,7 @@ import { SectionHeader } from '../SectionHeader';
 const pricingOptions = [
   {
     title: 'Solo',
-    price: '$99',
+    price: '$199',
     usps: [
       'Landing Page',
       'Dashboard',
@@ -15,7 +15,7 @@ const pricingOptions = [
         License for <Link href="/terms/">one project</Link>
       </>,
     ],
-    link: 'https://buy.stripe.com/28oaHQ0r86okfRu4gi',
+    link: 'https://buy.stripe.com/7sI17g0r81408p25ko',
     cta: 'Buy',
     icon: <MdCloudDownload />,
   },
