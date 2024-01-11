@@ -1,5 +1,5 @@
 {
-  "app": "yarn dlx tsx --tsconfig infrastructure/tsconfig.json infrastructure/apps/volca.ts",
+  "app": "yarn dlx tsx infrastructure/apps/volca.ts",
   "watch": {
     "include": ["**"],
     "exclude": [
