@@ -1,4 +1,4 @@
-import { Knex, knex } from 'knex';
+import knex from 'knex';
 import { Model, knexSnakeCaseMappers } from 'objection';
 import { EnvironmentVariables } from '../../utils/environment';
 import { Logger } from '../../utils/logger';
@@ -9,7 +9,7 @@ export const initialize = () => {
   const logger = new Logger();
   logger.debug('Creating new knex client');
 
-  const config: Knex.Config = {
+  const config: knex.Knex.Config = {
     client: 'pg',
     useNullAsDefault: true,
     connection: {

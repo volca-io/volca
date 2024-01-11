@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Stack, StackProps, RemovalPolicy, Duration } from 'aws-cdk-lib';
-import { BlockPublicAccess, Bucket, ObjectOwnership, RedirectProtocol } from 'aws-cdk-lib/aws-s3';
+import { Bucket, ObjectOwnership, RedirectProtocol } from 'aws-cdk-lib/aws-s3';
 import {
   CloudFrontWebDistribution,
   ViewerCertificate,
@@ -15,7 +15,11 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { BucketDeployment, CacheControl, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { execSync } from 'child_process';
 import { Environment } from '../../types/types';
-import { config } from '../../app.config';
+import { config } from '@project/config';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 interface LandingPageStackProps extends StackProps {
   domain: string;

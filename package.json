@@ -11,7 +11,6 @@
   "scripts": {
     "setup:aws": "./scripts/setup-aws.ts",
     "start": "yarn workspaces foreach --exclude @volca/root -vpi run start:dev",
-    "build:packages": "yarn workspaces foreach --include '@packages/*' -vpi run build",
     "check:lint": "yarn workspaces foreach --exclude @volca/root -vpi run check:lint",
     "check:types": "yarn workspaces foreach --exclude @volca/root -vpi run check:types",
     "test": "yarn workspaces foreach --exclude @volca/root -vpi run test",
@@ -53,5 +52,5 @@
     "aws-cdk": "^2.102.0",
     "aws-cdk-lib": "^2.102.0"
   },
-  "version": "2.9.0"
+  "version": "2.10.0"
 }

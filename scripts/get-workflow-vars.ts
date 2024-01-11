@@ -1,7 +1,7 @@
 #!/usr/bin/env -S npx tsx
 import { program } from 'commander';
 import { Environment } from '../types/types';
-import { config } from '../app.config';
+import { config } from '@project/config';
 
 program.requiredOption('-e, --environment <environment>');
 program.parse();

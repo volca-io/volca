@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@sentry/react';
 import { Amplify } from 'aws-amplify';
 import * as Sentry from '@sentry/react';
-import { theme } from '@packages/theme';
+import { theme } from '@project/theme';
 import {
   ListProjectsPage,
   AcceptAppInvitationPage,

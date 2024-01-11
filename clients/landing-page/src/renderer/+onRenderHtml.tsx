@@ -1,7 +1,7 @@
 import { escapeInject, dangerouslySkipEscape } from 'vike/server';
 import { OnRenderHtmlAsync } from 'vike/types';
 import type { PageContextServer } from '../types/PageContext';
-import { config } from '../../../../app.config';
+import { config } from '@project/config';
 import { getDescription, getTitle, renderWithPageShell } from './utils';
 
 const render: OnRenderHtmlAsync = async (pageContext: PageContextServer) => {

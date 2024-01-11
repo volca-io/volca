@@ -1,6 +1,6 @@
 import { Box, ChakraProvider, ColorModeScript, Container, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
-import { theme } from '@packages/theme';
+import { theme } from '@project/theme';
 import { Footer } from '../components/Footer.js';
 import { Menu } from '../components/Menu.js';
 import { PageContext } from '../types/PageContext.js';

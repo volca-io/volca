@@ -4,7 +4,6 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@packages/theme": "workspace:packages/theme",
     "apexcharts": "^3.44.2",
     "aws-amplify": "^5.2.5",
     "date-fns": "^2.30.0",
@@ -37,7 +36,8 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "vite-tsconfig-paths": "^4.2.3"
   },
   "scripts": {
     "start:dev": "./scripts/exec-with-env.ts local vite",

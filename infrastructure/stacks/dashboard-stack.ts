@@ -13,9 +13,13 @@ import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { execSync } from 'child_process';
 import * as path from 'path';
-import { config } from '../../app.config';
+import { config } from '@project/config';
 import { Environment } from '../../types/types';
 import { BucketDeployment, CacheControl, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 interface DashboardStackProps extends StackProps {
   domain: string;

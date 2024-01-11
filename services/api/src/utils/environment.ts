@@ -3,7 +3,7 @@ import { SSMClient, GetParametersByPathCommand } from '@aws-sdk/client-ssm';
 import { ServiceError } from '../errors/service-error';
 import { ErrorNames } from '../constants';
 import { Environments } from '../../../../types/types';
-import { config } from '../../../../app.config';
+import { config } from '@project/config';
 import { EnvironmentVariable } from '../types/environment-variables';
 export { config };
 

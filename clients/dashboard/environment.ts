@@ -1,4 +1,4 @@
-import { config } from '../../app.config';
+import { config } from '@project/config';
 
 export enum Environment {
   LOCAL = 'local',

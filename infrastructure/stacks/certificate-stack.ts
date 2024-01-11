@@ -3,7 +3,7 @@ import { HostedZone } from 'aws-cdk-lib/aws-route53';
 
 import { Construct } from 'constructs';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
-import { config } from '../../app.config';
+import { config } from '@project/config';
 import { Environment } from '../../types/types';
 
 interface CertificateStackProps extends StackProps {

@@ -1,25 +1,6 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "removeComments": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "inlineSources": true,
-    "typeRoots": ["node_modules/@types"],
-    "skipLibCheck": true,
-    "baseUrl": "./",
-    "preserveConstEnums": true,
-    "strictNullChecks": true,
-    "sourceMap": true,
-    "allowJs": true,
-    "outDir": "dist",
-    "moduleResolution": "node",
-    "module": "CommonJS",
-    "lib": ["es6"],
-    "target": "es6",
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "allowSyntheticDefaultImports": true
   }
 }

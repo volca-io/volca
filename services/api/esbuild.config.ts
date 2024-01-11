@@ -1,11 +1,15 @@
 import esbuild from 'esbuild';
-import path from 'path';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const config: esbuild.BuildOptions = {
   logLevel: 'info',
   bundle: true,
+  minify: false,
   platform: 'node',
-  format: 'cjs',
+  format: 'esm',
   outfile: path.resolve(__dirname, './dist/server.js'),
   sourcemap: true,
   target: 'node18.6',

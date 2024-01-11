@@ -1,7 +1,6 @@
-#!/usr/bin/env node
 import { App, Tags } from 'aws-cdk-lib';
+import { config } from '@project/config';
 import { Environment } from '../../types/types';
-import { config } from '../../app.config';
 import { CoreStack } from '../stacks/core-stack';
 import { ApiStack } from '../stacks/api-stack';
 import { DashboardStack } from '../stacks/dashboard-stack';

@@ -4,7 +4,7 @@ import { Construct } from 'constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import * as path from 'path';
-import { config } from '../../app.config';
+import { config } from '@project/config';
 import { ApiGateway, ApiLambdaExecutionRole, Database, SsmVariableGroup } from '../constructs';
 import { Environment } from '../../types/types';
 import { Cognito } from '../constructs/cognito';
@@ -13,6 +13,10 @@ import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-node
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
 import { InvocationType, Trigger } from 'aws-cdk-lib/triggers';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 interface ApiStackProps extends StackProps {
   domain: string;

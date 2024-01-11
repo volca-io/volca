@@ -2,8 +2,7 @@
   "name": "@packages/theme",
   "version": "0.0.0",
   "private": true,
-  "main": "dist/index.js",
-  "types": "dist/index.d.js",
+  "type": "module",
   "scripts": {
     "build": "tsc --build"
   },

@@ -2,7 +2,7 @@
 import { SSMClient, PutParameterCommand, GetParametersByPathCommand } from '@aws-sdk/client-ssm';
 import * as crypto from 'crypto';
 import 'zx/globals';
-import { config } from '../app.config';
+import { config } from '@project/config';
 
 const rawParameters = [
   { name: 'DB_PASSWORD', value: crypto.randomBytes(32).toString('hex') },

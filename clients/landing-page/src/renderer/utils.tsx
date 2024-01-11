@@ -3,7 +3,7 @@ import { PageContext, PageContextServer } from '../types/PageContext';
 import React from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { PageShell } from './PageShell';
-import { theme } from '@packages/theme/dist';
+import { theme } from '@project/theme';
 
 export { getTitle, getDescription, renderWithPageShell, renderNodeToString };
 

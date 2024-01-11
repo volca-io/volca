@@ -1,6 +1,7 @@
 {
   "name": "@volca/api",
   "private": true,
+  "type": "module",
   "packageManager": "yarn@3.2.0",
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.23.3",
@@ -42,7 +43,7 @@
     "migrate:up:production": "aws lambda invoke --function-name volca-production-migration-handler --cli-binary-format raw-in-base64-out --payload '{ \"type\": \"up\" }' /dev/stdout",
     "migrate:down:production": "aws lambda invoke --function-name volca-production-migration-handler --cli-binary-format raw-in-base64-out --payload '{ \"type\": \"down\" }' /dev/stdout",
     "migrate:latest:production": "aws lambda invoke --function-name volca-production-migration-handler --cli-binary-format raw-in-base64-out --payload '{ \"type\": \"latest\" }' /dev/stdout",
-    "start:dev": "yarn dependencies:start && yarn watch & nodemon",
+    "start:dev": "yarn dependencies:start && yarn build && yarn watch & nodemon",
     "test": "dotenv -e ./.env.test ./scripts/run-tests.ts",
     "test:unit": "jest --testRegex '.*.unit.test.ts'"
   },

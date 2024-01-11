@@ -2,7 +2,7 @@ import { VerifySesDomain } from '@seeebiii/ses-verify-identities';
 import { CfnOutput, Fn, Stack, StackProps } from 'aws-cdk-lib';
 import { IOpenIdConnectProvider, OpenIdConnectProvider, Role, WebIdentityPrincipal } from 'aws-cdk-lib/aws-iam';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
-import { config } from '../../app.config';
+import { config } from '@project/config';
 
 import { Construct } from 'constructs';
 import { DeploymentPolicy } from '../constructs';
