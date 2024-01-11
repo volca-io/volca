@@ -1,7 +1,7 @@
-#!/usr/bin/env -S npx tsx
+#!/usr/bin/env -S yarn dlx tsx
 import { program } from 'commander';
-import { Environment } from '../types/types';
 import { config } from '@project/config';
+import { Environment } from '../types/types';
 
 program.requiredOption('-e, --environment <environment>');
 program.parse();
