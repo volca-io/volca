@@ -1,27 +1,30 @@
 import { Server } from 'http';
-import { Knex } from 'knex';
-import supertest, { SuperTest, Test } from 'supertest';
+import supertest from 'supertest';
 import { createServer } from '../server';
+import { initialize } from '../lib/db/knex';
+import { Knex } from 'knex';
 
-export function setupServer() {
-  let databaseRef: Knex;
+export function useServer() {
   let serverRef: Server;
-  let request: SuperTest<Test>;
+  let databseRef: Knex;
 
   beforeAll(async () => {
-    const { server, database } = await createServer();
-    serverRef = server.listen();
-    databaseRef = database;
-    request = supertest(serverRef);
-  });
-
-  afterAll((done) => {
-    databaseRef.destroy().then(() => {
-      serverRef.close(() => {
-        done();
-      });
+    databseRef = initialize({
+      host: globalThis.__CONTAINER__.getHost(),
+      port: globalThis.__CONTAINER__.getPort(),
+      database: globalThis.__CONTAINER__.getDatabase(),
+      user: globalThis.__CONTAINER__.getUsername(),
+      password: globalThis.__CONTAINER__.getPassword(),
+      ssl: false,
     });
+
+    const { server } = await createServer();
+    serverRef = server.listen();
   });
 
-  return () => request;
+  afterAll(() => {
+    return Promise.all([databseRef.destroy(), serverRef.close()]);
+  });
+
+  return () => supertest(serverRef);
 }

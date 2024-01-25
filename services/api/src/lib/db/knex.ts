@@ -5,7 +5,16 @@ import { Logger } from '../../utils/logger';
 import { MigrationSource } from './migration-source';
 import { SeedSource } from './seed-source';
 
-export const initialize = () => {
+type DatabaseConnectionParams = {
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  database: string;
+  ssl: boolean;
+};
+
+export const initialize = (connection?: DatabaseConnectionParams) => {
   const logger = new Logger();
   logger.debug('Creating new knex client');
 
@@ -13,13 +22,13 @@ export const initialize = () => {
     client: 'pg',
     useNullAsDefault: true,
     connection: {
-      host: EnvironmentVariables.DB_HOST,
-      port: parseInt(EnvironmentVariables.DB_PORT, 10),
-      user: EnvironmentVariables.DB_USERNAME,
-      password: EnvironmentVariables.DB_PASSWORD,
-      database: 'postgres',
+      host: connection?.host ?? EnvironmentVariables.DB_HOST,
+      port: connection?.port ?? parseInt(EnvironmentVariables.DB_PORT, 10),
+      user: connection?.user ?? EnvironmentVariables.DB_USERNAME,
+      password: connection?.password ?? EnvironmentVariables.DB_PASSWORD,
+      database: connection?.database ?? 'postgres',
       pool: { min: 1, max: 1, idleTimeoutMillis: 1000 },
-      ssl: EnvironmentVariables.ENVIRONMENT !== 'local',
+      ssl: connection?.ssl ?? EnvironmentVariables.ENVIRONMENT !== 'local',
     },
     migrations: {
       migrationSource: new MigrationSource(),

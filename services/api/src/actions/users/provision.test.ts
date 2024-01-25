@@ -1,8 +1,8 @@
-import { setupServer } from '../../test-utils';
+import { useServer } from '../../test-utils';
 import { generateJwtToken } from '../../test-utils/authentication';
 
 describe('/provision', () => {
-  const getRequest = setupServer();
+  const getRequest = useServer();
 
   it('can provision a new user', async () => {
     const response = await getRequest()

@@ -15,17 +15,5 @@ services:
       - '5432:5432'
     profiles:
       - dev
-  test-database:
-    container_name: volca-api-test-database
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: volca-test
-    restart: always
-    image: postgres:15.3
-    ports:
-      - '5432:5432'
-    profiles:
-      - integration-test
 volumes:
   database:

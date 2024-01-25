@@ -1,9 +1,9 @@
-import { setupServer } from '../../test-utils';
+import { useServer } from '../../test-utils';
 import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne, userTwo } from '../../test-utils/fixtures';
 
 describe('GET /projects/:id/invitations/:id', () => {
-  const getRequest = setupServer();
+  const getRequest = useServer();
   let invitation: Record<string, unknown>;
   let project: Record<string, unknown>;
 
