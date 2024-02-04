@@ -18,7 +18,7 @@ import {
 import { MdContactSupport } from 'react-icons/md/index.js';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { useApiActions } from '../hooks';
+import { useApiClient } from '../hooks';
 
 type FormValues = {
   message: string;
@@ -28,17 +28,14 @@ type SupportButtonProps = Omit<IconButtonProps, 'aria-label'>;
 
 export const SupportButton: React.FC<SupportButtonProps> = (props) => {
   const { register, handleSubmit } = useForm<FormValues>();
-  const { createApiAction } = useApiActions();
+  const { client } = useApiClient();
   const toast = useToast();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
 
   const { mutate } = useMutation({
-    mutationFn: ({ message }: { message: string }) =>
-      createApiAction(async ({ client }) => {
-        await client.post('communications/support', { json: { message } });
-      }),
+    mutationFn: ({ message }: { message: string }) => client.post('communications/support', { json: { message } }),
     onSuccess: () => {
       toast({ status: 'success', title: 'Your message has been sent!' });
       onClose();

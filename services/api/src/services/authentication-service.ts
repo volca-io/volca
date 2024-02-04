@@ -7,25 +7,6 @@ import { ErrorNames } from '../constants';
 import { CognitoAccessTokenPayload, CognitoIdTokenPayload } from 'aws-jwt-verify/jwt-model';
 import { CognitoIdentityClient, GetIdCommand } from '@aws-sdk/client-cognito-identity';
 
-export type AccessTokenCookieSettings = {
-  secure: boolean;
-  httpOnly: boolean;
-  sameSite: 'lax';
-  expires: Date;
-  domain?: string;
-};
-
-export type AccessTokenResponse = {
-  accessToken: string;
-  expiresIn: number;
-};
-
-export type SessionResponse = {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-};
-
 export class AuthenticationService {
   private getVerifier(tokenUse: 'access' | 'id') {
     if (EnvironmentConfig.authentication.mockUser) {

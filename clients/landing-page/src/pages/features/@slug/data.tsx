@@ -215,8 +215,8 @@ export const features: FeaturePage[] = [
           <Flex gap={12} direction="column">
             <Text>
               To secure your API, you need an authentication mechanism to ensure that the users calling your API is who
-              they claim to be. This is usually done by providing some sort of proof in each request made to the API. For
-              example a token that is obtained when signing in.
+              they claim to be. This is usually done by providing some sort of proof in each request made to the API.
+              For example a token that is obtained when signing in.
             </Text>
             <Text>
               The Volca API comes with security built in by providing an authentication middleware that can be used in
@@ -277,12 +277,11 @@ export const MyComponent = () => {
 
             <CodeBlock language="tsx">
               {`
-const { createApiAction } = useApiActions();
+const { client } = useApiClient();
       
-createApiAction(async ({ client, publicClient }) => {
-  const { project } = await client.post('projects', { json: body }).json<{ project: Project }>();
-  return project;
-})`}
+const { project } = await client.post('projects', { json: body }).json<{ project: Project }>();
+return project;
+`}
             </CodeBlock>
           </Flex>
         ),
@@ -447,17 +446,15 @@ createApiAction(async ({ client, publicClient }) => {
             <CodeBlock language="tsx">
               {`export const TodosPage: React.FC = () => {
   const { selectedProject } = useProjectContext();
-  const { createApiAction } = useApiActions();
+  const { client } = useApiClient();
 
   const { data, isLoading } = useQuery({
     queryKey: ['todos'],
     queryFn: () =>
-      createApiAction<{ todos: Todo[] }>(async ({ client }) => {
-        return client
+      client
           .get(\`projects/\${selectedProject?.id}/todos\`})
           .json<{ todos: Todo[] }>();
-      }
-  });`}
+      });`}
             </CodeBlock>
           </Flex>
         ),
@@ -1018,9 +1015,9 @@ try {
             <CodeBlock language="tsx">yarn setup:aws</CodeBlock>
             <Text>
               Once the setup is complete you will have to point your domain to the name servers that got created. There
-              is more information in the <Link href="https://docs.volca.io">Volca docs</Link> on how to do this. When you have pointed
-              your domain to your new Volca environment, you can deploy all of the services to your environment with
-              this command:
+              is more information in the <Link href="https://docs.volca.io">Volca docs</Link> on how to do this. When
+              you have pointed your domain to your new Volca environment, you can deploy all of the services to your
+              environment with this command:
             </Text>
             <CodeBlock language="tsx">yarn cdk deploy -c environment=production --all</CodeBlock>
             <Text>

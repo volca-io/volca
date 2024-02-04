@@ -24,7 +24,7 @@ import { ConfirmationButton } from '../../components/generic/ConfirmationButton'
 import { Entity, Operation, usePrivileges } from '../../hooks/roles';
 import { PrivilegeContainer } from '../../components/generic/PrivilegeContainer';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useApiActions } from '../../hooks/api-actions';
+import { useApiClient } from '../../hooks/api-actions';
 import { useProjectContext } from '../../providers';
 
 type FormValues = {
@@ -33,28 +33,25 @@ type FormValues = {
 
 export const ProjectSettingsPage: React.FC = () => {
   const { selectedProject } = useProjectContext();
-  const { createApiAction } = useApiActions();
+  const { client } = useApiClient();
   const toast = useToast();
   const privileges = usePrivileges();
   const queryClient = useQueryClient();
 
   const { mutate: updateProject, isLoading: updateLoading } = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Project> }) =>
-      createApiAction(async ({ client }) =>
-        client.put(`projects/${id}`, { json: { ...data } }).json<{ project: Project }>()
-      ),
+      client.put(`projects/${id}`, { json: { ...data } }).json<{ project: Project }>(),
     onError: () => {
       toast({ status: 'error', title: 'Failed to update project' });
     },
     onSuccess: (_, { id }) => {
       toast({ status: 'success', title: 'Project saved' });
-      queryClient.invalidateQueries(['projects', id]);
+      queryClient.refetchQueries(['projects', id]);
     },
   });
 
   const { mutate: deleteProject, isLoading: deleteLoading } = useMutation({
-    mutationFn: ({ id }: { id: string }) =>
-      createApiAction(async ({ client }) => client.delete(`projects/${id}`).json<{ project: Project }>()),
+    mutationFn: ({ id }: { id: string }) => client.delete(`projects/${id}`).json<{ project: Project }>(),
     onError: () => {
       toast({ status: 'error', title: 'Failed to delete project' });
     },
@@ -123,7 +120,7 @@ export const ProjectSettingsPage: React.FC = () => {
                   <Heading as="h3" size="sm" mb={2}>
                     Delete project
                   </Heading>
-                  <Text>Once you delete a proeject, there is no going back. Please be certain.</Text>
+                  <Text>Once you delete a project, there is no going back. Please be certain.</Text>
                 </Box>
 
                 <ConfirmationButton

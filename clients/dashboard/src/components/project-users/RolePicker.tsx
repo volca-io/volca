@@ -4,7 +4,7 @@ import { usePrivileges } from '../../hooks/roles';
 import { useAuthContext } from '../../providers';
 import { Project, User } from '../../types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useApiActions } from '../../hooks/api-actions';
+import { useApiClient } from '../../hooks/api-actions';
 
 type FormValues = {
   role: string;
@@ -19,13 +19,13 @@ export const RolePicker: React.FC<RolePickerProps> = ({ user, project }) => {
   const privileges = usePrivileges();
   const { register, handleSubmit } = useForm<FormValues>();
   const { user: currentUser } = useAuthContext();
-  const { createApiAction } = useApiActions();
+  const { client } = useApiClient();
   const queryClient = useQueryClient();
   const toast = useToast();
 
   const { mutate } = useMutation({
     mutationFn: ({ projectId, userId, role }: { projectId: string; userId: string; role: string }) =>
-      createApiAction(async ({ client }) => client.put(`projects/${projectId}/users/${userId}`, { json: { role } })),
+      client.put(`projects/${projectId}/users/${userId}`, { json: { role } }),
     onSuccess: (_, { userId }) => {
       toast({ status: 'success', title: 'The users role has been updated' });
       queryClient.invalidateQueries(['projectUsers', userId]);

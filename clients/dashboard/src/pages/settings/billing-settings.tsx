@@ -4,7 +4,7 @@ import { MdAddShoppingCart, MdOutlineOpenInNew } from 'react-icons/md/index.js';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../../providers';
-import { useApiActions } from '../../hooks';
+import { useApiClient } from '../../hooks';
 import { useMutation } from '@tanstack/react-query';
 
 type CreateStripeSessionResponse = {
@@ -15,14 +15,11 @@ type CreateStripeSessionResponse = {
 export const BillingSettingsPage: React.FC = () => {
   const { user } = useAuthContext();
   const navigate = useNavigate();
-  const { createApiAction } = useApiActions();
+  const { client } = useApiClient();
   const toast = useToast();
 
   const { mutate } = useMutation({
-    mutationFn: () =>
-      createApiAction(({ client }) =>
-        client.post('stripe/billing-portal-sessions').json<CreateStripeSessionResponse>()
-      ),
+    mutationFn: () => client.post('stripe/billing-portal-sessions').json<CreateStripeSessionResponse>(),
     onSuccess: (data) => {
       window.open(data?.stripeBillingPortalSession.url, '_blank');
     },

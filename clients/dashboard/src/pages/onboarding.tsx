@@ -22,7 +22,7 @@ import { MdCheckCircle, MdRocketLaunch } from 'react-icons/md/index.js';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Plan, PlanId, StripeSession, User } from '../types';
 import { useAppConfigContext, useAuthContext } from '../providers';
-import { useApiActions } from '../hooks';
+import { useApiClient } from '../hooks';
 import { LoadingPage } from './loading';
 
 type PlanDescriptionMap = {
@@ -128,23 +128,20 @@ export const SubscribePage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuthContext();
   const { config } = useAppConfigContext();
-  const { createApiAction } = useApiActions();
+  const { client } = useApiClient();
   const toast = useToast();
 
   const { data, isLoading } = useQuery({
     queryKey: ['plans'],
-    queryFn: () =>
-      createApiAction<Plan[]>(async ({ client }) => {
-        const { plans } = await client.get('stripe/plans').json<{ plans: Plan[] }>();
-        return plans;
-      }),
+    queryFn: async () => {
+      const { plans } = await client.get('stripe/plans').json<{ plans: Plan[] }>();
+      return plans;
+    },
   });
 
   const { mutate, isLoading: isCreateSessionLoading } = useMutation({
     mutationFn: ({ planId }: { planId: string }) =>
-      createApiAction(({ client }) =>
-        client.post('stripe/sessions', { json: { planId } }).json<CreateStripeSessionResponse>()
-      ),
+      client.post('stripe/sessions', { json: { planId } }).json<CreateStripeSessionResponse>(),
     onError: () => {
       toast({
         status: 'error',

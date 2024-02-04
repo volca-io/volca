@@ -4,7 +4,6 @@ import {
   cardAnatomy as cardParts,
   modalAnatomy as modalParts,
   menuAnatomy as menuParts,
-  drawerAnatomy as drawerParts,
   tabsAnatomy as tabParts,
 } from '@chakra-ui/anatomy';
 import { mode } from '@chakra-ui/theme-tools';
@@ -13,7 +12,6 @@ const tableHelpers = createMultiStyleConfigHelpers(tableParts.keys);
 const cardHelpers = createMultiStyleConfigHelpers(cardParts.keys);
 const modalHelpers = createMultiStyleConfigHelpers(modalParts.keys);
 const menuHelpers = createMultiStyleConfigHelpers(menuParts.keys);
-const drawerHelpers = createMultiStyleConfigHelpers(drawerParts.keys);
 const tabHelpers = createMultiStyleConfigHelpers(tabParts.keys);
 
 const Button = defineStyleConfig({
@@ -105,14 +103,6 @@ const Menu = menuHelpers.defineMultiStyleConfig({
   }),
 });
 
-const Drawer = drawerHelpers.defineMultiStyleConfig({
-  baseStyle: {
-    dialog: {
-      bg: 'gray.950',
-    },
-  },
-});
-
 const Tabs = tabHelpers.defineMultiStyleConfig({
   defaultProps: {
     variant: 'soft-rounded',
@@ -164,7 +154,6 @@ export const globalStyles = {
     Card,
     Modal,
     Menu,
-    Drawer,
     Badge,
     Tabs,
   },

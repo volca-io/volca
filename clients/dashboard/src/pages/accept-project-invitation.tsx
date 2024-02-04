@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LoadingPage } from './loading';
-import { useApiActions } from '../hooks/api-actions';
+import { useApiClient } from '../hooks/api-actions';
 import { ErrorPage } from './error-page';
 import { useToast } from '@chakra-ui/react';
 
@@ -11,14 +11,11 @@ export const AcceptAppInvitationPage: React.FC = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
-  const { createApiAction } = useApiActions();
+  const { client } = useApiClient();
   const queryClient = useQueryClient();
 
   const { mutate: acceptInvite, error } = useMutation({
-    mutationFn: ({ id }: { id: string }) =>
-      createApiAction(async ({ client }) => {
-        await client.get(`invitations/${id}`).json();
-      }),
+    mutationFn: ({ id }: { id: string }) => client.get(`invitations/${id}`).json(),
     onError: () => {
       toast({ status: 'error', title: 'Something went wrong, make sure your invitation is still valid' });
     },
@@ -31,7 +28,6 @@ export const AcceptAppInvitationPage: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    console.log('rendering')
 
     acceptInvite({ id });
 

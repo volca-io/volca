@@ -8,9 +8,6 @@ type ApiErrorInterface = {
   message: string;
   status: number;
 };
-
-type ExecuteApiCallAction<T> = ({ client, publicClient }: { client: typeof ky; publicClient: typeof ky }) => Promise<T>;
-
 export class ApiError extends Error implements ApiErrorInterface {
   public readonly name: string;
   public readonly status: number;
@@ -22,7 +19,10 @@ export class ApiError extends Error implements ApiErrorInterface {
   }
 }
 
-export const useApiActions = () => {
+const isApiError = (error: Record<string, unknown>) =>
+  ['name', 'message'].every((item) => Object.keys(error).includes(item));
+
+export const useApiClient = () => {
   const { config } = useAppConfigContext();
 
   const errorHook = useCallback(async (_request: Request, _options: NormalizedOptions, response: Response) => {
@@ -30,6 +30,9 @@ export const useApiActions = () => {
       const body = await response.json();
 
       if (body && isApiError(body)) {
+        if (response.status === 401) {
+          Auth.signOut();
+        }
         throw new ApiError({ name: body.name, message: body.message, status: response.status });
       }
 
@@ -41,61 +44,41 @@ export const useApiActions = () => {
     }
   }, []);
 
-  const executeApiCall = useCallback(
-    async <T>({ action }: { action: ExecuteApiCallAction<T> }): Promise<T> => {
-      const publicClient = ky.create({
-        prefixUrl: import.meta.env.VITE_API_URL,
-        credentials: 'include',
-        mode: 'cors',
-        retry: {
-          limit: 0,
-        },
-        hooks: {
-          afterResponse: [errorHook],
-        },
-      });
-
-      const tokenHook = async (request: Request) => {
-        if (config.mockTokens) {
-          request.headers.set('authorization', `Bearer ${config.mockTokens.accessToken}`);
-        } else {
-          try {
-            const session = await Auth.currentSession();
-            const token = session.getAccessToken().getJwtToken();
-            request.headers.set('authorization', `Bearer ${token}`);
-          } catch (err) {
-            console.error({ url: request.url, err });
-            throw err;
-          }
-        }
-      };
-
-      const client = publicClient.extend({
-        hooks: {
-          beforeRequest: [tokenHook],
-        },
-      });
-      try {
-        return action({ client, publicClient });
-      } catch (error: unknown) {
-        console.error(error);
-        if (error instanceof ApiError && error.status === 401) {
-          Auth.signOut();
-        }
-        throw error;
-      }
+  const publicClient = ky.create({
+    prefixUrl: import.meta.env.VITE_API_URL,
+    credentials: 'include',
+    mode: 'cors',
+    retry: {
+      limit: 0,
     },
-    [errorHook, config.mockTokens]
-  );
+    hooks: {
+      afterResponse: [errorHook],
+    },
+  });
 
-  const createApiAction = <T>(action: ExecuteApiCallAction<T>): Promise<T | null> => {
-    return executeApiCall<T>({ action });
+  const tokenHook = async (request: Request) => {
+    if (config.mockTokens) {
+      request.headers.set('authorization', `Bearer ${config.mockTokens.accessToken}`);
+    } else {
+      try {
+        const session = await Auth.currentSession();
+        const token = session.getAccessToken().getJwtToken();
+        request.headers.set('authorization', `Bearer ${token}`);
+      } catch (err) {
+        console.error({ url: request.url, err });
+        throw err;
+      }
+    }
   };
 
-  const isApiError = (error: Record<string, unknown>) =>
-    ['name', 'message'].every((item) => Object.keys(error).includes(item));
+  const client = publicClient.extend({
+    hooks: {
+      beforeRequest: [tokenHook],
+    },
+  });
 
   return {
-    createApiAction,
+    client,
+    publicClient,
   };
 };

@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LoadingPage } from '../pages';
 import { User } from '../types';
 import { useAppConfigContext } from './app-config-provider';
-import { useApiActions } from '../hooks/api-actions';
+import { useApiClient } from '../hooks/api-actions';
 
 type SignInProps = {
   email: string;
@@ -71,14 +71,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const location = useLocation();
   const toast = useToast();
   const [searchParams] = useSearchParams();
-  const { createApiAction } = useApiActions();
+  const { publicClient } = useApiClient();
 
   const provision = useMutation({
-    mutationFn: (idToken: string) =>
-      createApiAction<User>(async ({ publicClient }) => {
-        const { me } = await publicClient.post('users/provision', { json: { idToken } }).json<{ me: User }>();
-        return me;
-      }),
+    mutationFn: async (idToken: string) => {
+      const { me } = await publicClient.post('users/provision', { json: { idToken } }).json<{ me: User }>();
+      return me;
+    },
   });
 
   const hasActiveSession = async () => {

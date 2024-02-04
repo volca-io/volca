@@ -1,7 +1,7 @@
 import React, { useContext, createContext, useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoadingPage } from '../pages';
-import { useApiActions } from '../hooks/api-actions';
+import { useApiClient } from '../hooks/api-actions';
 import { Project } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { ErrorPage } from '../pages/error-page';
@@ -16,7 +16,7 @@ interface ProjectProviderProps {
 const ProjectContext = createContext<ProjectProviderProps | null>(null);
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { createApiAction } = useApiActions();
+  const { client } = useApiClient();
   const { user } = useAuthContext();
   const localStorageKey = 'selectedProjectId';
   const [selectedId, setSelectedId] = useState(localStorage.getItem(localStorageKey));
@@ -40,11 +40,10 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   } = useQuery({
     enabled,
     queryKey: ['projects'],
-    queryFn: () =>
-      createApiAction<Project[]>(async ({ client }) => {
-        const { projects } = await client.get('projects').json<{ projects: Project[] }>();
-        return projects;
-      }),
+    queryFn: async () => {
+      const { projects } = await client.get('projects').json<{ projects: Project[] }>();
+      return projects;
+    },
   });
 
   const setSelectedProject = (project: Project | null) => {

@@ -24,4 +24,11 @@ export const action = useApiAction(async (ctx: CustomContext) => {
   }
 
   await projectService.delete(projectId);
+
+  return {
+    status: 200,
+    body: {
+      status: 'Project deleted',
+    },
+  };
 });
