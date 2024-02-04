@@ -1,7 +1,7 @@
-import { setupServer } from '../../test-utils/setup-server';
+import { useServer } from '../../test-utils/setup-server';
 
 describe('/status', () => {
-  const getRequest = setupServer()
+  const getRequest = useServer();
 
   it('returns OK', async () => {
     const res = await getRequest().get('/status');

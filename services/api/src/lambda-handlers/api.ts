@@ -5,6 +5,7 @@ import { Knex } from 'knex';
 import Koa from 'koa';
 import { createServer } from '../server';
 import { loadEnvironmentVariables } from '../utils/environment';
+import { initialize } from '../lib/db/knex';
 
 let serverRef: Koa;
 let databaseRef: Knex;
@@ -15,7 +16,9 @@ export const handler = async (event: APIGatewayProxyEvent, context: Context) => 
   context.callbackWaitsForEmptyEventLoop = false;
 
   if (!databaseRef || serverRef) {
-    const { database, server } = await createServer();
+    const { server } = await createServer();
+    const database = initialize();
+
     serverRef = server;
     databaseRef = database;
   }

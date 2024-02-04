@@ -1,9 +1,9 @@
-import { setupServer } from '../../test-utils';
+import { useServer } from '../../test-utils';
 import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne } from '../../test-utils/fixtures';
 
 describe('POST /projects/:id/invitations', () => {
-  const getRequest = setupServer();
+  const getRequest = useServer();
   let createdProject: Record<string, unknown>;
 
   beforeAll(async () => {

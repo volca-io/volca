@@ -1,7 +1,7 @@
-import { setupServer } from '../../test-utils/setup-server';
+import { useServer } from '../../test-utils/setup-server';
 
 describe('GET /stripe/plans', () => {
-  const getRequest = setupServer();
+  const getRequest = useServer();
 
   it('can fetch a list of plans', async () => {
     const response = await getRequest().get('/stripe/plans');

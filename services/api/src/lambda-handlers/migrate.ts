@@ -1,4 +1,4 @@
-import { createServer } from '../server';
+import { initialize } from '../lib/db/knex';
 import { Logger } from '../utils/logger';
 
 enum MigrationType {
@@ -13,6 +13,7 @@ type MigrationEvent = {
 
 export const handler = async (event: MigrationEvent): Promise<void> => {
   const logger = new Logger();
+
   const type = event.type || 'latest';
 
   if (!Object.values(MigrationType).includes(type as MigrationType)) {
@@ -21,7 +22,7 @@ export const handler = async (event: MigrationEvent): Promise<void> => {
 
   logger.info(`Running ${type} migrations`);
 
-  const { database } = await createServer();
+  const database = initialize();
   try {
     const res = await database.migrate[type]();
     logger.info(`Successfully ran ${type} migration`, res);

@@ -9,10 +9,8 @@ import {
   dependencyInjectionMiddleware,
 } from './middlewares';
 import { EnvironmentConfig, EnvironmentVariables, loadEnvironmentVariables } from './utils/environment';
-import { initialize } from './lib/db/knex';
-import { Knex } from 'knex';
 
-export const createServer = async (): Promise<{ server: Koa; database: Knex }> => {
+export const createServer = async (): Promise<{ server: Koa }> => {
   await loadEnvironmentVariables();
 
   const app = new Koa();
@@ -40,5 +38,5 @@ export const createServer = async (): Promise<{ server: Koa; database: Knex }> =
 
   app.use(router.routes()).use(router.allowedMethods());
 
-  return { server: app, database: initialize() };
+  return { server: app };
 };

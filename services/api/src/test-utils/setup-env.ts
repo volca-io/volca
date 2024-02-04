@@ -1,4 +1,4 @@
-import { PlanId } from '../../../types/types';
+import { PlanId } from '../../../../types/types';
 
 const mockConfig = {
   name: 'volca',
@@ -40,7 +40,7 @@ const mockConfig = {
   },
 };
 
-jest.mock('../src/utils/environment', () => {
+jest.mock('../utils/environment', () => {
   return {
     loadEnvironmentVariables: () => {},
     config: mockConfig,

@@ -1,10 +1,11 @@
 import { Logger } from '../utils/logger';
-import { createServer } from '../server';
+import { initialize } from '../lib/db/knex';
 
 export const handler = async () => {
-  const { database } = await createServer();
   const logger = new Logger();
   logger.info(`Running seeder`);
+
+  const database = initialize();
 
   try {
     const res = await database.seed.run();

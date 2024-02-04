@@ -1,11 +1,11 @@
 import { CommunicationsService, SendEmailParams } from '../../services';
 import { generateJwtToken } from '../../test-utils/authentication';
 import { userOne } from '../../test-utils/fixtures';
-import { setupServer } from '../../test-utils/setup-server';
+import { useServer } from '../../test-utils/setup-server';
 import { config } from '../../utils/environment';
 
 describe('POST /communications/support', () => {
-  const getRequest = setupServer();
+  const getRequest = useServer();
   let comsSpy: jest.SpyInstance<Promise<void>, [SendEmailParams], unknown>;
 
   beforeAll(() => {
