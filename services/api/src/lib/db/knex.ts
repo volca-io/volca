@@ -14,6 +14,9 @@ type DatabaseConnectionParams = {
   ssl: boolean;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let db: knex.Knex<any, unknown[]> | null = null;
+
 export const initialize = (connection?: DatabaseConnectionParams) => {
   const logger = new Logger();
   logger.debug('Creating new knex client');
@@ -40,7 +43,7 @@ export const initialize = (connection?: DatabaseConnectionParams) => {
     ...knexSnakeCaseMappers(),
   };
 
-  const db = knex(config);
+  if (!db) db = knex(config);
 
   Model.knex(db);
 
