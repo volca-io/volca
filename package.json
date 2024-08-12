@@ -49,8 +49,8 @@
     "zx": "^7.2.3"
   },
   "dependencies": {
-    "aws-cdk": "^2.102.0",
-    "aws-cdk-lib": "^2.102.0"
+    "aws-cdk": "^2.151.0",
+    "aws-cdk-lib": "^2.151.0"
   },
-  "version": "2.18.0"
+  "version": "2.19.0"
 }

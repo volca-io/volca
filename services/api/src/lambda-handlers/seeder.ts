@@ -1,7 +1,10 @@
 import { Logger } from '../utils/logger';
 import { initialize } from '../lib/db/knex';
+import { loadEnvironmentVariables } from '../utils/environment';
 
 export const handler = async () => {
+  await loadEnvironmentVariables();
+
   const logger = new Logger();
   logger.info(`Running seeder`);
 

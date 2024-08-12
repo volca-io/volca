@@ -1,4 +1,5 @@
 import { initialize } from '../lib/db/knex';
+import { loadEnvironmentVariables } from '../utils/environment';
 import { Logger } from '../utils/logger';
 
 enum MigrationType {
@@ -12,6 +13,8 @@ type MigrationEvent = {
 };
 
 export const handler = async (event: MigrationEvent): Promise<void> => {
+  await loadEnvironmentVariables();
+
   const logger = new Logger();
 
   const type = event.type || 'latest';
