@@ -117,10 +117,6 @@ type GithubConfig = {
   repository: string;
 };
 
-type CrispConfig = {
-  websiteId: string;
-};
-
 type GoogleAnalyticsConfig = {
   measurementId: string;
 };
@@ -138,7 +134,6 @@ export type Environments = {
 export type Config = {
   name: string;
   github: GithubConfig;
-  crisp?: CrispConfig;
   googleAnalytics?: GoogleAnalyticsConfig;
   aws: AwsConfig;
   domain: string;

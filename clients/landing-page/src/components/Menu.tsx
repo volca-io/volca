@@ -44,9 +44,6 @@ export const Menu = () => {
 
   const Navigation = () => (
     <>
-      <Button as={Link} href="/pricing/" variant="ghost">
-        Pricing
-      </Button>
       <ChakraMenu>
         <MenuButton as={Button} variant="ghost" rightIcon={<ChevronDownIcon />}>
           Features
@@ -90,9 +87,6 @@ export const Menu = () => {
       </ChakraMenu>
       <Button as={Link} href="https://docs.volca.io" variant="ghost">
         Docs
-      </Button>
-      <Button as={Link} href="/blog/" variant="ghost">
-        Blog
       </Button>
     </>
   );

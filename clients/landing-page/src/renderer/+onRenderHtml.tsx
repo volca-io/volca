@@ -10,10 +10,6 @@ const render: OnRenderHtmlAsync = async (pageContext: PageContextServer) => {
   const title = getTitle(pageContext);
   const description = getDescription(pageContext);
 
-  const crispWidget = config.crisp
-    ? `<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="${config.crisp.websiteId}";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>`
-    : '';
-
   const analyticsTag = config.googleAnalytics
     ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${config.googleAnalytics.measurementId}"></script>
   <script>
@@ -37,7 +33,6 @@ const render: OnRenderHtmlAsync = async (pageContext: PageContextServer) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${description}" />
 
-        ${dangerouslySkipEscape(crispWidget)}
       </head>
       <body>
         <div id="react-root">${dangerouslySkipEscape(pageHtml)}</div>

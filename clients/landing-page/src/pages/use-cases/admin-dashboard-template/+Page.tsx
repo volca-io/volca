@@ -116,16 +116,6 @@ const Page = () => (
             answer: 'Yes, you can use any backend API or service to back your admin dashboard.',
           },
           {
-            question: 'What if I regret my purchase?',
-            answer:
-              "As long as you haven't created anything with Volca yet, you are always free to request a refund within 14 days of your purchase.",
-          },
-          {
-            question: 'Do you provide support?',
-            answer:
-              'Yes, you will be invited to a private Slack channel where the Volca team will help you with any challenges you face with the template.',
-          },
-          {
             question: 'What is an admin dashboard template?',
             answer:
               'An admin dashboard is a user interface (UI) that is designed for use by administrators or other privileged users to manage and monitor the performance of a system or application. An admin dashboard typically includes a range of tools and features that allow administrators to view and analyze key metrics, manage users and permissions, configure settings, and perform other administrative tasks. An admin dashboard may be accessed through a web-based interface, a desktop application, or a mobile app, depending on the specific system or application. It is typically designed to be user-friendly and intuitive, to make it easy for administrators to quickly access and use the tools and features they need.',

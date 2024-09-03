@@ -109,16 +109,6 @@ const Page = () => (
 
       <Flex flexDirection="column" gap={4}>
         <Heading as="h3" fontSize="2xl">
-          Refund Policy
-        </Heading>
-        <Text>
-          If you are not satisfied with the Application, you may request a refund within 14 days of your purchase. If
-          you request a refund, you will lose all rights to use the Application.
-        </Text>
-      </Flex>
-
-      <Flex flexDirection="column" gap={4}>
-        <Heading as="h3" fontSize="2xl">
           Links to Other Websites
         </Heading>
         <Text>

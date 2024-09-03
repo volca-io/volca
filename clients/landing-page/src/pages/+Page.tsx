@@ -10,9 +10,7 @@ import oskarAvatar from '../assets/oskar_avatar.webp';
 import karlAvatar from '../assets/karl_avatar.webp';
 import demo from '../assets/volca-demo.webp';
 import { FeaturesSection } from '../components/sections/FeaturesSection.js';
-import { PricingSection } from '../components/sections/PricingSection.js';
 import { FaqSection } from '../components/sections/FaqSection.js';
-import { TestimonialsSection } from '../components/sections/TestimonialsSection.js';
 import { DescriptionSection } from '../components/sections/DescriptionSection.js';
 
 const Page = () => {
@@ -36,9 +34,9 @@ const Page = () => {
             <Link href="https://app.volca.io">
               <Button leftIcon={<MdRocket />}>Explore demo</Button>
             </Link>
-            <Link href="/pricing/">
+            <Link href="https://github.com/volca-io/volca">
               <Button variant="ghost" leftIcon={<MdCloudDownload />}>
-                Buy a license
+                Download
               </Button>
             </Link>
           </Flex>
@@ -128,10 +126,6 @@ const Page = () => {
       <DescriptionSection />
 
       <FeaturesSection />
-
-      <TestimonialsSection />
-
-      <PricingSection />
 
       <FaqSection />
     </Flex>

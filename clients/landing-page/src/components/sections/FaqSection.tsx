@@ -39,42 +39,6 @@ const mainFaqs: Array<Faq> = [
     ),
   },
   {
-    question: 'How do I get started creating a product with Volca?',
-    answer: (
-      <Text>
-        We have worked hard on documenting Volca and creating tutorials that are easy to follow. If you find yourself
-        stuck, we will support you in our private Slack channel.
-      </Text>
-    ),
-  },
-  {
-    question: 'Is support included?',
-    answer: (
-      <Text>
-        Yes, when you purchase Volca you will be invited to a private Slack channel where our team will help you build
-        your SaaS.
-      </Text>
-    ),
-  },
-  {
-    question: 'What if I regret my purchase?',
-    answer: (
-      <Text>
-        Don't worry. If you decide Volca is not the right choice for you, you can request a refund within 14 days and we
-        will give you all your money back.
-      </Text>
-    ),
-  },
-  {
-    question: 'What is the difference between the open source and paid versions?',
-    answer: (
-      <Text>
-        The open source code does not any of the features such as authentication, payments, projects or support. If you
-        use the open source version you have to build everything yourself.
-      </Text>
-    ),
-  },
-  {
     question: 'How is Volca hosted?',
     answer: (
       <Text>
@@ -175,7 +139,7 @@ export const FaqSection = ({ faqs = mainFaqs }: { faqs?: Faq[] }) => (
   <SimpleGrid minChildWidth={300}>
     <SectionHeader
       type="h2"
-      category="Support"
+      category="FAQ"
       title="FAQs"
       align="start"
       description={
